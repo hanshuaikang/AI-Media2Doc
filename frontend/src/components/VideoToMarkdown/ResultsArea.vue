@@ -132,6 +132,33 @@ const copyToClipboard = async (text, type) => {
     console.error('复制失败:', err);
   }
 }
+
+// 下载思维导图 JSON 文件
+const downloadMindMapJson = (jsonContent) => {
+  try {
+    // 创建 Blob 对象
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    // 创建下载链接
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mindmap_${new Date().getTime()}.json`;
+    document.body.appendChild(a);
+    a.click();
+
+    // 清理
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+
+    ElMessage.success('思维导图 JSON 文件下载成功');
+  } catch (err) {
+    ElMessage.error('下载失败');
+    console.error('下载思维导图 JSON 失败:', err);
+  }
+}
 </script>
 
 <template>
@@ -157,7 +184,7 @@ const copyToClipboard = async (text, type) => {
         <el-icon>
           <Document />
         </el-icon>
-        <span>音频转文字</span>
+        <span>原始文本</span>
         <div class="action-buttons">
           <el-button class="action-btn" type="success" circle @click="copyToClipboard(transcriptionText, '文本')"
             :icon="CopyDocument" />
@@ -183,7 +210,9 @@ const copyToClipboard = async (text, type) => {
           </template>
           <el-button class="action-btn" type="success" circle @click="copyToClipboard(markdownContent, 'Markdown')"
             :icon="CopyDocument" />
-          <el-button class="action-btn" type="primary" circle @click="$emit('download-markdown')" :icon="Download" />
+          <el-button class="action-btn" type="primary" circle
+            @click="contentStyle === 'mind' ? downloadMindMapJson(markdownContent) : $emit('download-markdown')"
+            :icon="Download" />
         </div>
       </div>
       <div class="card-content">

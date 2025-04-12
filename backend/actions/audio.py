@@ -14,9 +14,16 @@ from env import AUC_APP_ID, AUC_ACCESS_TOKEN
 
 @ActionDispatcher.register("submit_audio_task")
 async def submit_audio_task(request: ArkChatRequest):
+    """
+    提交一个音频转写任务
+    :param request: message: filename
+    :return:
+    """
     submit_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/submit"
+    # 音频文件名
     file_name = request.messages[0].content
     download_url = generate_download_url(file_name)
+    # 生成人物 id
     task_id = uuid.uuid4().hex
 
     data = {
@@ -29,7 +36,6 @@ async def submit_audio_task(request: ArkChatRequest):
             "enable_itn": True
         }
     }
-    print(task_id)
 
     headers = {
         "X-Api-App-Key": AUC_APP_ID,
@@ -40,11 +46,8 @@ async def submit_audio_task(request: ArkChatRequest):
     }
 
     response = requests.post(submit_url, data=json.dumps(data), headers=headers)
-    print(f'Submit task response header X-Tt-Logid: {response.headers["X-Tt-Logid"]}\n')
+    # 判断任务是否成功
     if 'X-Api-Status-Code' in response.headers and response.headers["X-Api-Status-Code"] == "20000000":
-        print(f'Submit task response header X-Api-Status-Code: {response.headers["X-Api-Status-Code"]}')
-        print(f'Submit task response header X-Api-Message: {response.headers["X-Api-Message"]}')
-        print(f'Submit task response header X-Tt-Logid: {response.headers["X-Tt-Logid"]}\n')
         yield ArkChatResponse(
             id="upload_url",
             choices=[],
@@ -69,17 +72,12 @@ async def query_audio_task(request: ArkChatRequest):
         "X-Api-Request-Id": task_id,
     }
 
-    print(f"query task id: {task_id}")
-
     query_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/query"
 
     response = requests.post(query_url, json.dumps({}), headers=headers)
 
     if 'X-Api-Status-Code' in response.headers:
         if response.headers["X-Api-Status-Code"] == "20000000":
-            print(f'Query task response header X-Api-Status-Code: {response.headers["X-Api-Status-Code"]}')
-            print(f'Query task response header X-Api-Message: {response.headers["X-Api-Message"]}')
-            print(f'Query task response header X-Tt-Logid: {response.headers["X-Tt-Logid"]}\n')
             yield ArkChatResponse(
                 id="query_audio_task",
                 choices=[],
@@ -102,7 +100,6 @@ async def query_audio_task(request: ArkChatRequest):
                 metadata={"result": "", "status": "running"}
             )
         else:
-            print(response.json())
             yield ArkChatResponse(
                 id="query_audio_task",
                 choices=[],
@@ -114,5 +111,4 @@ async def query_audio_task(request: ArkChatRequest):
                 metadata={"result": "", "status": "failed"}
             )
     else:
-        print(f'Query task failed and the response headers are: {response.headers}')
         raise Exception(f'Query task failed and the response headers are: {response.headers}')

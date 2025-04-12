@@ -10,6 +10,10 @@ defineProps({
   isProcessing: {
     type: Boolean,
     default: false
+  },
+  acceptHint: {
+    type: String,
+    default: '上传视频或Mp3音频'
   }
 })
 
@@ -20,18 +24,24 @@ const allowedTypes = [
   'video/quicktime',  // .mov
   'video/x-msvideo',  // .avi
   'video/x-matroska', // .mkv
-  'video/webm'        // .webm
+  'video/webm',       // .webm
+  'audio/mpeg'        // .mp3 - 添加支持MP3格式
 ]
 
 const handleFileChange = (file) => {
-  if (!allowedTypes.includes(file.raw.type)) {
-    ElMessage.error('只支持上传视频文件（MP4、MOV、AVI、MKV、WebM）')
+  // 检查文件类型是否为允许的类型或MP3文件
+  const isAllowedType = allowedTypes.includes(file.raw.type) ||
+    file.raw.name.toLowerCase().endsWith('.mp3');
+
+  if (!isAllowedType) {
+    ElMessage.error('只支持上传视频文件（MP4、MOV、AVI、MKV、WebM）或MP3音频文件')
     return false
   }
 
-  const maxSize = 2 * 1024 * 1024 * 1024
+  // 修改文件大小限制为100MB
+  const maxSize = 100 * 1024 * 1024
   if (file.raw.size > maxSize) {
-    ElMessage.error('文件大小不能超过 2GB')
+    ElMessage.error('文件大小不能超过 100MB')
     return false
   }
 
@@ -45,10 +55,10 @@ const handleFileChange = (file) => {
       <el-icon>
         <VideoCamera />
       </el-icon>
-      上传视频
+      {{ acceptHint }}
     </h3>
     <el-upload class="uploader" drag action="" :auto-upload="false" :on-change="handleFileChange"
-      :disabled="ffmpegLoading || isProcessing" :accept="allowedTypes.join(',')">
+      :disabled="ffmpegLoading || isProcessing" :accept="allowedTypes.join(',') + ',.mp3'">
       <div class="upload-content">
         <div class="upload-icon-wrapper">
           <el-icon class="upload-icon">
@@ -59,8 +69,8 @@ const handleFileChange = (file) => {
           {{ ffmpegLoading ? '正在加载 ffmpeg，请稍候...' : '开始上传' }}
         </h3>
         <p class="upload-desc" v-if="!ffmpegLoading">
-          支持拖放或点击上传视频文件<br>
-          <span class="upload-formats">支持格式：MP4、MOV、AVI、MKV、WebM，最大 2GB</span>
+          支持拖放或点击上传视频或MP3文件<br>
+          <span class="upload-formats">支持格式：MP4、MOV、AVI、MKV、WebM、MP3，最大 100MB</span>
         </p>
       </div>
     </el-upload>
