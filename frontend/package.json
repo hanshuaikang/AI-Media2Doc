@@ -1,0 +1,32 @@
+{
+  "name": "video2markdown-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server/upload-proxy.js"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "@ffmpeg/core": "^0.12.10",
+    "@ffmpeg/ffmpeg": "^0.10.1",
+    "axios": "^1.6.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "element-plus": "^2.9.7",
+    "express": "^4.18.2",
+    "idb": "^8.0.2",
+    "markdown-it": "^14.1.0",
+    "multer": "^1.4.5-lts.1",
+    "simple-mind-map": "^0.13.1-fix.2",
+    "spark-md5": "^3.0.2",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.2.0"
+  }
+}

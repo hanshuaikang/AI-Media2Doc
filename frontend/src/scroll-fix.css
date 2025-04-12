@@ -1,0 +1,40 @@
+/* 
+  全局滚动修复样式
+  这个文件用于修复页面滚动问题，确保所有内容在默认缩放下都能显示
+*/
+
+html,
+body {
+    scroll-behavior: smooth;
+    overflow-anchor: auto;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    height: auto;
+    overflow-y: auto !important;
+    overflow-anchor: auto;
+}
+
+.el-scrollbar,
+.el-scrollbar__wrap {
+    height: auto !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(144, 147, 153, 0.5);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
