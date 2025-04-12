@@ -210,7 +210,7 @@ const downloadContent = () => {
                             <el-icon>
                                 <Headset />
                             </el-icon>
-                            <h3>音频转文字</h3>
+                            <h3>原始文本</h3>
                         </div>
                         <el-button type="primary" :icon="CopyDocument" circle size="small" title="复制文本"
                             @click="copyText(task.transcriptionText)" />

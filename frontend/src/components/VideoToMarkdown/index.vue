@@ -117,6 +117,11 @@ const handleFile = async (file) => {
   isProcessing.value = false;
 }
 
+// 检查文件是否为MP3
+const isMP3File = (file) => {
+  return file && (file.type === 'audio/mpeg' || file.name.toLowerCase().endsWith('.mp3'));
+}
+
 // 开始处理按钮的点击事件处理
 const startProcessing = async () => {
   if (!videoFile.value) {
@@ -129,20 +134,37 @@ const startProcessing = async () => {
   processingAudio.value = true;
 
   try {
-    // 第一步：提取音频
-    activeStep.value = 1;
-    steps.value[1].status = 'processing';
+    // 检查是否为MP3文件
+    const isMp3 = isMP3File(videoFile.value);
 
-    const videoData = new Uint8Array(await videoFile.value.arrayBuffer());
-    const extractedAudio = await extractAudio(videoData);
+    // 提取音频或直接使用MP3文件
+    if (isMp3) {
+      // 如果是MP3文件，直接跳过音频提取步骤
+      steps.value[1].status = 'success';
+      ElMessage.success('检测到MP3文件，将直接跳过音频提取步骤');
 
-    audioData.value = extractedAudio;
-    const blob = new Blob([extractedAudio], { type: 'audio/mpeg' });
-    audioUrl.value = URL.createObjectURL(blob);
-    audioExtracted.value = true;
+      // 直接读取MP3文件
+      audioData.value = new Uint8Array(await videoFile.value.arrayBuffer());
+      const blob = new Blob([audioData.value], { type: 'audio/mpeg' });
+      audioUrl.value = URL.createObjectURL(blob);
+      audioExtracted.value = true;
+    } else {
+      // 如果不是MP3文件，正常提取音频
+      activeStep.value = 1;
+      steps.value[1].status = 'processing';
+
+      const videoData = new Uint8Array(await videoFile.value.arrayBuffer());
+      const extractedAudio = await extractAudio(videoData);
+
+      audioData.value = extractedAudio;
+      const blob = new Blob([extractedAudio], { type: 'audio/mpeg' });
+      audioUrl.value = URL.createObjectURL(blob);
+      audioExtracted.value = true;
+      steps.value[1].status = 'success';
+    }
 
     // 使用音频文件计算 MD5
-    const audioMd5 = await calculateMD5(extractedAudio);
+    const audioMd5 = await calculateMD5(audioData.value);
 
     // 检查是否存在相同的 MD5 和内容类型
     const exists = await checkTaskExistsByMd5AndStyle(audioMd5, contentStyle.value);
@@ -155,7 +177,6 @@ const startProcessing = async () => {
     }
 
     audioFilename.value = `${audioMd5}.mp3`;
-    steps.value[1].status = 'success';
 
     // 检查是否有任何风格的相同音频已完成处理
     const existingTask = await getAnyTaskByMd5(audioMd5);
@@ -198,7 +219,7 @@ const startProcessing = async () => {
     } else {
       // 没有相同MD5的任务，正常执行流程
 
-      // 第二步：上传音频文件
+      // 上传音频文件
       steps.value[2].status = 'processing';
       activeStep.value = 2;
 
@@ -209,7 +230,7 @@ const startProcessing = async () => {
       steps.value[2].status = 'success';
       ElMessage.success('音频上传成功');
 
-      // 第三步：音频识别
+      // 音频识别
       steps.value[3].status = 'processing';
       activeStep.value = 3;
 
@@ -228,7 +249,7 @@ const startProcessing = async () => {
       steps.value[3].status = 'success';
       ElMessage.success('音频识别完成');
 
-      // 第四步：生成 Markdown
+      // 生成 Markdown
       steps.value[4].status = 'processing';
       activeStep.value = 4;
 

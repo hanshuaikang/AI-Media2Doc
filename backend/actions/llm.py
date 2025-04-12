@@ -46,7 +46,6 @@ style_dict = {
 async def generate_markdown_text(request: ArkChatRequest):
     content = json.loads(request.messages[0].content)
     style = content.get("style", "note")
-    p = prompt
     if style == "mind":
         p = mind_prompt
         text = content.get("text", "")
