@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <img src="docs/images/img.png" alt="index">
+    <img src="docs/images/index.png" alt="index">
 </p>
 
 **Interactive conversations based on video content**
