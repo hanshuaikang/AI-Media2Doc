@@ -20,6 +20,7 @@ from actions.dispatcher import ActionDispatcher
 @task()
 async def main(request: ArkChatRequest) -> AsyncIterable[Response]:
     dispatcher = ActionDispatcher()
+    # 通过使用不同的 header 分发到不同的处理逻辑
     request_action = get_headers().get("request-action", "default")
 
     async for response in dispatcher.dispatch(request_action, request):
