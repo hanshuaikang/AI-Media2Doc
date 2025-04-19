@@ -292,8 +292,6 @@ const downloadMindMapJson = (jsonContent) => {
 
 .download-btn {}
 
-/* ...existing styles... */
-
 .custom-audio-player {
   width: 100%;
   margin-top: 0.5rem;
