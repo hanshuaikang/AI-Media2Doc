@@ -96,6 +96,17 @@ const currentStyleInfo = computed(() => {
   return styleMap[contentStyle.value] || { name: contentStyle.value, color: '#409EFF' }
 })
 
+// 步骤状态修改部分 - 请在相关处理代码中应用这些颜色设置
+const updateStepStatus = (stepIndex, status) => {
+  if (stepIndex >= 0 && stepIndex < steps.value.length) {
+    steps.value[stepIndex].status = status;
+    // 确保"上传文件"和"音频转文字"步骤的文字显示为黑色
+    if ((stepIndex === 2 || stepIndex === 3) && status === 'success') {
+      // 这里不需要额外代码，因为我们已经在CSS中设置了所有状态为黑色
+    }
+  }
+}
+
 const handleFile = async (file) => {
   if (!file) return;
 
@@ -140,7 +151,7 @@ const startProcessing = async () => {
     // 提取音频或直接使用MP3文件
     if (isMp3) {
       // 如果是MP3文件，直接跳过音频提取步骤
-      steps.value[1].status = 'success';
+      updateStepStatus(1, 'success');
       ElMessage.success('检测到MP3文件，将直接跳过音频提取步骤');
 
       // 直接读取MP3文件
@@ -151,7 +162,7 @@ const startProcessing = async () => {
     } else {
       // 如果不是MP3文件，正常提取音频
       activeStep.value = 1;
-      steps.value[1].status = 'processing';
+      updateStepStatus(1, 'processing');
 
       const videoData = new Uint8Array(await videoFile.value.arrayBuffer());
       const extractedAudio = await extractAudio(videoData);
@@ -160,7 +171,7 @@ const startProcessing = async () => {
       const blob = new Blob([extractedAudio], { type: 'audio/mpeg' });
       audioUrl.value = URL.createObjectURL(blob);
       audioExtracted.value = true;
-      steps.value[1].status = 'success';
+      updateStepStatus(1, 'success');
     }
 
     // 使用音频文件计算 MD5
@@ -170,7 +181,7 @@ const startProcessing = async () => {
     const exists = await checkTaskExistsByMd5AndStyle(audioMd5, contentStyle.value);
     if (exists) {
       ElMessage.warning('该音频已经以相同风格处理过，请在历史记录中查看或选择其他风格');
-      steps.value[1].status = 'warning';
+      updateStepStatus(1, 'warning');
       processingAudio.value = false;
       isProcessing.value = false;
       return;
@@ -186,9 +197,9 @@ const startProcessing = async () => {
       ElMessage.success('检测到相同音频，直接复用已有转写结果');
 
       // 标记上传和识别步骤为成功
-      steps.value[2].status = 'success';
+      updateStepStatus(2, 'success');
       activeStep.value = 3;
-      steps.value[3].status = 'success';
+      updateStepStatus(3, 'success');
 
       // 直接使用已存在的转写文本
       transcriptionText.value = existingTask.transcriptionText;
@@ -196,11 +207,11 @@ const startProcessing = async () => {
 
       // 跳到第四步：生成 Markdown
       activeStep.value = 4;
-      steps.value[4].status = 'processing';
+      updateStepStatus(4, 'processing');
 
       const markdown = await generateMarkdownText(transcriptionText.value, contentStyle.value);
       markdownContent.value = markdown;
-      steps.value[4].status = 'success';
+      updateStepStatus(4, 'success');
 
       // 保存新风格的任务记录
       await saveTask({
@@ -220,18 +231,18 @@ const startProcessing = async () => {
       // 没有相同MD5的任务，正常执行流程
 
       // 上传音频文件
-      steps.value[2].status = 'processing';
+      updateStepStatus(2, 'processing');
       activeStep.value = 2;
 
       const uploadUrl = await getAudioUploadUrl(audioFilename.value);
       const audioBlob = new Blob([audioData.value], { type: 'audio/mpeg' });
       await uploadFile(uploadUrl, audioBlob);
 
-      steps.value[2].status = 'success';
+      updateStepStatus(2, 'success');
       ElMessage.success('音频上传成功');
 
       // 音频识别
-      steps.value[3].status = 'processing';
+      updateStepStatus(3, 'processing');
       activeStep.value = 3;
 
       const taskId = await submitAudioTask(audioFilename.value);
@@ -246,16 +257,16 @@ const startProcessing = async () => {
 
       transcriptionText.value = text;
       textTranscribed.value = true;
-      steps.value[3].status = 'success';
+      updateStepStatus(3, 'success');
       ElMessage.success('音频识别完成');
 
       // 生成 Markdown
-      steps.value[4].status = 'processing';
+      updateStepStatus(4, 'processing');
       activeStep.value = 4;
 
       const markdown = await generateMarkdownText(text, contentStyle.value);
       markdownContent.value = markdown;
-      steps.value[4].status = 'success';
+      updateStepStatus(4, 'success');
 
       // 保存任务记录
       await saveTask({
@@ -275,7 +286,7 @@ const startProcessing = async () => {
   } catch (error) {
     // 设置当前步骤为错误状态
     if (activeStep.value >= 0 && activeStep.value < steps.value.length) {
-      steps.value[activeStep.value].status = 'error';
+      updateStepStatus(activeStep.value, 'error');
     }
     ElMessage.error(`处理失败: ${error.message}`);
   } finally {
@@ -324,11 +335,11 @@ onMounted(() => {
   loadFFmpeg()
     .then(() => {
       ffmpegLoaded.value = true;
-      steps.value[0].status = 'success';
+      updateStepStatus(0, 'success');
     })
     .catch(err => {
       console.error('FFmpeg 预加载失败:', err);
-      steps.value[0].status = 'error';
+      updateStepStatus(0, 'error');
     })
     .finally(() => {
       ffmpegLoading.value = false;

@@ -93,18 +93,21 @@ const iconMap = {
   margin: 0 auto;
   position: relative;
   overflow: hidden;
-  border: 1px solid #ebeef5;
+  border: 1px solid #dcdfe6;
+  color: #909399;
 }
 
 .step-icon-wrapper.success {
-  background: var(--el-color-success-light-9);
-  color: var(--el-color-success);
-  border: 2px solid var(--el-color-success);
+  background: #ecf5ff;
+  color: #409EFF;
+  border: 2px solid #409EFF;
+  box-shadow: 0 0 8px rgba(64, 158, 255, 0.2);
 }
 
 .step-icon-wrapper.processing {
   background: var(--el-color-primary);
   color: #fff;
+  border: 2px solid var(--el-color-primary);
   box-shadow: 0 0 0 0 rgba(64, 158, 255, 0.7);
   animation: pulse 2s infinite;
 }
@@ -136,38 +139,111 @@ const iconMap = {
 
 :deep(.el-step__line) {
   background-color: #dcdfe6;
+  /* 默认线条为灰色 */
+  height: 2px;
 }
 
 :deep(.el-step.is-success) {
 
   .el-step__title,
   .el-step__description {
-    color: var(--el-color-success);
+    color: #303133;
+    font-weight: 600;
   }
 
   .el-step__line {
-    background-color: var(--el-color-success);
+    background-color: #409EFF !important;
+    /* 修改为蓝色，添加!important */
   }
+}
+
+:deep(.el-step.is-success + .el-step .el-step__line) {
+  background-color: #409EFF !important;
+  /* 确保下一个步骤的线条也是蓝色 */
+}
+
+:deep(.el-step__head.is-success .el-step__line) {
+  background-color: #409EFF !important;
+  /* 成功步骤头部的线条 */
+}
+
+:deep(.el-step__head.is-success + .el-step__main .el-step__line) {
+  background-color: #409EFF !important;
+  /* 成功步骤后的主体线条 */
 }
 
 :deep(.el-step.is-process) {
 
   .el-step__title,
   .el-step__description {
-    color: var(--el-color-primary);
+    color: #303133;
+    font-weight: 600;
   }
+
+  /* 处理中状态线条保持默认灰色 */
 }
 
 :deep(.el-step.is-error) {
 
   .el-step__title,
   .el-step__description {
-    color: var(--el-color-danger);
+    color: #303133;
+    font-weight: 600;
   }
 
   .el-step__line {
     background-color: var(--el-color-danger);
+    /* 错误状态线条为红色 */
   }
+}
+
+/* 全面覆盖所有边框和文本颜色，确保成功状态的所有颜色都是蓝色 */
+:deep(.el-step.is-success .el-step__icon),
+:deep(.el-step__head.is-success),
+:deep(.el-step__head.is-success .el-step__icon),
+:deep(.el-step__head.is-success .el-step__icon.is-text),
+:deep(.el-step__head.is-success .el-step__icon-inner) {
+  color: #409EFF !important;
+}
+
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(64, 158, 255, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(64, 158, 255, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(64, 158, 255, 0);
+  }
+}
+
+/* 设置所有步骤文字的基础样式 */
+:deep(.el-step__title) {
+  font-size: 14px !important;
+  /* 固定文字大小为12px */
+  color: #303133 !important;
+  /* 设置为黑色 */
+  margin-top: 8px;
+  /* 增加与图标的间距 */
+  transition: none;
+  /* 禁用颜色过渡效果 */
+}
+
+/* 确保等待状态的文字也是12px黑色 */
+:deep(.el-step.is-wait) .el-step__title,
+:deep(.el-step__title.is-wait) {
+  font-size: 12px !important;
+  color: #303133 !important;
+  font-weight: normal;
+}
+
+:deep(.el-step__title:not(.is-wait)) {
+  font-weight: 600;
+  /* 保持非等待状态标题加粗 */
 }
 
 /* 添加屏幕高度相关的媒体查询 */
@@ -207,7 +283,7 @@ const iconMap = {
   }
 
   :deep(.el-step__title) {
-    font-size: 0.9rem;
+    font-size: 12px !important;
   }
 }
 </style>

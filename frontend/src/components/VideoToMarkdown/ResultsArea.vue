@@ -167,11 +167,14 @@ const downloadMindMapJson = (jsonContent) => {
     <!-- 音频结果卡片 -->
     <div v-if="audioExtracted" class="result-card audio-result">
       <div class="card-header">
-        <el-icon>
-          <Headset />
-        </el-icon>
-        <span>音频下载</span>
-        <el-button class="download-btn" type="primary" circle @click="$emit('download-audio')" :icon="Download" />
+        <div class="header-left">
+          <el-icon>
+            <Headset />
+          </el-icon>
+          <span>音频下载</span>
+        </div>
+        <el-button class="download-btn" type="primary" circle size="small" @click="$emit('download-audio')"
+          :icon="Download" />
       </div>
       <div class="card-content">
         <audio controls :src="audioUrl" class="custom-audio-player" />
@@ -181,47 +184,51 @@ const downloadMindMapJson = (jsonContent) => {
     <!-- 文本结果卡片 -->
     <div v-if="textTranscribed" class="result-card text-result">
       <div class="card-header">
-        <el-icon>
-          <Document />
-        </el-icon>
-        <span>原始文本</span>
+        <div class="header-left">
+          <el-icon>
+            <Document />
+          </el-icon>
+          <span>原始文本</span>
+        </div>
         <div class="action-buttons">
-          <el-button class="action-btn" type="success" circle @click="copyToClipboard(transcriptionText, '文本')"
-            :icon="CopyDocument" />
-          <el-button class="action-btn" type="primary" circle @click="$emit('download-text')" :icon="Download" />
+          <el-button class="action-btn" type="primary" circle size="small"
+            @click="copyToClipboard(transcriptionText, '文本')" :icon="CopyDocument" />
+          <el-button class="action-btn" type="primary" circle size="small" @click="$emit('download-text')"
+            :icon="Download" />
         </div>
       </div>
       <div class="card-content">
-        <div class="text-preview">{{ transcriptionText }}</div>
+        <div class="text-content">{{ transcriptionText }}</div>
       </div>
     </div>
 
     <!-- Markdown 结果卡片 -->
     <div v-if="markdownContent" class="result-card markdown-result">
       <div class="card-header">
-        <el-icon>
-          <Document />
-        </el-icon>
-        <span>{{ contentStyle === 'mind' ? '思维导图' : '图文内容' }}</span>
+        <div class="header-left">
+          <el-icon>
+            <Document />
+          </el-icon>
+          <span>{{ contentStyle === 'mind' ? '思维导图' : '图文内容' }}</span>
+        </div>
         <div class="action-buttons">
           <template v-if="contentStyle === 'mind'">
-            <el-button class="action-btn" type="info" circle @click="toggleFullscreen"
+            <el-button class="action-btn" type="primary" circle size="small" @click="toggleFullscreen"
               :icon="isFullscreen ? ScaleToOriginal : FullScreen" />
           </template>
-          <el-button class="action-btn" type="success" circle @click="copyToClipboard(markdownContent, 'Markdown')"
-            :icon="CopyDocument" />
-          <el-button class="action-btn" type="primary" circle
+          <el-button class="action-btn" type="primary" circle size="small"
+            @click="copyToClipboard(markdownContent, 'Markdown')" :icon="CopyDocument" />
+          <el-button class="action-btn" type="primary" circle size="small"
             @click="contentStyle === 'mind' ? downloadMindMapJson(markdownContent) : $emit('download-markdown')"
             :icon="Download" />
         </div>
       </div>
       <div class="card-content">
-        <!-- 根据内容类型显示不同的内容 -->
         <template v-if="contentStyle === 'mind'">
           <div id="mindMapContainer" class="mind-map-container"></div>
         </template>
         <template v-else>
-          <div class="markdown-preview" v-html="md.render(markdownContent)"></div>
+          <div class="markdown-content" v-html="md.render(markdownContent)"></div>
         </template>
       </div>
     </div>
@@ -233,104 +240,150 @@ const downloadMindMapJson = (jsonContent) => {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 1.5rem;
+  gap: 1rem;
+  padding: 1rem;
   background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #ebeef5;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
   margin: 0;
 }
 
 .result-card {
   background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+  transition: box-shadow 0.2s ease;
 }
 
 .result-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.07);
 }
 
 .card-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  color: #2c3e50;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
   position: relative;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card-header .el-icon {
+  font-size: 1.1rem;
+  color: #6b7280;
 }
 
 .action-buttons {
-  margin-left: auto;
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
-.action-btn {
-  font-size: 1.1rem;
-}
+.download-btn {}
 
-.download-btn {
-  margin-left: auto;
-  font-size: 1.2rem;
-}
+/* ...existing styles... */
 
 .custom-audio-player {
   width: 100%;
-  margin: 0.5rem 0;
-  border-radius: 8px;
+  margin-top: 0.5rem;
+  border-radius: 6px;
 }
 
-.text-preview {
-  max-height: 300px;
-  overflow-y: auto;
-  padding: 1rem;
-  background: #f8f9fa;
-  border-radius: 8px;
+.text-content {
   white-space: pre-wrap;
-  font-size: 0.9rem;
   line-height: 1.6;
-  text-align: left;
-}
-
-.markdown-preview {
-  max-height: 500px;
-  overflow-y: auto;
-  padding: 1.5rem;
-  background: #f8f9fa;
+  font-size: 13px;
+  color: #4a5568;
+  padding: 12px 16px;
+  border: 1px solid #edf2f7;
   border-radius: 8px;
+  background: #f8f9fa;
+  max-height: 150px;
+  overflow-y: auto;
+  text-align: left;
+  font-family: inherit;
+}
+
+.markdown-content {
   line-height: 1.6;
+  font-size: 13px;
+  color: #303133;
+  padding: 12px 16px;
+  border: 1px solid #edf2f7;
+  border-radius: 8px;
+  background: #f8f9fa;
+  max-height: 400px;
+  overflow-y: auto;
   text-align: left;
 }
 
-/* 滚动条样式 */
-.markdown-preview::-webkit-scrollbar,
-.text-preview::-webkit-scrollbar {
-  width: 6px;
+.markdown-content :deep(*) {
+  text-align: left !important;
 }
 
-.markdown-preview::-webkit-scrollbar-thumb,
-.text-preview::-webkit-scrollbar-track,
-.text-preview::-webkit-scrollbar-thumb,
-.text-preview::-webkit-scrollbar-track {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
+.markdown-content :deep(ul),
+.markdown-content :deep(ol) {
+  padding-left: 2em;
+  margin: 0.5em 0;
 }
 
-/* 删除响应式布局中不再需要的样式 */
-@media screen and (max-width: 1200px) {
+.markdown-content :deep(p),
+.markdown-content :deep(h1),
+.markdown-content :deep(h2),
+.markdown-content :deep(h3),
+.markdown-content :deep(h4) {
+  margin: 0.5em 0;
+}
+
+.markdown-content::-webkit-scrollbar,
+.text-content::-webkit-scrollbar {
+  width: 5px;
+}
+
+.markdown-content::-webkit-scrollbar-thumb,
+.text-content::-webkit-scrollbar-thumb {
+  background: #dcdfe6;
+  border-radius: 10px;
+}
+
+.markdown-content::-webkit-scrollbar-track,
+.text-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@media screen and (max-width: 768px) {
   .results-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .result-card {
     padding: 1rem;
   }
 
-  .markdown-preview {
-    max-height: 400px;
+  .card-header {
+    font-size: 0.95rem;
+  }
+
+  .text-content {
+    font-size: 12px;
+    max-height: 120px;
+  }
+
+  .markdown-content {
+    font-size: 12px;
+    max-height: 300px;
   }
 }
 
@@ -339,10 +392,10 @@ const downloadMindMapJson = (jsonContent) => {
   height: 500px;
   background: #f8f9fa;
   border-radius: 8px;
+  border: 1px solid #e5e7eb;
   position: relative;
 }
 
-/* 修改全屏时的样式 */
 .mind-map-container:fullscreen {
   padding: 24px;
   background: #ffffff;
@@ -353,7 +406,6 @@ const downloadMindMapJson = (jsonContent) => {
   justify-content: center;
 }
 
-/* 确保思维导图容器在全屏时正确显示 */
 :deep(.mind-map-container svg) {
   width: 100%;
   height: 100%;

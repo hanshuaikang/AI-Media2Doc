@@ -2,3 +2,5 @@ env.env
 trace*
 .venv
 .idea
+.DS_Store
+__pycache__

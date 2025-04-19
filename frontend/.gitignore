@@ -10,4 +10,5 @@ coverage
 *.tgz
 *.zip
 *.tar
-.vscode
+.vite
+.DS_Store
