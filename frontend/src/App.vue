@@ -95,7 +95,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f5f7fa;
+  background-color: #ffffff;
   width: 100%;
   height: auto;
   overflow-y: auto;
@@ -105,7 +105,7 @@ body {
 html {
   width: 100%;
   height: auto;
-  background-color: #f5f7fa;
+  background-color: #ffffff;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -114,7 +114,7 @@ html {
   width: 100vw;
   min-height: auto;
   position: relative;
-  background-color: #f5f7fa;
+  background-color: #ffffff;
   margin: 0;
   padding: 0;
   max-width: 100%;

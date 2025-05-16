@@ -1,8 +1,9 @@
 <script setup>
-import { ElUpload, ElIcon, ElMessage } from 'element-plus'
+import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton } from 'element-plus'
 import { UploadFilled, VideoCamera } from '@element-plus/icons-vue'
+import { ref, watch } from 'vue'
 
-defineProps({
+const props = defineProps({
   ffmpegLoading: {
     type: Boolean,
     default: false
@@ -11,99 +12,274 @@ defineProps({
     type: Boolean,
     default: false
   },
+  // acceptHint 只在未上传文件时才需要
   acceptHint: {
     type: String,
     default: '上传视频或Mp3音频'
-  }
+  },
+  file: Object,
+  fileName: String,
+  fileSize: Number,
+  fileMd5: String,
+  style: String,
+  showStyleSelector: Boolean,
+  disabled: Boolean
 })
 
-const emit = defineEmits(['file-selected'])
+const emit = defineEmits(['file-selected', 'update:style', 'start-process', 'reset'])
 
 const allowedTypes = [
   'video/mp4',
-  'video/quicktime',  // .mov
-  'video/x-msvideo',  // .avi
-  'video/x-matroska', // .mkv
-  'video/webm',       // .webm
-  'audio/mpeg'        // .mp3 - 添加支持MP3格式
+  'video/quicktime',
+  'video/x-msvideo',
+  'video/x-matroska',
+  'video/webm',
+  'audio/mpeg'
 ]
 
 const handleFileChange = (file) => {
-  // 检查文件类型是否为允许的类型或MP3文件
   const isAllowedType = allowedTypes.includes(file.raw.type) ||
     file.raw.name.toLowerCase().endsWith('.mp3');
-
   if (!isAllowedType) {
     ElMessage.error('只支持上传视频文件（MP4、MOV、AVI、MKV、WebM）或MP3音频文件')
     return false
   }
-
-  // 修改文件大小限制为100MB
   const maxSize = 100 * 1024 * 1024
   if (file.raw.size > maxSize) {
     ElMessage.error('文件大小不能超过 100MB')
     return false
   }
-
   emit('file-selected', file.raw)
+}
+
+// 支持风格类型及图标
+const styleList = [
+  { label: 'note', name: '知识笔记', icon: new URL('../../assets/笔记.svg', import.meta.url).href },
+  { label: 'xiaohongshu', name: '小红书', icon: new URL('../../assets/小红书.svg', import.meta.url).href },
+  { label: 'wechat', name: '公众号', icon: new URL('../../assets/微信公众号.svg', import.meta.url).href },
+  { label: 'summary', name: '内容总结', icon: new URL('../../assets/汇总.svg', import.meta.url).href },
+  { label: 'mind', name: '思维导图', icon: new URL('../../assets/思维导图.svg', import.meta.url).href }
+]
+
+const localStyle = ref(props.style || '')
+watch(() => props.style, v => { localStyle.value = v })
+const handleStyleChange = (val) => {
+  emit('update:style', val)
+}
+const handleStart = () => {
+  emit('start-process')
+}
+const handleReset = () => {
+  emit('reset')
 }
 </script>
 
 <template>
-  <div class="upload-section" :class="{ 'loading-state': ffmpegLoading }">
-    <h3 class="section-title">
-      <el-icon>
-        <VideoCamera />
-      </el-icon>
-      {{ acceptHint }}
-    </h3>
-    <el-upload class="uploader" drag action="" :auto-upload="false" :on-change="handleFileChange"
-      :disabled="ffmpegLoading || isProcessing" :accept="allowedTypes.join(',') + ',.mp3'">
-      <div class="upload-content">
-        <div class="upload-icon-wrapper">
-          <el-icon class="upload-icon">
-            <UploadFilled />
-          </el-icon>
-        </div>
-        <h3 class="upload-title">
-          {{ ffmpegLoading ? '正在加载 ffmpeg，请稍候...' : '开始上传' }}
-        </h3>
-        <p class="upload-desc" v-if="!ffmpegLoading">
-          支持拖放或点击上传视频或MP3文件<br>
-          <span class="upload-formats">支持格式：MP4、MOV、AVI、MKV、WebM、MP3，最大 100MB</span>
-        </p>
+  <div class="upload-section-outer">
+    <div class="upload-section" :class="{ 'loading-state': ffmpegLoading }">
+      <div class="welcome">
+        <div class="welcome-title">你好，我是 <span class="ai-highlight">AI 图文创作助手</span></div>
+        <div class="welcome-desc">上传你的视频或MP3音频，我会帮你自动转写并生成多种风格的图文内容。</div>
       </div>
-    </el-upload>
+      <!-- 仅在未上传文件时显示风格支持列表和acceptHint -->
+      <div v-if="!props.file">
+        <div class="style-support-list">
+          <div class="style-support-item" v-for="item in styleList" :key="item.label">
+            <img :src="item.icon" :alt="item.name" class="style-support-icon" />
+            <span class="style-support-name">{{ item.name }}</span>
+          </div>
+        </div>
+        <h3 class="section-title">
+          <el-icon>
+            <VideoCamera />
+          </el-icon>
+          {{ acceptHint }}
+        </h3>
+      </div>
+      <!-- 上传区域：仅在未上传文件时显示 -->
+      <el-upload v-if="!props.file" class="uploader" drag action="" :auto-upload="false" :on-change="handleFileChange"
+        :disabled="ffmpegLoading || isProcessing" :accept="allowedTypes.join(',') + ',.mp3'">
+        <div class="upload-content">
+          <div class="upload-icon-wrapper">
+            <el-icon class="upload-icon">
+              <UploadFilled />
+            </el-icon>
+          </div>
+          <h3 class="upload-title">
+            {{ ffmpegLoading ? '正在加载 ffmpeg，请稍候...' : '开始上传' }}
+          </h3>
+          <p class="upload-desc" v-if="!ffmpegLoading">
+            支持拖放或点击上传视频或MP3文件<br>
+            <span class="upload-formats">支持格式：MP4、MOV、AVI、MKV、WebM、MP3，最大 100MB</span>
+          </p>
+        </div>
+      </el-upload>
+      <!-- 文件信息和风格选择：上传后显示 -->
+      <div v-else class="file-info-section">
+        <div class="file-info-card">
+          <div class="file-info-row">
+            <span class="file-info-label">文件名：</span>
+            <span class="file-info-value">{{ props.fileName }}</span>
+          </div>
+          <div class="file-info-row">
+            <span class="file-info-label">文件大小：</span>
+            <span class="file-info-value">{{ (props.fileSize / 1024 / 1024).toFixed(2) }} MB</span>
+          </div>
+          <div class="file-info-row">
+            <span class="file-info-label">文件MD5：</span>
+            <span class="file-info-value file-info-md5">{{ props.fileMd5 }}</span>
+          </div>
+        </div>
+        <!-- 风格选择 radio，保证一行内自适应换行 -->
+        <div class="style-selector-wrapper style-selector-flex">
+          <el-radio-group v-model="localStyle" :disabled="isProcessing" @change="handleStyleChange" size="large"
+            class="style-radio-group-flex">
+            <el-radio-button v-for="item in styleList" :key="item.label" :label="item.label"
+              class="style-radio-btn-flex">
+              <img :src="item.icon" :alt="item.name" class="style-radio-icon" />
+              {{ item.name }}
+            </el-radio-button>
+          </el-radio-group>
+        </div>
+        <div class="file-action-row">
+          <el-button class="start-process-btn" :disabled="!localStyle || isProcessing" @click="handleStart">
+            开始处理
+          </el-button>
+          <a href="#" @click.prevent="handleReset" class="reset-link">重新选择文件</a>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.upload-section {
+.upload-section-outer {
+  min-height: 70vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
   width: 100%;
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-  border: 1px solid #ebeef5;
+  box-sizing: border-box;
+  background: transparent;
+  margin-top: 12vh;
+}
+
+.upload-section {
+  width: 60vw;
+  max-width: 900px;
+  min-width: 340px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 2.8rem 2.2rem 2.2rem 2.2rem;
+  border: none;
   box-sizing: border-box;
   margin: 0;
   height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #23272f;
+  position: relative;
+  box-shadow: 0 4px 32px 0 rgba(60, 80, 120, 0.08), 0 1.5px 6px 0 rgba(60, 80, 120, 0.03);
+  border: 1.5px solid #f2f3f5;
+  transition: box-shadow 0.2s;
+}
+
+.welcome {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 1.8rem;
+}
+
+.welcome-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+  color: #23272f;
+  line-height: 1.2;
+}
+
+.ai-highlight {
+  color: #23272f;
+  background: linear-gradient(90deg, #23272f 40%, #444950 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.welcome-desc {
+  font-size: 1.08rem;
+  color: #6b7280;
+  margin-bottom: 0.2rem;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.style-support-list {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 1.6rem;
+  margin-top: -0.5rem;
+  flex-wrap: wrap;
+}
+
+.style-support-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f5f6fa;
+  border-radius: 12px;
+  padding: 0.7rem 1.1rem 0.5rem 1.1rem;
+  box-shadow: 0 1px 4px 0 rgba(60, 80, 120, 0.04);
+  border: 1px solid #f0f1f3;
+  min-width: 80px;
+  min-height: 80px;
+  transition: box-shadow 0.18s, border-color 0.18s;
+}
+
+.style-support-item:hover {
+  box-shadow: 0 4px 16px 0 rgba(60, 80, 120, 0.10);
+  border-color: #e0e3e8;
+}
+
+.style-support-icon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 0.5rem;
+  user-drag: none;
+  user-select: none;
+}
+
+.style-support-name {
+  font-size: 0.98rem;
+  color: #23272f;
+  font-weight: 600;
+  letter-spacing: 0.1px;
 }
 
 .section-title {
-  font-size: 1.1rem;
-  color: #303133;
+  font-size: 1.13rem;
+  color: #23272f;
   margin-bottom: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   text-align: left;
   display: flex;
   align-items: center;
   gap: 8px;
+  letter-spacing: 0.2px;
 }
 
 .section-title .el-icon {
-  font-size: 1.2rem;
-  color: var(--el-color-primary);
+  font-size: 1.3rem;
+  color: #23272f;
+  background: #f3f4f6;
+  border-radius: 50%;
+  padding: 3px;
 }
 
 .uploader {
@@ -112,106 +288,253 @@ const handleFileChange = (file) => {
 
 .upload-content {
   text-align: center;
-  padding: 1rem;
+  padding: 1.2rem 0.5rem 0.5rem 0.5rem;
 }
 
 .upload-icon-wrapper {
-  width: 48px;
-  height: 48px;
-  background: #ecf5ff;
+  width: 58px;
+  height: 58px;
+  background: linear-gradient(135deg, #f3f4f6 60%, #fff 100%);
   border-radius: 50%;
-  margin: 0 auto 0.5rem;
-  /* 减小下方边距 */
+  margin: 0 auto 0.7rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #d9ecff;
+  border: 2.5px solid #23272f;
+  box-shadow: 0 2px 8px 0 rgba(60, 80, 120, 0.06);
 }
 
 .upload-icon {
-  font-size: 1.4rem;
-  /* 减小图标字体大小 */
-  color: #409EFF;
+  font-size: 2.1rem;
+  color: #23272f;
 }
 
 .upload-title {
-  font-size: 1.1rem;
-  /* 减小标题字体大小 */
-  color: #303133;
+  font-size: 1.18rem;
+  color: #23272f;
   margin: 0.5rem 0;
-  /* 减小标题上下边距 */
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.1px;
 }
 
 .upload-desc {
-  color: #606266;
-  line-height: 1.5;
-  font-size: 0.9rem;
-  /* 减小描述字体大小 */
+  color: #6b7280;
+  line-height: 1.6;
+  font-size: 1.01rem;
+  margin-top: 0.2rem;
 }
 
 .upload-formats {
-  font-size: 0.8rem;
-  /* 减小格式文字大小 */
-  color: #909399;
+  font-size: 0.93rem;
+  color: #23272f;
+  font-weight: 500;
+  letter-spacing: 0.1px;
 }
 
 .loading-state {
-  background-color: #f8f9fa;
+  background-color: #f7f7fa !important;
   pointer-events: none;
   opacity: 0.8;
 }
 
-/* 添加小屏幕优化 */
-@media screen and (max-height: 800px) {
-  .upload-section {
-    padding: 1.2rem;
-  }
-
-  .upload-icon-wrapper {
-    width: 42px;
-    height: 42px;
-    margin: 0 auto 0.3rem;
-  }
-
-  .upload-title {
-    font-size: 1rem;
-    margin: 0.3rem 0;
-  }
-
-  .upload-desc {
-    font-size: 0.85rem;
-    line-height: 1.4;
-  }
-
-  .section-title {
-    font-size: 1rem;
-    margin-bottom: 0.6rem;
-    gap: 6px;
-  }
-
-  .section-title .el-icon {
-    font-size: 1.1rem;
-  }
+/* 文件信息和风格选择样式 */
+.file-info-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.2rem;
+  background: transparent;
+  box-shadow: none;
+  border: none;
 }
 
-@media screen and (max-height: 700px) {
-  .section-title {
-    font-size: 1rem;
-    margin-bottom: 0.6rem;
+.file-info-card {
+  width: 100%;
+  max-width: 520px;
+  background: #f7f8fa;
+  border-radius: 14px;
+  padding: 1.5rem 2rem 1.2rem 2rem;
+  box-shadow: 0 2px 10px 0 rgba(60, 80, 120, 0.04);
+  border: 1.5px solid #f2f3f5;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.file-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.03rem;
+  color: #23272f;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.file-info-label {
+  color: #6b7280;
+  font-size: 1.01rem;
+  font-weight: 500;
+  min-width: 70px;
+}
+
+.file-info-value {
+  color: #23272f;
+  font-size: 1.03rem;
+  font-weight: 600;
+}
+
+.file-info-md5 {
+  font-family: monospace;
+  font-size: 0.98rem;
+  color: #888;
+  background: #f3f4f6;
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+.style-selector-wrapper {
+  width: 100%;
+  max-width: 520px;
+  /* 保持原有宽度 */
+}
+
+.style-selector-flex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem 0.5rem;
+  /* 允许内容自动换行 */
+  overflow-x: auto;
+}
+
+.style-radio-group-flex {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem 0.5rem;
+  width: 100%;
+}
+
+.style-radio-btn-flex {
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+  flex: 0 1 auto;
+  min-width: 110px;
+  max-width: 180px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.file-action-row {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 0.5rem;
+  justify-content: flex-start;
+}
+
+.start-process-btn {
+  background: #23272f !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 1.08rem;
+  font-weight: 700;
+  padding: 0.7rem 2.2rem;
+  transition: background 0.18s;
+  box-shadow: 0 2px 8px 0 rgba(60, 80, 120, 0.06);
+}
+
+.start-process-btn:disabled {
+  background: #e5e7eb !important;
+  color: #b0b3b8 !important;
+  cursor: not-allowed !important;
+  box-shadow: none;
+}
+
+.start-process-btn:hover:not(:disabled) {
+  background: #444950 !important;
+}
+
+.reset-link {
+  color: #888;
+  font-size: 0.98rem;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: color 0.18s;
+}
+
+.reset-link:hover {
+  color: #23272f;
+}
+
+:deep(.el-upload) {
+  background: #fff !important;
+  border: 2px dashed #23272f !important;
+  border-radius: 14px !important;
+  color: #23272f !important;
+  transition: border-color 0.2s;
+}
+
+:deep(.el-upload:hover) {
+  border-color: #444950 !important;
+}
+
+:deep(.el-upload-dragger) {
+  background: transparent !important;
+  color: #23272f !important;
+}
+
+:deep(.el-upload-list) {
+  color: #23272f !important;
+}
+
+.style-radio-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@media screen and (max-width: 900px) {
+  .upload-section {
+    width: 98vw;
+    max-width: 98vw;
+    padding: 1.2rem 0.5rem;
+    border-radius: 14px;
   }
 
-  .upload-content {
-    padding: 0.7rem;
+  .upload-section-outer {
+    min-height: 60vh;
+    margin-top: 3vh;
   }
 
-  .upload-icon-wrapper {
-    width: 36px;
-    height: 36px;
+  .welcome-title {
+    font-size: 1.13rem;
   }
 
-  .upload-formats {
-    font-size: 0.75rem;
+  .style-support-list {
+    gap: 10px;
+    margin-bottom: 1.1rem;
+  }
+
+  .style-support-item {
+    min-width: 64px;
+    min-height: 64px;
+    padding: 0.5rem 0.7rem 0.4rem 0.7rem;
+  }
+
+  .style-support-icon {
+    width: 24px;
+    height: 24px;
   }
 }
 </style>

@@ -220,30 +220,31 @@ const handleDeleteTask = async (event, task) => {
     left: 0;
     top: 0;
     z-index: 1000;
-    background-color: #f9fafb;
-    box-shadow: 1px 0 10px rgba(0, 0, 0, 0.08);
+    background-color: #f7f8fa;
+    box-shadow: 1px 0 10px rgba(60, 80, 120, 0.06);
     overflow: hidden;
     transition: all 0.3s ease;
+    border-right: 1.5px solid #f2f3f5;
 }
 
 .app-logo {
-    padding: 20px;
+    padding: 28px 20px 18px 20px;
     display: flex;
     align-items: center;
     gap: 12px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-    background: linear-gradient(to bottom, #ffffff, #f9fafb);
+    border-bottom: 1.5px solid #f2f3f5;
+    background: linear-gradient(to bottom, #fff 80%, #f7f8fa 100%);
 }
 
 .logo-container {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #409EFF, #3c89e8);
-    box-shadow: 0 4px 12px rgba(60, 137, 232, 0.25);
+    border-radius: 12px;
+    background: linear-gradient(135deg, #23272f 60%, #444950 100%);
+    box-shadow: 0 2px 8px rgba(60, 80, 120, 0.10);
     overflow: hidden;
     position: relative;
 }
@@ -255,23 +256,24 @@ const handleDeleteTask = async (event, task) => {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
-    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0));
+    border-radius: 12px;
 }
 
 .app-title h2 {
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #202123;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+    font-size: 17px;
+    font-weight: 800;
+    color: #23272f;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
 }
 
 .sidebar-menu {
     flex: 1;
     border-right: none;
     background-color: transparent;
-    padding: 15px 0;
+    padding: 18px 0 0 0;
     overflow-y: auto;
 }
 
@@ -279,30 +281,34 @@ const handleDeleteTask = async (event, task) => {
     height: auto !important;
     line-height: normal !important;
     padding: 0 !important;
-    margin: 4px 12px !important;
-    border-radius: 8px;
+    margin: 6px 14px !important;
+    border-radius: 10px;
     transition: all 0.2s ease;
     overflow: hidden;
+    background: #fff;
+    border: 1px solid #f2f3f5;
+    box-shadow: 0 1px 4px rgba(60, 80, 120, 0.04);
 }
 
 .menu-item-content {
     display: flex;
     align-items: center;
-    padding: 12px;
+    padding: 13px 14px;
     gap: 10px;
-    border-radius: 8px;
+    border-radius: 10px;
     transition: all 0.2s ease;
 }
 
 .menu-item-content span {
-    font-size: 14px;
-    font-weight: 500;
-    color: #303133;
+    font-size: 15px;
+    font-weight: 600;
+    color: #23272f;
+    letter-spacing: 0.1px;
 }
 
 .menu-icon {
-    font-size: 18px;
-    color: #606266;
+    font-size: 19px;
+    color: #444950;
     transition: all 0.2s ease;
 }
 
@@ -310,32 +316,34 @@ const handleDeleteTask = async (event, task) => {
     transition: all 0.2s ease;
     min-height: auto;
     height: auto;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-    background-color: white;
+    background: transparent;
+    border-radius: 10px;
+    border: none;
+    box-shadow: none;
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) {
-    background: linear-gradient(to right, #ecf5ff, #f2f6ff);
-    color: #409EFF;
-    border-radius: 8px;
-    font-weight: 500;
-    box-shadow: 0 2px 6px rgba(64, 158, 255, 0.15);
-    border-left: 3px solid #409EFF;
+    background: linear-gradient(to right, #f3f4f6 70%, #fff 100%);
+    color: #23272f;
+    border-radius: 10px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(60, 80, 120, 0.08);
+    border-left: 3px solid #23272f;
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) .menu-icon {
-    color: #409EFF;
+    color: #23272f;
 }
 
 .sidebar-menu :deep(.el-menu-item:hover) {
-    background-color: #fafbfc;
-    color: #303133;
+    background-color: #f5f6fa;
+    color: #23272f;
     transform: translateY(-1px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 8px rgba(60, 80, 120, 0.08);
 }
 
 .sidebar-menu :deep(.el-menu-item:hover) .menu-icon {
-    transform: scale(1.1);
+    transform: scale(1.08);
 }
 
 .sidebar-menu :deep(.el-menu-item .el-icon) {
@@ -344,11 +352,12 @@ const handleDeleteTask = async (event, task) => {
 
 /* 历史任务区域样式 */
 .history-section {
-    margin: 8px 12px;
-    border-radius: 8px;
-    background-color: white;
+    margin: 10px 14px;
+    border-radius: 10px;
+    background-color: #fff;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 1px 4px rgba(60, 80, 120, 0.04);
+    border: 1px solid #f2f3f5;
 }
 
 .history-header {
@@ -358,17 +367,17 @@ const handleDeleteTask = async (event, task) => {
     padding-right: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
-    border-radius: 8px 8px 0 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-    background-color: #fcfcfd;
+    border-radius: 10px 10px 0 0;
+    border-bottom: 1px solid #f2f3f5;
+    background-color: #f7f8fa;
 }
 
 .history-header:hover {
-    background-color: #f5f7fa;
+    background-color: #f3f4f6;
 }
 
 .expand-icon {
-    font-size: 14px;
+    font-size: 15px;
     color: #909399;
     transition: transform 0.3s ease;
 }
@@ -383,17 +392,16 @@ const handleDeleteTask = async (event, task) => {
     transition: max-height 0.3s ease, opacity 0.3s ease;
     opacity: 0;
     margin-top: 0;
-    background-color: white;
+    background-color: #fff;
 }
 
 .history-submenu.is-expanded {
     max-height: 750px;
-    /* 修改：从350px增加到550px，以容纳更多任务 */
     overflow-y: auto;
     opacity: 1;
     padding: 5px 0;
-    border-radius: 0 0 8px 8px;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+    border-radius: 0 0 10px 10px;
+    box-shadow: inset 0 1px 2px rgba(60, 80, 120, 0.02);
 }
 
 .history-loading,
@@ -402,8 +410,8 @@ const handleDeleteTask = async (event, task) => {
     text-align: center;
     color: #909399;
     font-size: 13px;
-    background-color: #fafbfc;
-    border-radius: 6px;
+    background-color: #f5f6fa;
+    border-radius: 8px;
     margin: 8px;
 }
 
@@ -416,31 +424,30 @@ const handleDeleteTask = async (event, task) => {
     align-items: flex-start;
     padding: 10px 12px;
     cursor: pointer;
-    border-radius: 6px;
+    border-radius: 8px;
     margin: 2px 4px;
     gap: 10px;
     transition: all 0.2s ease;
-    background-color: #f9fafb;
+    background-color: #f7f8fa;
     border-left: 2px solid transparent;
     position: relative;
-    /* 添加相对定位，用于删除按钮定位 */
 }
 
 .history-item:hover {
-    background-color: #f0f7ff;
+    background-color: #f3f4f6;
     transform: translateX(2px);
-    border-left: 2px solid #b3d8ff;
+    border-left: 2px solid #23272f;
 }
 
 .history-icon {
-    font-size: 14px;
+    font-size: 15px;
     color: #909399;
     margin-top: 2px;
     transition: all 0.2s ease;
 }
 
 .history-item:hover .history-icon {
-    color: #409EFF;
+    color: #23272f;
 }
 
 .history-info {
@@ -454,13 +461,13 @@ const handleDeleteTask = async (event, task) => {
 
 .history-title {
     font-size: 13px;
-    color: #303133;
+    color: #23272f;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
     text-align: left;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .history-meta {
@@ -478,13 +485,16 @@ const handleDeleteTask = async (event, task) => {
     font-weight: 500;
     border-radius: 4px;
     text-align: left;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px rgba(60, 80, 120, 0.04);
+    background: #f5f6fa !important;
+    border: 1px solid #e0e3e8 !important;
+    color: #23272f !important;
 }
 
 .sidebar-footer {
-    padding: 12px 16px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    background-color: #fafbfc;
+    padding: 14px 16px;
+    border-top: 1.5px solid #f2f3f5;
+    background-color: #f7f8fa;
     text-align: center;
 }
 
@@ -496,6 +506,7 @@ const handleDeleteTask = async (event, task) => {
     margin: 0;
     font-size: 11px;
     color: #909399;
+    letter-spacing: 0.1px;
 }
 
 @media screen and (max-width: 768px) {
@@ -561,7 +572,6 @@ const handleDeleteTask = async (event, task) => {
     animation-delay: 0.2s;
 }
 
-/* 增加历史任务项的动画延迟，以支持展示十条记录 */
 .history-item:nth-child(6) {
     animation-delay: 0.25s;
 }
@@ -582,7 +592,6 @@ const handleDeleteTask = async (event, task) => {
     animation-delay: 0.45s;
 }
 
-/* 添加删除按钮样式 */
 .history-actions {
     opacity: 0;
     position: absolute;
@@ -614,11 +623,9 @@ const handleDeleteTask = async (event, task) => {
     transform: scale(1.1);
 }
 
-/* 添加移动端样式支持 */
 @media screen and (max-width: 768px) {
     .history-actions {
         opacity: 1;
-        /* 在移动端始终显示删除按钮 */
         position: static;
         transform: none;
         margin-left: auto;
@@ -631,7 +638,6 @@ const handleDeleteTask = async (event, task) => {
 }
 </style>
 
-<!-- 添加全局样式覆盖 Element Plus 的确认按钮边框 -->
 <style>
 /* 删除确认按钮移除边框 */
 .el-message-box__btns .el-button--danger {
