@@ -94,7 +94,7 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 以及你的 github 名称, 方便我整理展示在项目主页
 
 <p align="left">
-  <img src="docs/images/appreciate.jpg" alt="appreciate" width="200">
+ 赞助作者: <a href="https://afdian.com/a/hanshu-github">我的爱发电主页</a>
 </p>
 
 ### 🌟 Star History
