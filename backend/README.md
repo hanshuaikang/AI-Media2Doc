@@ -4,6 +4,9 @@
 在启动后端服务之前, 需要先安装好 Arkitect 的依赖, 并且申请字节 Tos 对象存储服务 以及 对应大模型的 API 调用权限
 
 ## 1. 安装依赖
+
+### 请使用 Python 3.9 及以上版本
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -27,6 +30,7 @@ export AUC_ACCESS_TOKEN=xxxx
 ```bash
 python main.py
 ```
+
 
 ## 在火山引擎获取对应的环境变量的值
 主要分为三部分, 火山方舟/字节Tos/音频识别大模型
