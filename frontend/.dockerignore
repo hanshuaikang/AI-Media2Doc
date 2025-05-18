@@ -1,0 +1,5 @@
+.idea
+node_modules
+package-lock.json
+Dockerfile
+.dockerignore

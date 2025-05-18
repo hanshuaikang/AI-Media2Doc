@@ -32,13 +32,29 @@ AI Media2Doc Assistant is a web tool based on AI large models that converts vide
 - 🎯 **Multiple Style Support**: Supports various document styles like Xiaohongshu/WeChat Official Account/Knowledge Notes/Mind Maps/Content Summaries.
 - 🤖 **AI Conversation**: Supports secondary Q&A based on video content.
 - 🤖 **Local Deployment Friendly**: With basic development knowledge, you can get it running in no time.
+- 🐳 **One-Click Deployment**: Supports one-click deployment with Docker.
 
 ### 🔜 Future Plans
 
 - 📷 Support intelligent extraction of video key frames, achieving true integration of text and images
 - 🎙️ Support audio recognition using fast-whisper local large model processing to further reduce costs
 - 🎨 Completely rebuild the frontend page using React for a smoother experience
-- 🐳 Support one-click deployment with Docker
+
+### 📦 Installation Guide
+
+1) Image Build:
+
+```shell
+$ make docker-image
+```
+
+2) Please refer to the [Backend Deployment Guide / Configuration Instructions](https://github.com/hanshuaikang/AI-Media2Doc/blob/main/backend/README.md#%E5%9C%A8%E7%81%AB%E5%B1%B1%E5%BC%95%E6%93%8E%E8%8E%B7%E5%8F%96%E5%AF%B9%E5%BA%94%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%80%BC) to complete the `variables.env` file in the root directory.
+
+3) Run the Project:
+
+```shell
+$ make run
+```
 
 ### 👾 Developer's Note
 
@@ -64,7 +80,7 @@ Generated mind maps can be exported to third-party platforms for editing and opt
 <img src="docs/images/process_flow.png" alt="architecture" width="80%">
 </p>
 
-### 📦 Installation Guide
+### 🔧 Local Development Guide
 
 - [Backend Local Deployment](./backend/README.md)
 - [Frontend Local Deployment](./frontend/README.md)
@@ -76,6 +92,7 @@ This project is licensed under the [MIT License](./LICENSE)
 ### 🔗 Related Links
 
 - [volcengine-ai-app-lab](https://github.com/volcengine/ai-app-lab)
+- [throttled-py](https://github.com/ZhuoZhuoCrayon/throttled-py): ✨Python rate-limiting library, reasonably limits and smooths cloud resource usage.
 
 
 [韩数的开发笔记： 致力于分享 Github 上那些好玩、有趣、免费、实用的高质量项目](https://www.xiaohongshu.com/user/profile/5e2992b000000000010064a4)

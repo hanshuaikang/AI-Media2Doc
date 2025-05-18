@@ -13,6 +13,7 @@ from arkitect.core.component.llm.model import (
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
 from arkitect.utils.context import get_headers
+from throttled import MemoryStore
 
 from actions.dispatcher import ActionDispatcher
 
@@ -26,6 +27,8 @@ async def main(request: ArkChatRequest) -> AsyncIterable[Response]:
     async for response in dispatcher.dispatch(request_action, request):
         yield response
 
+
+store: MemoryStore()
 
 if __name__ == "__main__":
     port = os.getenv("_FAAS_RUNTIME_PORT")

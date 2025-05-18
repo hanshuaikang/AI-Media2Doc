@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import os
-ARK_API_KEY=os.getenv("ARK_API_KEY")
+
+ARK_API_KEY = os.getenv("ARK_API_KEY")
 TOS_ACCESS_KEY = os.getenv("TOS_ACCESS_KEY")
 TOS_SECRET_KEY = os.getenv("TOS_SECRET_KEY")
 TOS_ENDPOINT = os.getenv("TOS_ENDPOINT")

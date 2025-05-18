@@ -31,8 +31,7 @@ AI 视频图文创作助手是一款Web工具, 基于AI大模型, 一键将视�
 - 💻 **前端处理**：采用 ffmpeg wasm 技术，无需本地安装 ffmpeg
 - 🎯 **多种风格支持**：支持小红书/公众号/知识笔记/思维导图/内容总结等多种文档风格支持。
 - 🤖 **AI 对话**：支持针对视频内容进行 AI 二次问答。
-- 🤖 **本地部署友好**：有点开发基础卡卡3下俩除2就跑起来了。
-
+- 🐳 **一键部署**：支持 Docker 一键部署。
 
 
 ### 🔜 未来计划
@@ -40,9 +39,22 @@ AI 视频图文创作助手是一款Web工具, 基于AI大模型, 一键将视�
 - 📷 支持智能截取视频关键帧，实现真正的图文并茂
 - 🎙️ 音频识别支持使用 fast-whisper 本地大模型处理，进一步降低成本
 - 🎨 使用 React 完全重构前端页面，带来更加流畅丝滑的体验。
-- 🐳 支持 Docker 一键部署
 
+### 📦 安装指南
 
+1）镜像构建：
+
+```shell
+$ make docker-image
+```
+
+2）请根据 [后端部署指引 / 配置项说明](https://github.com/hanshuaikang/AI-Media2Doc/blob/main/backend/README.md#%E5%9C%A8%E7%81%AB%E5%B1%B1%E5%BC%95%E6%93%8E%E8%8E%B7%E5%8F%96%E5%AF%B9%E5%BA%94%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%80%BC) 完善根目录下的 `variables.env` 文件。
+
+3）运行项目：
+
+```shell
+$ make run
+```
 
 ### 👾 开发者的废话
 
@@ -69,7 +81,7 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 <img src="docs/images/process_flow.png" alt="architecture" width="80%">
 </p>
 
-### 📦 安装指南
+### 🔧 本地开发指南
 
 - [后端本地部署](./backend/README.md)
 - [前端本地部署](./frontend/README.md)
@@ -81,6 +93,8 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 ### 🔗 相关链接
 
 - [volcengine-ai-app-lab](https://github.com/volcengine/ai-app-lab)
+
+- [throttled-py](https://github.com/ZhuoZhuoCrayon/throttled-py)：✨Python 限流库，合理限制、平滑云资源用量。
 
 ### 🌵 支持开发者
 本项目暂时还未考虑开启捐赠渠道，不过我个人业余时间维护了一个小红书, 大家感兴趣的话可以点个关注，就当支持开发者啦。
