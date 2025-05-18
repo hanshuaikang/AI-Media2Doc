@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import AppSidebar from './components/AppSidebar.vue'
 import VideoToMarkdown from './components/VideoToMarkdown/index.vue'
 import TaskDetail from './components/VideoToMarkdown/TaskDetail.vue'
+import { eventBus } from './utils/eventBus'
 
 const activeMenu = ref('new-task')
 const isChatOpen = ref(false)
@@ -31,6 +32,13 @@ const handleViewTask = (task) => {
   previousMenu.value = activeMenu.value
   activeMenu.value = 'task-detail'
 }
+
+onMounted(() => {
+  eventBus.on('view-task', handleViewTask)
+})
+onBeforeUnmount(() => {
+  eventBus.off('view-task', handleViewTask)
+})
 </script>
 
 <template>

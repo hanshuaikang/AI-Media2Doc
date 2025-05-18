@@ -286,7 +286,7 @@ const downloadContent = () => {
     width: 90%;
     padding: 0;
     margin: 0 auto;
-    height: 95vh;
+    height: 96vh;
     /* 固定为视窗高度的90% */
     display: flex;
     flex-direction: column;
@@ -337,6 +337,8 @@ const downloadContent = () => {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     transition: box-shadow 0.3s;
+    width: 96%;
+    margin: 0 auto;
 }
 
 .detail-card:hover {

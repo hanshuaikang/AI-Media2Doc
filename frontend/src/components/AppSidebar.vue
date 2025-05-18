@@ -136,7 +136,7 @@ const handleDeleteTask = async (event, task) => {
                 <el-avatar :size="40" src="/src/assets/logo.jpeg" alt="Logo" class="app-avatar" />
             </div>
             <div class="app-title">
-                <h2>AI 视频图文创作助手</h2>
+                <h2>AI-Media2Doc</h2>
             </div>
         </div>
 
@@ -144,7 +144,7 @@ const handleDeleteTask = async (event, task) => {
         <el-menu :default-active="activeMenu" class="sidebar-menu" @select="handleSelect">
             <el-menu-item index="new-task" class="menu-item">
                 <div class="menu-item-content">
-                    <el-icon class="menu-icon">
+                    <el-icon class="menu-icon-new">
                         <Plus />
                     </el-icon>
                     <span>新建任务</span>
@@ -182,8 +182,11 @@ const handleDeleteTask = async (event, task) => {
                             <div class="history-info">
                                 <div class="history-title">{{ task.fileName || '未命名文件' }}</div>
                                 <div class="history-meta">
-                                    <el-tag size="small"
-                                        :style="{ background: getStyleInfo(task.contentStyle).color + '15', color: getStyleInfo(task.contentStyle).color, border: '1px solid ' + getStyleInfo(task.contentStyle).color + '30' }">
+                                    <el-tag size="small" effect="plain" :style="{
+                                        background: getStyleInfo(task.contentStyle).color + '15' + ' !important',
+                                        color: getStyleInfo(task.contentStyle).color + ' !important',
+                                        border: '1px solid ' + getStyleInfo(task.contentStyle).color + '30' + ' !important'
+                                    }">
                                         {{ getStyleInfo(task.contentStyle).name }}
                                     </el-tag>
                                 </div>
@@ -221,7 +224,8 @@ const handleDeleteTask = async (event, task) => {
     top: 0;
     z-index: 1000;
     background-color: #f7f8fa;
-    box-shadow: 1px 0 10px rgba(60, 80, 120, 0.06);
+    /* 修改阴影为四周都明显 */
+    box-shadow: 0 1px 8px 0px rgba(0, 0, 0, 0.06);
     overflow: hidden;
     transition: all 0.3s ease;
     border-right: 1.5px solid #f2f3f5;
@@ -275,6 +279,11 @@ const handleDeleteTask = async (event, task) => {
     background-color: transparent;
     padding: 18px 0 0 0;
     overflow-y: auto;
+
+}
+
+.menu-icon-new {
+    color: #0057ff;
 }
 
 .menu-item {
@@ -288,6 +297,7 @@ const handleDeleteTask = async (event, task) => {
     background: #fff;
     border: 1px solid #f2f3f5;
     box-shadow: 0 1px 4px rgba(60, 80, 120, 0.04);
+
 }
 
 .menu-item-content {
@@ -320,11 +330,12 @@ const handleDeleteTask = async (event, task) => {
     border-radius: 10px;
     border: none;
     box-shadow: none;
+    border: 1px solid #0057ff;
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) {
-    background:rgba(0,87,255,0.06);
-    color:#0057ff;
+    background: rgba(0, 87, 255, 0.06);
+    color: #0057ff;
     border-radius: 10px;
     /* font-weight: 700; */
     border: 1px solid #0057ff;
@@ -606,6 +617,7 @@ const handleDeleteTask = async (event, task) => {
 .history-item:hover .history-actions {
     opacity: 1;
 }
+
 #historyTaskText {
     color: #23272f !important;
 }

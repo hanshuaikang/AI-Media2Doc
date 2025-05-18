@@ -3,13 +3,12 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import UploadSection from './UploadSection.vue'
 import LoadingOverlay from './LoadingOverlay.vue'
-import ResultsArea from './ResultsArea.vue'
 import { loadFFmpeg, extractAudio } from '../../utils/ffmpeg'
 import { submitAudioTask, pollAudioTask } from '../../apis/audioService'
 import { generateMarkdownText } from '../../apis/markdownService'
 import { calculateMD5 } from '../../utils/md5'
 import { getAudioUploadUrl, uploadFile } from '../../apis'
-import { saveTask, checkTaskExistsByMd5AndStyle, getAnyTaskByMd5 } from '../../utils/db'
+import { saveTask, checkTaskExistsByMd5AndStyle, getAnyTaskByMd5, getAllTasks, getTaskByID } from '../../utils/db'
 import { eventBus } from '../../utils/eventBus'
 
 const stepDefs = [
@@ -40,7 +39,6 @@ const audioExtracted = ref(false)
 const textTranscribed = ref(false)
 const transcriptionText = ref('')
 const markdownContent = ref('')
-const contentStyle = computed(() => style.value)
 
 const fileMd5 = ref('')
 const fileSize = ref(0)
@@ -150,16 +148,22 @@ const startProcessing = async () => {
     updateStepStatus(4, 'success')
 
     // 保存
-    await saveTask({
+    const task = {
       fileName: fileName.value,
       md5: audioMd5,
       transcriptionText: transcriptionText.value,
       markdownContent: md,
       contentStyle: style.value,
       createdAt: new Date().toISOString()
-    })
+    }
+    const taskId = await saveTask(task)
     eventBus.emit('task-updated')
     ElMessage.success('图文内容生成完成')
+    // 用 taskId 查询完整任务对象并跳转
+    const savedTask = await getTaskByID(taskId)
+    if (savedTask) {
+      eventBus.emit('view-task', savedTask)
+    }
   } catch (e) {
     updateStepStatus(activeStep.value, 'error')
     ElMessage.error(e.message || '处理失败')
@@ -169,41 +173,11 @@ const startProcessing = async () => {
   }
 }
 
-const downloadAudio = () => {
-  const a = document.createElement('a')
-  a.href = audioUrl.value
-  a.download = audioFilename.value || 'audio.mp3'
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-}
-const downloadText = () => {
-  const blob = new Blob([transcriptionText.value], { type: 'text/plain' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'transcript.txt'
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
-}
-const downloadMarkdown = () => {
-  const blob = new Blob([markdownContent.value], { type: 'text/markdown' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'content.md'
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  URL.revokeObjectURL(url)
-}
-
 // 步骤百分比辅助
 const stepPercents = [10, 30, 50, 80, 100]
 const percent = computed(() => stepPercents[activeStep.value] || 0)
 const stepText = computed(() => steps.value[activeStep.value]?.title || '')
+
 </script>
 
 <template>
@@ -217,13 +191,6 @@ const stepText = computed(() => steps.value[activeStep.value]?.title || '')
       </div>
       <!-- 步骤3：处理进度（全屏loading） -->
       <LoadingOverlay v-if="isProcessing" :step-text="stepText" :percent="percent" />
-      <!-- 步骤4：结果展示 -->
-      <div v-if="markdownContent" class="component-wrapper">
-        <ResultsArea :audio-extracted="audioExtracted" :text-transcribed="textTranscribed" :audio-url="audioUrl"
-          :audio-filename="audioFilename" :transcription-text="transcriptionText" :markdown-content="markdownContent"
-          :content-style="contentStyle" @download-audio="downloadAudio" @download-text="downloadText"
-          @download-markdown="downloadMarkdown" />
-      </div>
     </div>
   </div>
 </template>
@@ -275,11 +242,13 @@ const stepText = computed(() => steps.value[activeStep.value]?.title || '')
 .file-info-card {
   width: 100%;
   max-width: 520px;
-  background: #f7f8fa;
+  background: #fff;
+  /* 纯白色 */
   border-radius: 14px;
   padding: 1.5rem 2rem 1.2rem 2rem;
   box-shadow: 0 2px 10px 0 rgba(60, 80, 120, 0.04);
-  border: 1.5px solid #f2f3f5;
+  border: 1px solid #23272f22;
+  /* 淡黑色边框 */
   margin-bottom: 0.5rem;
   display: flex;
   flex-direction: column;
@@ -368,6 +337,4 @@ const stepText = computed(() => steps.value[activeStep.value]?.title || '')
 .reset-link:hover {
   color: #23272f;
 }
-
-/* ...existing code for .start-section, .file-info, .style-info... */
 </style>

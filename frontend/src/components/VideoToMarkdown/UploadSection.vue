@@ -1,6 +1,6 @@
 <script setup>
 import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton } from 'element-plus'
-import { UploadFilled, VideoCamera } from '@element-plus/icons-vue'
+import { UploadFilled, VideoCamera, Promotion, RefreshRight } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 
 const props = defineProps({
@@ -130,7 +130,6 @@ const handleReset = () => {
             <span class="file-info-value file-info-md5">{{ props.fileMd5 }}</span>
           </div>
         </div>
-        <!-- 风格选择 radio，保证一行内自适应换行 -->
         <div class="style-selector-wrapper style-selector-flex">
           <el-radio-group v-model="localStyle" :disabled="isProcessing" @change="handleStyleChange" size="large"
             class="style-radio-group-flex">
@@ -143,10 +142,19 @@ const handleReset = () => {
         </div>
         <div class="file-action-row">
           <el-button class="start-process-btn" :disabled="!localStyle || isProcessing" @click="handleStart">
+            <el-icon class="plane-icon">
+              <Promotion />
+            </el-icon>
             开始处理
           </el-button>
-          <a href="#" @click.prevent="handleReset" class="reset-link">重新选择文件</a>
         </div>
+        <!-- 右下角悬浮的重新选择文件按钮 -->
+        <a href="#" @click.prevent="handleReset" class="reset-link-float upload-section-reset-link">
+          <el-icon class="reset-icon">
+            <RefreshRight />
+          </el-icon>
+          重新选择文件
+        </a>
       </div>
     </div>
   </div>
@@ -364,13 +372,15 @@ const handleReset = () => {
 }
 
 .file-info-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 90px 1fr;
   align-items: center;
   gap: 0.5rem;
   font-size: 1.03rem;
   color: #23272f;
   font-weight: 500;
   word-break: break-all;
+  padding: 0.1rem 0;
 }
 
 .file-info-label {
@@ -378,12 +388,19 @@ const handleReset = () => {
   font-size: 1.01rem;
   font-weight: 500;
   min-width: 70px;
+  width: 90px;
+  text-align: right;
+  justify-self: end;
+  /* 右对齐标签 */
 }
 
 .file-info-value {
   color: #23272f;
   font-size: 1.03rem;
   font-weight: 600;
+  word-break: break-all;
+  text-align: left;
+  justify-self: start;
 }
 
 .file-info-md5 {
@@ -393,6 +410,7 @@ const handleReset = () => {
   background: #f3f4f6;
   border-radius: 4px;
   padding: 2px 6px;
+  word-break: break-all;
 }
 
 .style-selector-wrapper {
@@ -400,6 +418,31 @@ const handleReset = () => {
   max-width: 520px; */
   /* 保持原有宽度 */
 }
+
+
+.start-process-btn {
+  background: #23272f !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 1.08rem;
+  font-weight: 700;
+  padding: 0.7rem 2.2rem;
+  transition: background 0.18s;
+  box-shadow: 0 2px 8px 0 rgba(60, 80, 120, 0.06);
+}
+
+.start-process-btn:disabled {
+  background: #e5e7eb !important;
+  color: #b0b3b8 !important;
+  cursor: not-allowed !important;
+  box-shadow: none;
+}
+
+.start-process-btn:hover:not(:disabled) {
+  background: #444950 !important;
+}
+
 
 .style-selector-flex {
   display: flex;
@@ -435,45 +478,48 @@ const handleReset = () => {
   max-width: 520px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 1.2rem;
   margin-top: 0.5rem;
-  justify-content: center;
+  position: relative;
 }
 
-.start-process-btn {
-  background: #23272f !important;
-  color: #fff !important;
-  border: none !important;
-  border-radius: 8px !important;
-  font-size: 1.08rem;
-  font-weight: 700;
-  padding: 0.7rem 2.2rem;
-  transition: background 0.18s;
-  box-shadow: 0 2px 8px 0 rgba(60, 80, 120, 0.06);
-}
-
-.start-process-btn:disabled {
-  background: #e5e7eb !important;
-  color: #b0b3b8 !important;
-  cursor: not-allowed !important;
-  box-shadow: none;
-}
-
-.start-process-btn:hover:not(:disabled) {
-  background: #444950 !important;
-}
-
-.reset-link {
-  color: #888;
-  font-size: 0.98rem;
-  text-decoration: underline;
+/* 右下角悬浮的重新选择文件按钮 */
+.upload-section-reset-link {
+  position: absolute;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  color: #b0b3b8;
+  font-size: 0.95rem;
+  /* 移除下划线 */
+  text-decoration: none;
   cursor: pointer;
-  margin-left: 0.5rem;
-  transition: color 0.18s;
+  background: #fff;
+  border-radius: 8px;
+  padding: 2px 12px 2px 8px;
+  transition: color 0.18s, border-color 0.18s;
+  z-index: 2;
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.reset-link:hover {
+.upload-section-reset-link:hover {
   color: #23272f;
+  border-color: #e0e3e8;
+}
+
+.reset-icon {
+  font-size: 1.1em;
+  margin-right: 2px;
+  vertical-align: middle;
+}
+
+/* 隐藏方框内的reset-link-inside和reset-link */
+.reset-link-inside,
+.reset-link {
+  display: none !important;
 }
 
 :deep(.el-upload) {
@@ -496,8 +542,9 @@ const handleReset = () => {
 :deep(.el-upload-list) {
   color: #23272f !important;
 }
-:deep(.el-radio-button__inner){
-  border:1px solid #dcdfe6;
+
+:deep(.el-radio-button__inner) {
+  border: 1px solid #dcdfe6;
   border-radius: 8px !important;
 }
 

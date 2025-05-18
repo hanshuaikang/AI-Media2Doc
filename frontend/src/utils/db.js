@@ -39,7 +39,7 @@ export async function saveTask(taskData) {
     // 检查并保留最新的10条记录
     await cleanupOldTasks(db);
 
-    return taskId;
+    return taskId; // 返回 taskId
   } catch (error) {
     console.error('保存任务失败:', error)
     throw error
@@ -165,6 +165,16 @@ export async function getAnyTaskByMd5(md5) {
     return tasks.length > 0 ? tasks[0] : null
   } catch (error) {
     console.error('根据MD5获取任务失败:', error)
+    return null
+  }
+}
+
+export async function getTaskByID(taskId) {
+  try {
+    const db = await initDB()
+    return await db.get('tasks', taskId)
+  } catch (error) {
+    console.error('通过ID获取任务失败:', error)
     return null
   }
 }
