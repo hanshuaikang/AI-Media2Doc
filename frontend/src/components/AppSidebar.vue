@@ -158,7 +158,7 @@ const handleDeleteTask = async (event, task) => {
                         <el-icon class="menu-icon">
                             <Tickets />
                         </el-icon>
-                        <span>历史任务</span>
+                        <span id="historyTaskText">历史任务</span>
                     </div>
                     <el-icon class="expand-icon" :class="{ 'is-expanded': showHistoryTasks }">
                         <ArrowRight />
@@ -302,7 +302,7 @@ const handleDeleteTask = async (event, task) => {
 .menu-item-content span {
     font-size: 15px;
     font-weight: 600;
-    color: #23272f;
+    color: #0057ff;
     letter-spacing: 0.1px;
 }
 
@@ -313,7 +313,7 @@ const handleDeleteTask = async (event, task) => {
 }
 
 .sidebar-menu :deep(.el-menu-item) {
-    transition: all 0.2s ease;
+    /* transition: all 0.2s ease; */
     min-height: auto;
     height: auto;
     background: transparent;
@@ -323,23 +323,22 @@ const handleDeleteTask = async (event, task) => {
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) {
-    background: linear-gradient(to right, #f3f4f6 70%, #fff 100%);
-    color: #23272f;
+    background:rgba(0,87,255,0.06);
+    color:#0057ff;
     border-radius: 10px;
-    font-weight: 700;
-    box-shadow: 0 2px 8px rgba(60, 80, 120, 0.08);
-    border-left: 3px solid #23272f;
+    /* font-weight: 700; */
+    border: 1px solid #0057ff;
 }
 
 .sidebar-menu :deep(.el-menu-item.is-active) .menu-icon {
-    color: #23272f;
+    color: #0057ff;
 }
 
 .sidebar-menu :deep(.el-menu-item:hover) {
-    background-color: #f5f6fa;
-    color: #23272f;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(60, 80, 120, 0.08);
+    background-color: #d9e5f8;
+    /* color: #e1681d; */
+    /* transform: translateY(-1px); */
+    /* box-shadow: 0 2px 8px rgba(60, 80, 120, 0.08); */
 }
 
 .sidebar-menu :deep(.el-menu-item:hover) .menu-icon {
@@ -369,11 +368,11 @@ const handleDeleteTask = async (event, task) => {
     transition: all 0.2s ease;
     border-radius: 10px 10px 0 0;
     border-bottom: 1px solid #f2f3f5;
-    background-color: #f7f8fa;
+    /* background-color: #f7f8fa; */
 }
 
 .history-header:hover {
-    background-color: #f3f4f6;
+    background-color: #e9eaec;
 }
 
 .expand-icon {
@@ -606,6 +605,9 @@ const handleDeleteTask = async (event, task) => {
 
 .history-item:hover .history-actions {
     opacity: 1;
+}
+#historyTaskText {
+    color: #23272f !important;
 }
 
 .delete-icon {

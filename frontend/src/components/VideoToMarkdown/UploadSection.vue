@@ -396,8 +396,8 @@ const handleReset = () => {
 }
 
 .style-selector-wrapper {
-  width: 100%;
-  max-width: 520px;
+  /* width: 100%;
+  max-width: 520px; */
   /* 保持原有宽度 */
 }
 
@@ -437,7 +437,7 @@ const handleReset = () => {
   align-items: center;
   gap: 1.2rem;
   margin-top: 0.5rem;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .start-process-btn {
@@ -495,6 +495,10 @@ const handleReset = () => {
 
 :deep(.el-upload-list) {
   color: #23272f !important;
+}
+:deep(.el-radio-button__inner){
+  border:1px solid #dcdfe6;
+  border-radius: 8px !important;
 }
 
 .style-radio-icon {
