@@ -3,6 +3,8 @@
 后端依赖于字节跳动火山引擎高代码 SDK Arkitect [高代码 SDK Arkitect](https://github.com/volcengine/ai-app-lab/blob/main/arkitect/README.md)。 
 在启动后端服务之前, 需要先安装好 Arkitect 的依赖, 并且申请字节 Tos 对象存储服务 以及 对应大模型的 API 调用权限
 
+**注意 ⚠️： 请至少保证你本地的 Python 版本为 3.9 及以上, 否则可能会出现依赖无法安装, 项目启动失败等问题。**
+
 ## 1. 安装依赖
 ```bash
 pip install -r requirements.txt

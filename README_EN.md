@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-    <img src="docs/images/index.png" alt="index" width="80%">
+    <img src="docs/images/index.jpg" alt="index" width="80%">
 </p>
 
 [中文文档](./README.md)
@@ -64,14 +64,14 @@ The AI Media2Doc Assistant originated from an idea I had at the beginning of the
 
 #### Support AI Q&A based on video content
 <p align="center">
-<img src="docs/images/task_details.png" alt="task details" width="80%">
+<img src="docs/images/details.jpg" alt="task details" width="80%">
 </p>
 
 #### Support mind map generation
 
 Generated mind maps can be exported to third-party platforms for editing and optimization
 <p align="center">
-<img src="docs/images/mindmap.png" alt="mindmap" width="80%">
+<img src="docs/images/mindmap.jpg" alt="mindmap" width="80%">
 </p>
 
 ### 🔄 Processing Flow

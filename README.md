@@ -6,19 +6,16 @@
 </h1>
 
 <p align="center">
-    <em>基于AI大模型, 一键将视频和音频转化为小红书/公众号/知识笔记/思维导图等各种风格的文档。</em>
+    基于AI大模型, 一键将视频和音频转化为小红书/公众号/知识笔记/思维导图等各种风格的文档。
 </p>
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/Platform-Web-orange" alt="Web Platform">
+  <img src="https://img.shields.io/badge/Docker-Support-blue?logo=docker" alt="Docker Support">
 </p>
 
-<p align="center">
-    <img src="docs/images/index.png" alt="index" width="80%">
-</p>
 
-[English Document](./README_EN.md)
 
 ### 📖 简介
 
@@ -40,17 +37,48 @@ AI 视频图文创作助手是一款Web工具, 基于AI大模型, 一键将视�
 - 🎙️ 音频识别支持使用 fast-whisper 本地大模型处理，进一步降低成本
 - 🎨 使用 React 完全重构前端页面，带来更加流畅丝滑的体验。
 
-### 📦 安装指南
 
-1）镜像构建：
+
+### 项目截图
+
+#### 全新设计的首页, 尽力之作
+
+<p align="center">
+    <img src="docs/images/index.jpg" alt="index" width="80%">
+</p>
+
+#### 更加简洁的加载页
+<p align="center">
+<img src="docs/images/loading.jpg" alt="task details" width="80%">
+</p>
+
+
+#### 支持针对视频内容进行 AI 二次问答。
+<p align="center">
+<img src="docs/images/details.jpg" alt="task details" width="80%">
+</p>
+
+
+#### 支持生成思维导图
+
+生成的思维导图可导出至第三方平台进行编辑优化
+<p align="center">
+<img src="docs/images/mindmap.jpg" alt="mindmap" width="80%">
+</p>
+
+
+### 📦 docker 本地一键部署
+
+1️⃣：镜像构建：
 
 ```shell
 $ make docker-image
 ```
+2️⃣：请根据 [后端部署指引 / 配置项说明](https://github.com/hanshuaikang/AI-Media2Doc/blob/main/backend/README.md#%E5%9C%A8%E7%81%AB%E5%B1%B1%E5%BC%95%E6%93%8E%E8%8E%B7%E5%8F%96%E5%AF%B9%E5%BA%94%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%80%BC) 完善根目录下的 `variables.env` 文件。 
 
-2）请根据 [后端部署指引 / 配置项说明](https://github.com/hanshuaikang/AI-Media2Doc/blob/main/backend/README.md#%E5%9C%A8%E7%81%AB%E5%B1%B1%E5%BC%95%E6%93%8E%E8%8E%B7%E5%8F%96%E5%AF%B9%E5%BA%94%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%80%BC) 完善根目录下的 `variables.env` 文件。
+3️⃣：修改前端的 evn.development 中的 VITE_API_BASE_URL 为 http://0.0.0.0:8080
 
-3）运行项目：
+4️⃣：运行项目
 
 ```shell
 $ make run
@@ -59,20 +87,6 @@ $ make run
 ### 👾 开发者的废话
 
 AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的人, 我更希望将一些视频内容转化为文字, 方便我进行二次阅读思考和总结记录笔记, 但市面上并没有一个好的工具来实现这个想法, 大多数工具都需要登录和付费, 我不太想在互联网上注册过多的账号, 同时也不想将自己想要总结的内容上传至除了云厂商之外的第三方平台，因此我开发了这个小应用，MIT 协议, 任何人都可以以极低的成本去体验音视频转文本。
-
-### 项目截图
-
-#### 支持针对视频内容进行 AI 二次问答。
-<p align="center">
-<img src="docs/images/task_details.png" alt="task details" width="80%">
-</p>
-
-#### 支持生成思维导图
-
-生成的思维导图可导出至第三方平台进行编辑优化
-<p align="center">
-<img src="docs/images/mindmap.png" alt="mindmap" width="80%">
-</p>
 
 
 ### 🔄 处理流程
