@@ -85,7 +85,6 @@ export const queryAudioTask = async (taskId: string): Promise<AudioTaskResult> =
  */
 export const pollAudioTask = async (
   taskId: string,
-  onProgress: (status: string) => void,
   maxAttempts = 60,
   interval = 3000
 ): Promise<string> => {
@@ -94,7 +93,6 @@ export const pollAudioTask = async (
   while (attempts < maxAttempts) {
     const result = await queryAudioTask(taskId)
     console.log('Polling result:', result)
-    onProgress(result.status)
     
     if (result.status === 'finished') {
       return result.text
