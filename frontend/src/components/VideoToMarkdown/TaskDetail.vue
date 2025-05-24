@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import ChatPanel from './ChatPanel.vue'
 import TranscriptionPanel from './TranscriptionPanel.vue'
 import GeneratedContentPanel from './GeneratedContentPanel.vue'
+import { ChatDotRound } from '@element-plus/icons-vue'
 
 const props = defineProps({
     task: {
@@ -36,7 +37,7 @@ const closeChatPanel = () => { showChatPanel.value = false }
 
         <!-- 悬浮AI助手按钮 -->
         <div class="floating-ai-btn">
-            <el-button type="primary" :icon="Headset" circle size="large" @click="openChatPanel" title="AI智能助手" />
+            <el-button type="primary" :icon="ChatDotRound" circle size="medium" @click="openChatPanel" title="AI智能助手" />
         </div>
         <!-- AI助手抽屉/侧边栏 -->
         <div v-if="showChatPanel" class="chat-panel-overlay" @click.self="closeChatPanel">
@@ -131,9 +132,9 @@ const closeChatPanel = () => { showChatPanel.value = false }
 }
 
 .floating-ai-btn .el-button {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
     box-shadow: 0 4px 20px rgba(64, 158, 255, 0.25);
     background: linear-gradient(135deg, #409EFF, #64b5f6);
     border: none;
@@ -150,7 +151,8 @@ const closeChatPanel = () => { showChatPanel.value = false }
     right: 0;
     width: 420px;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.18);
+    background: rgba(0, 0, 0, 0.08);
+    /* 原为 0.18，改为 0.08 */
     z-index: 4000;
     display: flex;
     align-items: stretch;

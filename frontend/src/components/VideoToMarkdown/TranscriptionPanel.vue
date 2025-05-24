@@ -4,6 +4,10 @@
             <h2>文本转录信息</h2>
             <el-button type="primary" :icon="CopyDocument" circle size="small" title="复制文本" @click="copyText"
                 class="copy-btn" />
+            <el-button type="primary" :icon="Download" size="small" title="导出为字幕文件" @click="exportSRT"
+                class="export-btn rounded-btn" style="margin-left: 8px;">
+                导出字幕
+            </el-button>
         </div>
         <div class="original-text-content">
             <template v-if="isSegmentArray">
@@ -24,7 +28,7 @@
 <script setup>
 import { computed } from 'vue'
 import { ElButton, ElMessage } from 'element-plus'
-import { CopyDocument } from '@element-plus/icons-vue'
+import { CopyDocument, Download } from '@element-plus/icons-vue'
 
 const props = defineProps({
     transcription: {
@@ -63,6 +67,50 @@ const copyText = () => {
         .catch(() => {
             ElMessage.error('复制失败')
         })
+}
+
+// 导出 SRT 字幕文件
+const exportSRT = () => {
+    if (!isSegmentArray.value || !Array.isArray(props.transcription)) {
+        ElMessage.warning('当前内容无法导出为字幕文件')
+        return
+    }
+    // SRT 文件头注释
+    const header = `1\n00:00:00,000 --> 00:00:00,000\n字幕由 AI-Media2Doc 生成\nhttps://github.com/hanshuaikang/AI-Media2Doc\n\n`
+    // 生成 SRT 正文
+    const srtContent = props.transcription.map((seg, idx) => {
+        const start = msToSrtTime(seg.start_time)
+        // 结束时间为下一个片段的开始时间，最后一条+2秒
+        const end = msToSrtTime(
+            idx < props.transcription.length - 1
+                ? props.transcription[idx + 1].start_time
+                : seg.start_time + 2000
+        )
+        return `${idx + 1}\n${start} --> ${end}\n${seg.text}\n`
+    }).join('\n')
+
+    const fullSrt = header + srtContent
+
+    // 下载
+    const blob = new Blob([fullSrt], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'transcription.srt'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+    ElMessage.success('字幕文件已导出')
+}
+
+// 毫秒转 SRT 时间格式
+function msToSrtTime(ms) {
+    const h = String(Math.floor(ms / 3600000)).padStart(2, '0')
+    const m = String(Math.floor((ms % 3600000) / 60000)).padStart(2, '0')
+    const s = String(Math.floor((ms % 60000) / 1000)).padStart(2, '0')
+    const msStr = String(ms % 1000).padStart(3, '0')
+    return `${h}:${m}:${s},${msStr}`
 }
 </script>
 
@@ -126,6 +174,14 @@ const copyText = () => {
 
 .copy-btn {
     margin-left: auto;
+}
+
+.export-btn {
+    /* 可根据需要自定义样式 */
+}
+
+.rounded-btn {
+    border-radius: 6px !important;
 }
 
 .original-text-content {

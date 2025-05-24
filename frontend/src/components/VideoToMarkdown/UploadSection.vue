@@ -58,7 +58,8 @@ const styleList = [
   { label: 'xiaohongshu', name: '小红书', icon: new URL('../../assets/小红书.svg', import.meta.url).href },
   { label: 'wechat', name: '公众号', icon: new URL('../../assets/微信公众号.svg', import.meta.url).href },
   { label: 'summary', name: '内容总结', icon: new URL('../../assets/汇总.svg', import.meta.url).href },
-  { label: 'mind', name: '思维导图', icon: new URL('../../assets/思维导图.svg', import.meta.url).href }
+  { label: 'mind', name: '思维导图', icon: new URL('../../assets/思维导图.svg', import.meta.url).href },
+  { label: 'cc', name: '字幕文件', icon: new URL('../../assets/字幕.svg', import.meta.url).href },
 ]
 
 const localStyle = ref(props.style || '')
@@ -134,7 +135,7 @@ const handleReset = () => {
           <el-radio-group v-model="localStyle" :disabled="isProcessing" @change="handleStyleChange" size="large"
             class="style-radio-group-flex">
             <el-radio-button v-for="item in styleList" :key="item.label" :label="item.label"
-              class="style-radio-btn-flex">
+              class="style-radio-btn-flex" :disabled="item.label === 'cc'">
               <img :src="item.icon" :alt="item.name" class="style-radio-icon" />
               {{ item.name }}
             </el-radio-button>
