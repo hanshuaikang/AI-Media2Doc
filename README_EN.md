@@ -77,7 +77,7 @@ Generated mind maps can be exported to third-party platforms for editing and opt
 ### 🔄 Processing Flow
 
 <p align="center">
-<img src="docs/images/process_flow.png" alt="architecture" width="80%">
+<img src="docs/images/process_flow.jpg" alt="architecture" width="80%">
 </p>
 
 ### 🔧 Local Development Guide

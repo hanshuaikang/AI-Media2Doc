@@ -4,7 +4,7 @@ import { ElMessage } from 'element-plus'
 import UploadSection from './UploadSection.vue'
 import LoadingOverlay from './LoadingOverlay.vue'
 import { loadFFmpeg, extractAudio } from '../../utils/ffmpeg'
-import { submitAudioTask, pollAudioTask } from '../../apis/audioService'
+import { submitAsrTask, pollAsrTask } from '../../apis/asrService'
 import { generateMarkdownText } from '../../apis/markdownService'
 import { calculateMD5 } from '../../utils/md5'
 import { getAudioUploadUrl, uploadFile } from '../../apis'
@@ -134,8 +134,8 @@ const startProcessing = async () => {
       textTranscribed.value = true
       updateStepStatus(3, 'success')
     } else {
-      const taskId = await submitAudioTask(audioFilename.value)
-      const text = await pollAudioTask(taskId)
+      const taskId = await submitAsrTask(audioFilename.value)
+      const text = await pollAsrTask(taskId)
       transcriptionText.value = text
       textTranscribed.value = true
       updateStepStatus(3, 'success')
@@ -143,7 +143,14 @@ const startProcessing = async () => {
 
     // 5. 生成内容
     updateStepStatus(4, 'processing')
-    const md = await generateMarkdownText(transcriptionText.value, style.value)
+    // 兼容新版协议：只传入文本
+    let plainText
+    if (Array.isArray(transcriptionText.value) && transcriptionText.value.length > 0 && typeof transcriptionText.value[0] === 'object' && 'text' in transcriptionText.value[0]) {
+      plainText = transcriptionText.value.map(seg => seg.text).join('\n')
+    } else {
+      plainText = transcriptionText.value
+    }
+    const md = await generateMarkdownText(plainText, style.value)
     markdownContent.value = md
     updateStepStatus(4, 'success')
 

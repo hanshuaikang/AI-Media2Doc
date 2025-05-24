@@ -23,9 +23,17 @@ const loading = ref(false)
 const isThinking = ref(false) // 添加状态
 
 const initSystemPrompt = () => {
+  // 兼容新版协议：只拼接文本内容
+  let textContent
+  const t = props.task.transcriptionText
+  if (Array.isArray(t) && t.length > 0 && typeof t[0] === 'object' && 'text' in t[0]) {
+    textContent = t.map(seg => seg.text).join('\n')
+  } else {
+    textContent = t
+  }
   const systemMessage = {
     role: 'user',
-    content: `你是一个优秀的人工智能助手，现在我有一个视频生成的文字，你总是可以根据我提供的内容准确回答我的问题。你的第一句问候固定回复: 你好, 我是AI助手, 你可以针对视频内容向我提问~ \n\n${props.task.transcriptionText}`
+    content: `你是一个优秀的人工智能助手，现在我有一个视频生成的文字，你总是可以根据我提供的内容准确回答我的问题。你的第一句问候固定回复: 你好, 我是AI助手, 你可以针对视频内容向我提问~ \n\n${textContent}`
   }
   return systemMessage
 }

@@ -92,7 +92,7 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 ### 🔄 处理流程
 
 <p align="center">
-<img src="docs/images/process_flow.png" alt="architecture" width="80%">
+<img src="docs/images/process_flow.jpg" alt="architecture" width="80%">
 </p>
 
 ### 🔧 本地开发指南

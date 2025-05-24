@@ -8,17 +8,17 @@ from arkitect.core.component.llm import ArkChatRequest
 from arkitect.core.component.llm.model import ArkChatResponse
 from throttled import Throttled, per_sec, MemoryStore
 
+from constants import VolcengineASRResponseStatusCode, AsrTaskStatus
 from .dispatcher import ActionDispatcher
 
 from actions.tos import generate_download_url
 from env import AUC_APP_ID, AUC_ACCESS_TOKEN
 
-
 STORE = MemoryStore()
 
 
-@ActionDispatcher.register("submit_audio_task")
-async def submit_audio_task(request: ArkChatRequest):
+@ActionDispatcher.register("submit_asr_task")
+async def submit_asr_task(request: ArkChatRequest):
     """
     提交一个音频转写任务
     :param request: message: filename
@@ -69,8 +69,8 @@ async def submit_audio_task(request: ArkChatRequest):
         )
 
 
-@ActionDispatcher.register("query_audio_task")
-async def query_audio_task(request: ArkChatRequest):
+@ActionDispatcher.register("query_asr_task_status")
+async def query_asr_task_status(request: ArkChatRequest):
     task_id = request.messages[0].content
     headers = {
         "X-Api-App-Key": AUC_APP_ID,
@@ -86,9 +86,24 @@ async def query_audio_task(request: ArkChatRequest):
         response = requests.post(query_url, json.dumps({}), headers=headers)
 
     if "X-Api-Status-Code" in response.headers:
-        if response.headers["X-Api-Status-Code"] == "20000000":
+        if (
+            response.headers["X-Api-Status-Code"]
+            == VolcengineASRResponseStatusCode.SUCCESS.value
+        ):
+
+            data = response.json()
+            utterances = data["result"]["utterances"]
+            result = [
+                {
+                    "start_time": utterance["start_time"],
+                    "end_time": utterance["end_time"],
+                    "text": utterance["text"],
+                }
+                for utterance in utterances
+            ]
+
             yield ArkChatResponse(
-                id="query_audio_task",
+                id="query_asr_task_status",
                 choices=[],
                 created=int(time.time()),
                 model="",
@@ -96,31 +111,34 @@ async def query_audio_task(request: ArkChatRequest):
                 usage=None,
                 bot_usage=None,
                 metadata={
-                    "result": response.json()["result"]["text"],
-                    "status": "finished",
+                    "result": result,
+                    "status": AsrTaskStatus.FINISHED.value,
                 },
             )
-        elif response.headers["X-Api-Status-Code"] in ["20000001", "20000002"]:
+        elif response.headers["X-Api-Status-Code"] in [
+            VolcengineASRResponseStatusCode.PENDING.value,
+            VolcengineASRResponseStatusCode.RUNNING.value,
+        ]:
             yield ArkChatResponse(
-                id="query_audio_task",
+                id="query_asr_task_status",
                 choices=[],
                 created=int(time.time()),
                 model="",
                 object="chat.completion",
                 usage=None,
                 bot_usage=None,
-                metadata={"result": "", "status": "running"},
+                metadata={"result": None, "status": AsrTaskStatus.RUNNING.value},
             )
         else:
             yield ArkChatResponse(
-                id="query_audio_task",
+                id="query_asr_task_status",
                 choices=[],
                 created=int(time.time()),
                 model="",
                 object="chat.completion",
                 usage=None,
                 bot_usage=None,
-                metadata={"result": "", "status": "failed"},
+                metadata={"result": None, "status": AsrTaskStatus.FAILED.value},
             )
     else:
         raise Exception(

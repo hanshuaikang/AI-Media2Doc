@@ -27,14 +27,44 @@ export async function initDB() {
   }
 }
 
+// 工具：序列化 transcriptionText
+function serializeTranscriptionText(val) {
+  if (Array.isArray(val)) {
+    try {
+      return JSON.stringify(val)
+    } catch {
+      return ''
+    }
+  }
+  return val
+}
+
+// 工具：反序列化 transcriptionText
+function deserializeTranscriptionText(val) {
+  if (typeof val === 'string') {
+    try {
+      // 判断是否为 JSON 数组字符串
+      const arr = JSON.parse(val)
+      if (Array.isArray(arr) && arr.length && typeof arr[0] === 'object' && 'text' in arr[0]) {
+        return arr
+      }
+    } catch {
+      // 不是 JSON 字符串，直接返回原始字符串
+    }
+  }
+  return val
+}
+
 export async function saveTask(taskData) {
   try {
     const db = await initDB()
-    const taskId = await db.add('tasks', {
+    const taskToSave = {
       ...taskData,
       createdAt: new Date().toISOString(),
-      contentStyle: taskData.contentStyle // 添加contentStyle字段
-    })
+      contentStyle: taskData.contentStyle,
+      transcriptionText: serializeTranscriptionText(taskData.transcriptionText)
+    }
+    const taskId = await db.add('tasks', taskToSave)
 
     // 检查并保留最新的10条记录
     await cleanupOldTasks(db);
@@ -67,11 +97,19 @@ async function cleanupOldTasks(db) {
   }
 }
 
+// 反序列化工具，批量处理任务数组
+function deserializeTasks(tasks) {
+  return tasks.map(task => ({
+    ...task,
+    transcriptionText: deserializeTranscriptionText(task.transcriptionText)
+  }))
+}
+
 export async function getAllTasks() {
   try {
     const db = await initDB()
     const tasks = await db.getAllFromIndex('tasks', 'createdAt')
-    return tasks
+    return deserializeTasks(tasks)
   } catch (error) {
     console.error('获取任务列表失败:', error)
     return []
@@ -162,7 +200,11 @@ export async function getAnyTaskByMd5(md5) {
   try {
     const db = await initDB()
     const tasks = await db.getAllFromIndex('tasks', 'md5', md5)
-    return tasks.length > 0 ? tasks[0] : null
+    const result = tasks.length > 0 ? tasks[0] : null
+    if (result) {
+      result.transcriptionText = deserializeTranscriptionText(result.transcriptionText)
+    }
+    return result
   } catch (error) {
     console.error('根据MD5获取任务失败:', error)
     return null
@@ -172,7 +214,11 @@ export async function getAnyTaskByMd5(md5) {
 export async function getTaskByID(taskId) {
   try {
     const db = await initDB()
-    return await db.get('tasks', taskId)
+    const task = await db.get('tasks', taskId)
+    if (task) {
+      task.transcriptionText = deserializeTranscriptionText(task.transcriptionText)
+    }
+    return task
   } catch (error) {
     console.error('通过ID获取任务失败:', error)
     return null

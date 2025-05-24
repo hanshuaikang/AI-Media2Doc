@@ -161,12 +161,16 @@ const chatPanelKey = computed(() => `chat-panel-${props.task.id}`)
 
 // 复制文本到剪贴板
 const copyText = (text) => {
-    if (!text) {
+    let textToCopy = text
+    if (isSegmentArray.value && Array.isArray(text)) {
+        textToCopy = text.map(seg => seg.text).join('\n')
+    }
+    if (!textToCopy) {
         ElMessage.warning('没有可复制的文本')
         return
     }
 
-    navigator.clipboard.writeText(text)
+    navigator.clipboard.writeText(textToCopy)
         .then(() => {
             ElMessage.success('文本已复制到剪贴板')
         })
@@ -197,6 +201,21 @@ const downloadContent = () => {
     URL.revokeObjectURL(url)
     document.body.removeChild(a)
 }
+
+// 判断内容是否为新版协议的分段数组
+const isSegmentArray = computed(() => {
+    const t = props.task.transcriptionText
+    return Array.isArray(t) && t.length > 0 && typeof t[0] === 'object' && 'start_time' in t[0] && 'end_time' in t[0] && 'text' in t[0]
+})
+
+// 时间格式化 mm:ss
+const formatTime = (ms) => {
+    if (typeof ms !== 'number') return ''
+    const totalSeconds = Math.floor(ms / 1000)
+    const min = Math.floor(totalSeconds / 60)
+    const sec = totalSeconds % 60
+    return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`
+}
 </script>
 
 <template>
@@ -217,7 +236,18 @@ const downloadContent = () => {
                     </div>
                     <div class="card-body">
                         <div class="text-content">
-                            {{ task.transcriptionText }}
+                            <template v-if="isSegmentArray">
+                                <div class="segment-list">
+                                    <div class="segment-row" v-for="(seg, idx) in task.transcriptionText" :key="idx">
+                                        <span class="segment-time">{{ formatTime(seg.start_time) }} - {{
+                                            formatTime(seg.end_time) }}</span>
+                                        <span class="segment-text">{{ seg.text }}</span>
+                                    </div>
+                                </div>
+                            </template>
+                            <template v-else>
+                                {{ task.transcriptionText }}
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -517,6 +547,38 @@ const downloadContent = () => {
 .text-content::-webkit-scrollbar-track,
 .markdown-content::-webkit-scrollbar-track {
     background: transparent;
+}
+
+/* 新增：分段原文展示样式 */
+.segment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.segment-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 2px 0;
+}
+
+.segment-time {
+    min-width: 80px;
+    color: #888;
+    font-family: monospace;
+    font-size: 13px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.segment-text {
+    flex: 1;
+    color: #23272f;
+    font-size: 13px;
+    line-height: 1.6;
+    word-break: break-all;
+    text-align: left;
 }
 
 /* 响应式设计 */

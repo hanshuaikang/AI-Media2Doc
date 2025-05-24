@@ -1,0 +1,22 @@
+[flake8]
+ignore = C901, W503, F405, E203
+# C901: is too complex
+# W503: line break before binary operator
+# F405: may be undefined, or defined from star imports
+exclude =
+    *migrations*,
+    *.pyc,
+    .git,
+    .cover,
+    __pycache__,
+    */node_modules/*,
+    */templates_module*,
+    */bin/*,
+    local/*,
+    local_settings.py,
+max-line-length = 120
+max-complexity = 12
+format = pylint
+show_source = True
+statistics = True
+count = True

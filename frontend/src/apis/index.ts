@@ -1,11 +1,11 @@
-import * as audioService from './audioService'
+import * as audioService from './asrService'
 import * as markdownService from './markdownService'
 import * as uploadService from './uploadService'
 import * as chatService from './chatService'
 import httpService from './http'
 
 // 从各个服务中导出常用函数
-export const { submitAudioTask, pollAudioTask, queryAudioTask } = audioService
+export const { submitAudioTask, pollAsrTask: pollAudioTask, queryAudioTask } = audioService
 export const { generateMarkdownText } = markdownService
 export const { getAudioUploadUrl, uploadFile } = uploadService
 export const { sendChatMessage } = chatService
