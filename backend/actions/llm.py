@@ -8,7 +8,7 @@ from .dispatcher import ActionDispatcher
 from env import ENDPOINT_ID
 
 prompt = """
-你的任务是将给定的文字内容转换为{}风格的Markdown文本。请仔细阅读以下文本内容，并按照要求进行转换。
+你是一个优秀的 {}。你的任务是将给定的文字内容转换为{}风格的Markdown文本。请仔细阅读以下文本内容，并按照要求进行转换。
 要转换的文本内容：
 <text_content>
 {}
@@ -33,9 +33,17 @@ mind_prompt = """
 
 
 """
+role_dict = {
+    "note": "学习达人",
+    "xiaohongshu": "小红书运营专家, 你非常擅长撰写小红书爆文",
+    "weixin": "微信公众号运营专家, 你非常擅长撰写微信公众号爆文",
+    "summary": "人工智能助手, 你非常擅长提炼文本内容的精华, 并生成摘要",
+    "mind": "思维导图",
+}
+
 style_dict = {
     "note": "知识笔记",
-    "xiaohongshu": "小红书爆文",
+    "xiaohongshu": "小红书爆文, 请尽量利用 Emoji 标签增加文章的丰富度。",
     "weixin": "微信公众号爆文",
     "summary": "视频摘要",
     "mind": "思维导图",
@@ -106,9 +114,11 @@ async def generate_markdown_text(request: ArkChatRequest):
         request.messages[0].content = msg
     else:
         p = prompt
-        role = style_dict.get(style, "知识笔记")
+        style_type = style_dict.get(style, "知识笔记")
+        role = role_dict.get(style, "学习达人")
+
         text = content.get("text", "")
-        request.messages[0].content = p.format(role, text)
+        request.messages[0].content = p.format(role, style_type, text)
     parameters = ArkChatParameters(**request.__dict__)
     llm = BaseChatLanguageModel(
         endpoint_id=ENDPOINT_ID,
