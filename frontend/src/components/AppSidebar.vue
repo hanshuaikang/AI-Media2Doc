@@ -133,10 +133,12 @@ const handleDeleteTask = async (event, task) => {
         <!-- 头像和应用名称区域 -->
         <div class="app-logo">
             <div class="logo-container">
-                <el-avatar :size="40" src="/src/assets/logo.jpeg" alt="Logo" class="app-avatar" />
+                <!-- 纯白色 logo 区域 -->
+                <img src="/src/assets/logo.png" alt="Logo" class="app-logo-img" />
             </div>
             <div class="app-title">
-                <h2>AI-Media2Doc</h2>
+                <h3>AI-Media2Doc</h3>
+                <div class="app-subtitle">一键音视频转文档</div>
             </div>
         </div>
 
@@ -240,6 +242,7 @@ const handleDeleteTask = async (event, task) => {
     background: linear-gradient(to bottom, #fff 80%, #f7f8fa 100%);
 }
 
+
 .logo-container {
     width: 44px;
     height: 44px;
@@ -247,30 +250,29 @@ const handleDeleteTask = async (event, task) => {
     align-items: center;
     justify-content: center;
     border-radius: 12px;
-    background: linear-gradient(135deg, #23272f 60%, #444950 100%);
-    box-shadow: 0 2px 8px rgba(60, 80, 120, 0.10);
+    background: #fff;
+    /* 纯白色背景 */
+    box-shadow: none;
+    /* 去除阴影 */
     overflow: hidden;
     position: relative;
+    border: 1.5px solid #f2f3f5;
+    /* 可选：加淡灰色边框以区分背景 */
 }
 
+/* 移除 logo-container::after 伪元素 */
 .logo-container::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0));
-    border-radius: 12px;
+    display: none;
 }
 
-.app-title h2 {
-    margin: 0;
-    font-size: 17px;
-    font-weight: 800;
-    color: #23272f;
-    letter-spacing: 0.5px;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+.app-logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    display: block;
+    margin: auto;
+    background: transparent;
+    border-radius: 8px;
 }
 
 .sidebar-menu {
@@ -517,6 +519,25 @@ const handleDeleteTask = async (event, task) => {
     font-size: 11px;
     color: #909399;
     letter-spacing: 0.1px;
+}
+
+.app-title h3 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 800;
+    color: #23272f;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.app-subtitle {
+    font-size: 12px;
+    color: #909399;
+    margin-top: 2px;
+    font-weight: 00;
+    letter-spacing: 0.2px;
+    line-height: 1.2;
+    text-align: left;
 }
 
 @media screen and (max-width: 768px) {
