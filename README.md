@@ -1,13 +1,8 @@
 <h1 align="center">
   <p>
-  <img src="docs/images/logo.jpeg" alt="logo" width="50" height="50" style="border-radius: 50%;">
- </p>
-  AI 视频图文创作助手
+  <img src="docs/images/readme_header.jpg" alt="logo">
+    </p>
 </h1>
-
-<p align="center">
-    基于AI大模型, 一键将视频和音频转化为小红书/公众号/知识笔记/思维导图等各种风格的文档。
-</p>
 
 <p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License"></a>
