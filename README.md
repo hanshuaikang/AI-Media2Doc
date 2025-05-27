@@ -130,7 +130,7 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 |:-:|:-:|
 | <a href="https://github.com/ZhuoZhuoCrayon"><img src="https://github.com/ZhuoZhuoCrayon.png" width="50" height="50"/><br/>crayon</a> | <a href="https://github.com/cjx929"><img src="https://github.com/cjx929.png" width="50" height="50"/><br/>chen_jx</a> |
 
-感谢以下自媒体对本项目的关注和转发, 大家感兴趣的话可以关注下他们 ～
+感谢以下自媒体对本项目的关注和转发(以下排名不分先后), 大家感兴趣的话可以关注下他们 ～
 
 | 名称 | 名称 | 名称 | 名称 |
 |:----:|:----:|:----:|:----:|
