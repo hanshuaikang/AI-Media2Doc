@@ -5,11 +5,14 @@
 </h1>
 
 <p align="center">
+    <a href="https://hellogithub.com/repository/d869461d98d245d388b50e25b6a80dae" target="_blank"><img src="https://abroad.hellogithub.com/v1/widgets/recommend.svg?rid=d869461d98d245d388b50e25b6a80dae&claim_uid=uT2Sc8Xli4PUA76" alt="Featured｜HelloGitHub" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+</p>
+
+<p align="center">
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License"></a>
   <img src="https://img.shields.io/badge/Platform-Web-orange" alt="Web Platform">
   <img src="https://img.shields.io/badge/Docker-Support-blue?logo=docker" alt="Docker Support">
 </p>
-
 
 
 ### 📖 简介
@@ -31,8 +34,7 @@ AI 视频图文创作助手是一款Web工具, 基于AI大模型, 一键将视�
 
 - 📷 支持智能截取视频关键帧，实现真正的图文并茂
 - 🎙️ 音频识别支持使用 fast-whisper 本地大模型处理，进一步降低成本
-- 🎨 使用 React 完全重构前端页面，带来更加流畅丝滑的体验。
-
+- 🎨 支持在前端自定义配置 prompt。
 
 
 ### 项目截图
@@ -128,11 +130,16 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 |:-:|:-:|
 | <a href="https://github.com/ZhuoZhuoCrayon"><img src="https://github.com/ZhuoZhuoCrayon.png" width="50" height="50"/><br/>crayon</a> | <a href="https://github.com/cjx929"><img src="https://github.com/cjx929.png" width="50" height="50"/><br/>chen_jx</a> |
 
-感谢以下自媒体对本项目的关注和转发:
+感谢以下自媒体对本项目的关注和转发, 大家感兴趣的话可以关注下他们 ～
 
-| [阮一峰的网络日志](https://www.ruanyifeng.com/blog/weekly/) | [公众号:一飞开源](https://mp.weixin.qq.com/s/BZjr54h8dIQgzr8UW3fwOQ) | [小红书：AI-GitHub](https://www.xiaohongshu.com/user/profile/65c44d1200000000090254fc)
+| 名称 | 名称 | 名称 | 名称 |
+|:----:|:----:|:----:|:----:|
+|开源AI项目落地<br/><img src="docs/images/wxgzh/aild.png" width="80" height="80"/> | [HelloGithub](https://hellogithub.com)<br/><img src="docs/images/wxgzh/hellogithub.png" width="80" height="80"/> | [阮一峰的网络日志](https://www.ruanyifeng.com/blog/weekly/)<br/><img src="docs/images/wxgzh/ryf.png" width="80" height="80"/> | 一飞开源<br/><img src="docs/images/wxgzh/yf.png" width="80" height="80"/> |
 
 
+其他:
+
+[小红书：AI-GitHub](https://www.xiaohongshu.com/user/profile/65c44d1200000000090254fc)
 ### 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=hanshuaikang/AI-Media2Doc&type=Date)](https://www.star-history.com/#hanshuaikang/AI-Media2Doc&Date)
