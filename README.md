@@ -132,9 +132,9 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 
 感谢以下自媒体对本项目的关注和转发(以下排名不分先后), 大家感兴趣的话可以关注下他们 ～
 
-| 名称 | 名称 | 名称 | 名称 |
-|:----:|:----:|:----:|:----:|
-|开源AI项目落地<br/><img src="docs/images/wxgzh/aild.png" width="80" height="80"/> | [HelloGithub](https://hellogithub.com)<br/><img src="docs/images/wxgzh/hellogithub.png" width="80" height="80"/> | [阮一峰的网络日志](https://www.ruanyifeng.com/blog/weekly/)<br/><img src="docs/images/wxgzh/ryf.png" width="80" height="80"/> | 一飞开源<br/><img src="docs/images/wxgzh/yf.png" width="80" height="80"/> |
+| [HelloGithub](https://hellogithub.com)   |                           开源AI项目落地                            |                               [阮一峰的网络日志](https://www.ruanyifeng.com/blog/weekly/)                               |                               一飞开源                               |
+|:----:|:-------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------:|
+|<img src="docs/images/wxgzh/hellogithub.png" width="80" height="80"/>|<img src="docs/images/wxgzh/aild.png" width="80" height="80"/> |<img src="docs/images/wxgzh/ryf.png" width="80" height="80"/> | <img src="docs/images/wxgzh/yf.png" width="80" height="80"/> |
 
 
 其他:
