@@ -47,6 +47,15 @@ python main.py
 </p>
 当然你也可以根据实际情况灵活选择。
 
+#### TOS_ENDPOINT
+点击 **桶列表** ->  **点进去你创建的那个 bucket** -> **点击概览** -> **眼睛往下看**
+
+你会看到一个访问域名, TOS_ENDPOINT 的值就是红框框里面那个，不同的区域 TOS_ENDPOINT 的值可能不一样。
+<p>
+<img src="../docs/images/tos_endpoint.png" alt="tos access key">
+</p>
+
+
 #### TOS_BUCKET
 `TOS_BUCKET` 的值就是你创建的 bucket 的名称。
 
