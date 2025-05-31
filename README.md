@@ -27,6 +27,7 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
 - 🎯 **多种风格支持**：支持小红书/公众号/知识笔记/思维导图/内容总结等多种文档风格支持。
 - 🤖 **AI 对话**：支持针对视频内容进行 AI 二次问答。
 - 🎬 **支持字幕导出**: 结果一键导出为字幕文件。
+- 🎨 **支持自定义 Prompt**：支持在前端自定义配置 prompt。
 - 🐳 **一键部署**：支持 Docker 一键部署。
 
 
@@ -54,6 +55,11 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
 #### 全新设计的结果页, 支持一键导出为字幕。
 <p align="center">
 <img src="docs/images/details.jpg" alt="task details" width="80%">
+</p>
+
+#### 支持自定义 prompt
+<p align="center">
+<img src="docs/images/custom_prompt.png" alt="task details" width="80%">
 </p>
 
 
