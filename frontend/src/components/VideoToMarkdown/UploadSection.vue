@@ -170,7 +170,7 @@ const handleReset = () => {
   width: 100%;
   box-sizing: border-box;
   background: transparent;
-  margin-top: 12vh;
+  /* margin-top: 12vh; */
 }
 
 .upload-section {

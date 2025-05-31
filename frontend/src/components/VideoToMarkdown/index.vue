@@ -218,21 +218,31 @@ const stepText = computed(() => steps.value[activeStep.value]?.title || '')
 .main-content {
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto 40px;
-  padding: 20px 20px;
+  /* 只占父容器宽度 */
+  max-width: 100%;
+  /* 只占父容器宽度 */
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
-  height: auto;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
 }
 
 .component-wrapper {
-  width: 100%;
+  width: auto;
+  max-width: 900px;
   box-sizing: border-box;
   border-radius: 12px;
   overflow: visible;
-  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24px 0;
+  /* 新增，防止极小屏幕时贴边 */
 }
 
 /* 文件信息卡片和风格选择区域样式与 UploadSection.vue 保持一致 */
