@@ -146,7 +146,7 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 [小红书：AI-GitHub](https://www.xiaohongshu.com/user/profile/65c44d1200000000090254fc)
 
 推特:
-| [Geek](https://x.com/geekbb) | [AIGCLINK](https://x.com/aigclink) | [ilovelife](https://x.com/ilovek8s) 
+| [Geek](https://x.com/geekbb) | [AIGCLINK](https://x.com/aigclink) | [ilovelife](https://x.com/ilovek8s) | [ahhhhfs](https://x.com/abskoop)
 
 ### 🌟 Star History
 
