@@ -4,6 +4,7 @@ import { ElMenu, ElMenuItem, ElAvatar, ElTag, ElIcon, ElEmpty, ElMessage, ElMess
 import { VideoCameraFilled, Tickets, Document, Plus, ArrowRight, Delete } from '@element-plus/icons-vue'
 import { getAllTasks, deleteTask } from '../utils/db'
 import { eventBus } from '../utils/eventBus'
+import Settings from './Settings/Settings.vue'
 
 const props = defineProps({
     activeMenu: {
@@ -15,6 +16,10 @@ const props = defineProps({
 const emit = defineEmits(['menu-select', 'view-task', 'chat'])
 
 const handleSelect = (key) => {
+    if (key === 'settings') {
+        showSettingsDialog.value = true
+        return
+    }
     if (key.startsWith('task-')) {
         const taskId = parseInt(key.replace('task-', ''))
         const task = recentTasks.value.find(t => t.id === taskId)
@@ -31,6 +36,7 @@ const recentTasks = ref([])
 const isTasksLoading = ref(false)
 const showHistoryTasks = ref(true)
 const isInitialLoad = ref(true)
+const showSettingsDialog = ref(false)
 
 const styleMap = {
     note: { name: '知识笔记', color: '#409EFF' }, // 蓝色
@@ -206,6 +212,28 @@ const handleDeleteTask = async (event, task) => {
             </div>
         </el-menu>
 
+        <!-- 设置按钮放在底部版权信息上方，脱离 el-menu -->
+        <div class="sidebar-settings">
+            <div class="settings-menu-item" @click="showSettingsDialog = true">
+                <div class="settings-btn-content">
+                    <el-icon class="menu-icon-settings">
+                        <el-icon>
+                            <svg viewBox="0 0 1024 1024" width="1em" height="1em">
+                                <path
+                                    d="M512 320a192 192 0 1 0 0 384 192 192 0 0 0 0-384zm0 320a128 128 0 1 1 0-256 128 128 0 0 1 0 256z"
+                                    fill="#0057ff" />
+                                <path
+                                    d="M952 544h-56.8a376.8 376.8 0 0 0-16.8-64.8l40.8-40.8a40 40 0 0 0 0-56.8l-79.2-79.2a40 40 0 0 0-56.8 0l-40.8 40.8A376.8 376.8 0 0 0 544 128V71.6A39.6 39.6 0 0 0 504.4 32h-112.8A39.6 39.6 0 0 0 352 71.6V128a376.8 376.8 0 0 0-64.8 16.8l-40.8-40.8a40 40 0 0 0-56.8 0l-79.2 79.2a40 40 0 0 0 0 56.8l40.8 40.8A376.8 376.8 0 0 0 128 480H71.6A39.6 39.6 0 0 0 32 519.6v112.8A39.6 39.6 0 0 0 71.6 672H128a376.8 376.8 0 0 0 16.8 64.8l-40.8 40.8a40 40 0 0 0 0 56.8l79.2 79.2a40 40 0 0 0 56.8 0l40.8-40.8A376.8 376.8 0 0 0 480 896v56.4A39.6 39.6 0 0 0 519.6 992h112.8A39.6 39.6 0 0 0 672 952.4V896a376.8 376.8 0 0 0 64.8-16.8l40.8 40.8a40 40 0 0 0 56.8 0l79.2-79.2a40 40 0 0 0 0-56.8l-40.8-40.8A376.8 376.8 0 0 0 896 544h56.4A39.6 39.6 0 0 0 992 504.4v-112.8A39.6 39.6 0 0 0 952 544z"
+                                    fill="#0057ff" />
+                            </svg>
+                        </el-icon>
+                    </el-icon>
+                    <span>自定义配置</span>
+                </div>
+            </div>
+            <Settings v-model:visible="showSettingsDialog" />
+        </div>
+
         <!-- 底部版权信息 -->
         <div class="sidebar-footer">
             <div class="footer-content">
@@ -276,7 +304,7 @@ const handleDeleteTask = async (event, task) => {
 }
 
 .sidebar-menu {
-    flex: 1;
+    flex: 1 1 auto;
     border-right: none;
     background-color: transparent;
     padding: 18px 0 0 0;
@@ -569,6 +597,10 @@ const handleDeleteTask = async (event, task) => {
     .sidebar-footer {
         display: none;
     }
+
+    .settings-menu-item {
+        margin: 0 !important;
+    }
 }
 
 @keyframes fadeIn {
@@ -658,18 +690,57 @@ const handleDeleteTask = async (event, task) => {
     transform: scale(1.1);
 }
 
-@media screen and (max-width: 768px) {
-    .history-actions {
-        opacity: 1;
-        position: static;
-        transform: none;
-        margin-left: auto;
-    }
+.sidebar-settings {
+    width: 100%;
+    padding: 0 0 12px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-    .delete-icon {
-        font-size: 16px;
-        padding: 4px;
-    }
+.settings-menu-item {
+    width: 92%;
+    margin: 0 auto 10px auto !important;
+    background: #fff;
+    border: 1.5px solid #f2f3f5;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(60, 80, 120, 0.04);
+    cursor: pointer;
+    transition: all 0.18s;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-menu-item:hover {
+    background: #f0f6ff;
+    border-color: #0057ff;
+    box-shadow: 0 2px 8px rgba(0, 87, 255, 0.07);
+}
+
+.settings-btn-content {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 13px 0;
+    border-radius: 10px;
+}
+
+.settings-btn-content span {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0057ff;
+    letter-spacing: 0.1px;
+}
+
+.menu-icon-settings {
+    color: #0057ff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
 }
 </style>
 
