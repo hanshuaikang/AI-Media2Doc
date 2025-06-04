@@ -5,7 +5,7 @@ import time
 
 import requests
 from arkitect.core.component.llm import ArkChatRequest
-from arkitect.core.component.llm.model import ArkChatResponse
+from arkitect.types.llm.model import ArkChatResponse
 from throttled import Throttled, per_sec, MemoryStore
 
 from constants import VolcengineASRResponseStatusCode, AsrTaskStatus

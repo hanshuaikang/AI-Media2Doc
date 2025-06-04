@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 from typing import Dict, Callable, AsyncIterable
 from functools import wraps
-from arkitect.core.component.llm.model import Response
+
+from arkitect.types.runtime.model import Response
 
 
 class ActionDispatcher:
@@ -26,7 +27,9 @@ class ActionDispatcher:
 
         return decorator
 
-    async def dispatch(self, action_name: str, *args, **kwargs) -> AsyncIterable[Response]:
+    async def dispatch(
+        self, action_name: str, *args, **kwargs
+    ) -> AsyncIterable[Response]:
         if action_name not in self._actions:
             raise ValueError(f"Action {action_name} not found")
         action = self._actions[action_name]

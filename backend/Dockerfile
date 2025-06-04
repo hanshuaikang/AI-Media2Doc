@@ -37,7 +37,7 @@ WORKDIR /app
 COPY --from=builder /.venv /.venv
 ADD ./ ./
 
-ENV ENDPOINT_ID="xxx" \
+ENV MODEL_ID="xxx" \
     ARK_API_KEY="xxx" \
     TOS_ACCESS_KEY="xxx" \
     TOS_SECRET_KEY="xxx" \

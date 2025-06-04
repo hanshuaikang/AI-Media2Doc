@@ -6,12 +6,10 @@ import os
 from typing import AsyncIterable
 
 
-from arkitect.core.component.llm.model import (
-    ArkChatRequest,
-    Response,
-)
 from arkitect.launcher.local.serve import launch_serve
 from arkitect.telemetry.trace import task
+from arkitect.types.llm.model import ArkChatRequest
+from arkitect.types.runtime.model import Response
 from arkitect.utils.context import get_headers
 from throttled import MemoryStore
 

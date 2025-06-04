@@ -13,7 +13,7 @@ pip install -r requirements.txt
 ## 2. 配置环境变量
 
 ```bash
-export ENDPOINT_ID=xxxx
+export MODEL_ID=xxxx
 export ARK_API_KEY=xxxx
 export TOS_ACCESS_KEY=xxxx
 export TOS_SECRET_KEY=xxxx
@@ -34,8 +34,20 @@ python main.py
 主要分为三部分, 火山方舟/字节Tos/音频识别大模型
 
 ### 火山方舟
-#### ENDPOINT_ID
-登录[方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/endpoint?projectName=default)，创建一个推理接入点（Endpoint），推荐使用Doubao-pro-32k [参考文档](https://www.volcengine.com/docs/82379/1399008#_2-%E5%88%9B%E5%BB%BA%E5%9C%A8%E7%BA%BF%E6%8E%A8%E7%90%86%E6%8E%A5%E5%85%A5%E7%82%B9%EF%BC%88endpoint%EF%BC%89) 你就得到了 `ENDPOINT_ID` 的 值。
+#### MODEL_ID
+
+⚠️: v0.3.0 版本的 AI-Media2Doc 已经不再需要 ENDPOINT_ID, 由 MODEL_ID 代替。
+
+登录[方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?projectName=default)。进入开通管理, 选择开通一个大语言模型。
+推荐使用 `Doubao-1.5-pro-32k` 。点击开通之后点击该大模型进入详情页，选择通用 LLM(没有就选主线模型), 复制红框内的 `模型 ID`，即为 `MODEL_ID` 的值。
+
+
+<p>
+<img src="../docs/images/model_id.png" alt="model id">
+</p>
+
+
+
 #### ARK_API_KEY
 在 API Key 管理中创建一个 API Key [参考文档](https://www.volcengine.com/docs/82379/1399008#_3-%E5%88%9B%E5%BB%BAAPIKey) 你就得到了 `ARK_API_KEY` 的值。
 
