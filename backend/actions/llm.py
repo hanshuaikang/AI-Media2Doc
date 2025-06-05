@@ -35,7 +35,6 @@ async def default_llm_action(request: ArkChatRequest):
         for message in request.messages
     ]
     resp = await ctx.completions.create(messages=messages, stream=request.stream)
-
     if request.stream:
         async for chunk in resp:
             yield chunk
