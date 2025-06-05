@@ -79,9 +79,7 @@ $ make docker-image
 ```
 2️⃣：请根据 [后端部署指引 / 配置项说明](https://github.com/hanshuaikang/AI-Media2Doc/blob/main/backend/README.md#%E5%9C%A8%E7%81%AB%E5%B1%B1%E5%BC%95%E6%93%8E%E8%8E%B7%E5%8F%96%E5%AF%B9%E5%BA%94%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E7%9A%84%E5%80%BC) 完善根目录下的 `variables.env` 文件。 
 
-3️⃣：修改前端的 evn.development 中的 VITE_API_BASE_URL 为 http://0.0.0.0:8080
-
-4️⃣：运行项目
+3️⃣：运行项目
 
 ```shell
 $ make run
