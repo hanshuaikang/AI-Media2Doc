@@ -12,7 +12,7 @@ from constants import VolcengineASRResponseStatusCode, AsrTaskStatus
 from .dispatcher import ActionDispatcher
 
 from actions.tos import generate_download_url
-from env import AUC_APP_ID, AUC_ACCESS_TOKEN
+from env import AUC_APP_ID, AUC_ACCESS_TOKEN, AUC_CLUSTER_ID
 
 STORE = MemoryStore()
 
@@ -35,6 +35,9 @@ async def submit_asr_task(request: ArkChatRequest):
         "audio": {"format": "mp3", "url": download_url},
         "request": {"model_name": "bigmodel", "enable_itn": True},
     }
+
+    if AUC_CLUSTER_ID:
+        data["cluster"] = AUC_CLUSTER_ID
 
     headers = {
         "X-Api-App-Key": AUC_APP_ID,

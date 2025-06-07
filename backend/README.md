@@ -22,6 +22,7 @@ export TOS_REGION=xxxx
 export TOS_BUCKET=xxxx
 export AUC_APP_ID=xxxx
 export AUC_ACCESS_TOKEN=xxxx
+export AUC_CLUSTER_ID=xxxx 
 ```
 
 
@@ -39,7 +40,7 @@ python main.py
 ⚠️: 最新版本的 AI-Media2Doc 已经不再需要 ENDPOINT_ID, 由 MODEL_ID 代替。
 
 登录[方舟控制台](https://console.volcengine.com/ark/region:ark+cn-beijing/openManagement?projectName=default)。进入开通管理, 选择开通一个大语言模型。
-推荐使用 `Doubao-1.5-pro-32k` 。点击开通之后点击该大模型进入详情页，选择通用 LLM(没有就选主线模型), 复制红框内的 `模型 ID`，即为 `MODEL_ID` 的值。
+推荐使用 `doubao-1-5-pro-32k-250115` 。点击开通之后点击该大模型进入详情页，选择通用 LLM(没有就选主线模型), 复制红框内的 `模型 ID`，即为 `MODEL_ID` 的值。
 
 
 <p>
@@ -81,12 +82,21 @@ python main.py
 
 
 ### 音频识别大模型
-登录录音文件识别大模型控制台(https://console.volcengine.com/speech/service), 点击右侧录音文件识别大模型， 创建一个应用, 你就得到了 `AUC_APP_ID` 和 `AUC_ACCESS_TOKEN` 的值。
+
+火山方舟每个音频识别大模型都提供了 20 个小时的试用额度, 可以轮流试用。
+
+登录录音文件识别大模型控制台(https://console.volcengine.com/speech/service), 点击右侧录音文件识别， 创建一个应用, 你就得到了 `AUC_APP_ID` 和 `AUC_ACCESS_TOKEN` 的值。
+
+
 #### AUC_APP_ID
 `AUC_APP_ID` 的值就是你创建的应用的 ID。
 
 #### AUC_ACCESS_TOKEN
 `AUC_ACCESS_TOKEN` 的值就是你创建的应用的 Access Token。
+
+
+#### AUC_CLUSTER_ID
+点击试用 `录音文件识别-通用-标准版` 或者其他的大模型，开通试用之后，`Cluster ID` 列就表示 AUC_CLUSTER_ID 的值。
 
 
 

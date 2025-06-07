@@ -45,7 +45,8 @@ ENV MODEL_ID="xxx" \
     TOS_REGION="xxx" \
     TOS_BUCKET="xxx" \
     AUC_APP_ID="xxx" \
-    AUC_ACCESS_TOKEN="xxx"
+    AUC_ACCESS_TOKEN="xxx" \
+    AUC_CLUSTER_ID="xxx"
 
 EXPOSE 8080
 
