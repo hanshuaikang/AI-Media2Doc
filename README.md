@@ -48,13 +48,13 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
 
 #### 更加简洁的加载页
 <p align="center">
-<img src="docs/images/loading.jpg" alt="task details" width="80%">
+<img src="docs/images/loading.png" alt="task details" width="80%">
 </p>
 
 
 #### 全新设计的结果页, 支持一键导出为字幕。
 <p align="center">
-<img src="docs/images/details.jpg" alt="task details" width="80%">
+<img src="docs/images/details.png" alt="task details" width="80%">
 </p>
 
 #### 支持自定义 prompt

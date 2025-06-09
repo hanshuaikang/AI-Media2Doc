@@ -64,7 +64,7 @@ The AI Media2Doc Assistant originated from an idea I had at the beginning of the
 
 #### Support AI Q&A based on video content
 <p align="center">
-<img src="docs/images/details.jpg" alt="task details" width="80%">
+<img src="docs/images/details.png" alt="task details" width="80%">
 </p>
 
 #### Support mind map generation

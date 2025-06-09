@@ -129,7 +129,7 @@ onMounted(() => {
     <div class="chat-header">
       <div class="header-info">
         <div class="header-icon">
-          <el-avatar :src="'/src/assets/logo.jpeg'" :size="40" />
+          <el-avatar :src="'/src/assets/system.jpeg'" :size="40" />
         </div>
         <div class="header-title">
           <h3>AI 智能助手</h3>
@@ -146,7 +146,7 @@ onMounted(() => {
     <div class="chat-content">
       <div v-for="(msg, index) in chatMessages" :key="index" class="message-wrapper" :class="msg.role">
         <div class="avatar-container">
-          <el-avatar :size="40" :src="msg.role === 'assistant' ? '/src/assets/logo.jpeg' : '/src/assets/user.jpeg'"
+          <el-avatar :size="40" :src="msg.role === 'assistant' ? '/src/assets/system.jpeg' : '/src/assets/user.jpeg'"
             :icon="msg.role === 'assistant' ? '' : User" :class="msg.role" />
         </div>
         <div class="message-bubble">
@@ -530,60 +530,13 @@ onMounted(() => {
 .markdown-content :deep(h4),
 .markdown-content :deep(h5),
 .markdown-content :deep(h6) {
-  margin-top: 8px;
-  margin-bottom: 4px;
+  margin: 8px 0 4px 0;
   font-weight: 600;
   line-height: 1.2;
 }
 
-/* 使列表更紧凑的样式调整 */
-.markdown-content :deep(ul),
-.markdown-content :deep(ol) {
-  padding-left: 12px;
-  /* 减少缩进 */
-  margin: 2px 0;
-  /* 减少上下外边距 */
-}
-
-.markdown-content :deep(li) {
-  margin: 0;
-  /* 移除列表项的外边距 */
-  line-height: 1.3;
-  /* 减少行高 */
-  padding: 1px 0;
-  /* 添加少量内边距确保可读性 */
-}
-
-/* 嵌套列表样式优化 */
-.markdown-content :deep(li > ul),
-.markdown-content :deep(li > ol) {
-  margin: 0 0 0 2px;
-  /* 嵌套列表几乎无边距 */
-  padding-left: 10px;
-  /* 减少缩进 */
-}
-
-/* 列表内段落更紧凑 */
-.markdown-content :deep(li p) {
-  margin: 0;
-  /* 移除段落边距 */
-  padding: 0;
-  /* 移除内边距 */
-}
-
-/* 列表和前后元素间距调整 */
-.markdown-content :deep(p + ul),
-.markdown-content :deep(p + ol),
-.markdown-content :deep(ul + p),
-.markdown-content :deep(ol + p) {
-  margin-top: 2px;
-  /* 减少段落和列表间距 */
-  margin-bottom: 2px;
-}
-
 .markdown-content :deep(p) {
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin: 4px 0;
   line-height: 1.4;
 }
 
@@ -600,32 +553,33 @@ onMounted(() => {
 
 .markdown-content :deep(code) {
   background-color: #f5f5f5;
-  padding: 1px 3px;
+  padding: 2px 4px;
   border-radius: 3px;
   font-family: monospace;
-  font-size: 12px;
-  color: #d63384;
+  font-size: 13px;
+  color: #e74c3c;
 }
 
 .markdown-content :deep(pre) {
-  background-color: #f5f5f5;
-  padding: 8px;
-  border-radius: 5px;
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
   overflow-x: auto;
-  margin: 4px 0;
+  margin: 8px 0;
 }
 
 .markdown-content :deep(pre code) {
-  background-color: transparent;
+  background: none;
   padding: 0;
   color: #333;
 }
 
 .markdown-content :deep(blockquote) {
-  border-left: 3px solid #ddd;
-  padding-left: 8px;
+  border-left: 3px solid #409EFF;
+  padding-left: 12px;
   color: #666;
-  margin: 4px 0;
+  margin: 8px 0;
+  font-style: italic;
 }
 
 .markdown-content :deep(a) {
@@ -637,26 +591,13 @@ onMounted(() => {
   text-decoration: underline;
 }
 
-.markdown-content :deep(img) {
-  max-width: 100%;
-  margin: 4px 0;
+.markdown-content :deep(strong) {
+  font-weight: 600;
+  color: #303133;
 }
 
-.markdown-content :deep(table) {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 4px 0;
-  font-size: 12px;
-}
-
-.markdown-content :deep(th),
-.markdown-content :deep(td) {
-  border: 1px solid #ddd;
-  padding: 4px 6px;
-  text-align: left;
-}
-
-.markdown-content :deep(th) {
-  background-color: #f2f2f2;
+.markdown-content :deep(em) {
+  font-style: italic;
+  color: #606266;
 }
 </style>
