@@ -12,6 +12,7 @@ pip install -r requirements.txt
 
 ## 2. 配置环境变量
 
+
 ```bash
 export MODEL_ID=xxxx
 export ARK_API_KEY=xxxx
@@ -23,7 +24,11 @@ export TOS_BUCKET=xxxx
 export AUC_APP_ID=xxxx
 export AUC_ACCESS_TOKEN=xxxx
 export AUC_CLUSTER_ID=xxxx 
+export WEB_ACCESS_PASSWORD=xxx
 ```
+环境变量说明:
+
+**WEB_ACCESS_PASSWORD**【选填】:前端访问后端服务的密码,后端指定之后需要在前端自定义设置-> 访问密码填写该密码才可以正常使用。
 
 
 ## 3. 启动服务

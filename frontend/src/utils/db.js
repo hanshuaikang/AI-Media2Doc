@@ -76,21 +76,28 @@ export async function saveTask(taskData) {
   }
 }
 
-// 新增：清理旧任务，只保留最新的10条记录
+// 新增：清理旧任务，只保留最新的最大数量记录（取用户设置，默认10）
 async function cleanupOldTasks(db) {
   try {
-    const MAX_TASKS = 10;
+    let maxTasks = 10;
+    try {
+      const v = localStorage.getItem('maxRecords');
+      if (v) {
+        const n = parseInt(v);
+        if (!isNaN(n) && n > 0) maxTasks = n;
+      }
+    } catch { }
     // 按创建时间降序排列获取所有任务
     const allTasks = await db.getAllFromIndex('tasks', 'createdAt');
     allTasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    // 如果任务数超过10个，则删除较旧的任务
-    if (allTasks.length > MAX_TASKS) {
-      const tasksToDelete = allTasks.slice(MAX_TASKS);
+    // 如果任务数超过最大数量，则删除较旧的任务
+    if (allTasks.length > maxTasks) {
+      const tasksToDelete = allTasks.slice(maxTasks);
       for (const task of tasksToDelete) {
         await db.delete('tasks', task.id);
       }
-      console.log(`已清理 ${tasksToDelete.length} 条旧任务记录，保留最新的 ${MAX_TASKS} 条记录`);
+      console.log(`已清理 ${tasksToDelete.length} 条旧任务记录，保留最新的 ${maxTasks} 条记录`);
     }
   } catch (error) {
     console.error('清理旧任务失败:', error);

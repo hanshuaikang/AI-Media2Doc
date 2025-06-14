@@ -42,6 +42,7 @@ const markdownContent = ref('')
 
 const fileMd5 = ref('')
 const fileSize = ref(0)
+const md5Calculating = ref(false)
 
 const resetAll = () => {
   steps.value = stepDefs.map(s => ({ ...s }))
@@ -66,8 +67,10 @@ const handleFileSelected = async (f) => {
   file.value = f
   fileName.value = f.name
   fileSize.value = f.size
+  md5Calculating.value = true
   // 计算MD5
   fileMd5.value = await calculateMD5(new Uint8Array(await f.arrayBuffer()))
+  md5Calculating.value = false
   showStyleSelector.value = true
 }
 
@@ -105,8 +108,6 @@ const startProcessing = async () => {
     } else {
       audioBuf = await extractAudio(new Uint8Array(await file.value.arrayBuffer()))
     }
-    audioData.value = audioBuf
-    audioUrl.value = URL.createObjectURL(new Blob([audioBuf], { type: 'audio/mpeg' }))
     audioExtracted.value = true
     updateStepStatus(1, 'success')
 
@@ -120,11 +121,6 @@ const startProcessing = async () => {
       ElMessage.warning('该音频已以相同风格处理过，请在历史记录中查看')
       return
     }
-    // 3. 上传
-    updateStepStatus(2, 'processing')
-    const uploadUrl = await getAudioUploadUrl(audioFilename.value)
-    await uploadFile(uploadUrl, new Blob([audioBuf], { type: 'audio/mpeg' }))
-    updateStepStatus(2, 'success')
 
     // 4. 识别
     updateStepStatus(3, 'processing')
@@ -134,6 +130,12 @@ const startProcessing = async () => {
       textTranscribed.value = true
       updateStepStatus(3, 'success')
     } else {
+      // 全新的任务才需要上传和识别
+      updateStepStatus(2, 'processing')
+      const uploadUrl = await getAudioUploadUrl(audioFilename.value)
+      await uploadFile(uploadUrl, new Blob([audioBuf], { type: 'audio/mpeg' }))
+      updateStepStatus(2, 'success')
+
       const taskId = await submitAsrTask(audioFilename.value)
       const text = await pollAsrTask(taskId)
       transcriptionText.value = text
@@ -193,8 +195,9 @@ const stepText = computed(() => steps.value[activeStep.value]?.title || '')
       <!-- 步骤1：上传/风格选择/文件信息，始终显示，除非正在处理或有结果 -->
       <div v-if="!isProcessing && !markdownContent" class="component-wrapper">
         <UploadSection :ffmpeg-loading="ffmpegLoading" :is-processing="isProcessing" :file="file" :file-name="fileName"
-          :file-size="fileSize" :file-md5="fileMd5" :style="style" @file-selected="handleFileSelected"
-          @update:style="handleStyleSelected" @start-process="startProcessing" @reset="resetAll" />
+          :file-size="fileSize" :file-md5="fileMd5" :md5-calculating="md5Calculating" :style="style"
+          @file-selected="handleFileSelected" @update:style="handleStyleSelected" @start-process="startProcessing"
+          @reset="resetAll" />
       </div>
       <!-- 步骤3：处理进度（全屏loading） -->
       <LoadingOverlay v-if="isProcessing" :step-text="stepText" :percent="percent" />
