@@ -11,3 +11,6 @@ TOS_BUCKET = os.getenv("TOS_BUCKET")
 AUC_APP_ID = os.getenv("AUC_APP_ID")
 AUC_ACCESS_TOKEN = os.getenv("AUC_ACCESS_TOKEN")
 AUC_CLUSTER_ID = os.getenv("AUC_CLUSTER_ID", None)  # 选填, 填这个可以试用
+WEB_ACCESS_PASSWORD = os.getenv("WEB_ACCESS_PASSWORD", None)  # 选填, 填这个可以开启 Web 端访问密码
+
+os.environ["ARK_API_KEY"] = ARK_API_KEY  # 设置环境变量以供 arkitect 使用

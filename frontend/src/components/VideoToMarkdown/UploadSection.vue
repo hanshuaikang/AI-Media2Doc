@@ -1,6 +1,6 @@
 <script setup>
 import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton } from 'element-plus'
-import { UploadFilled, VideoCamera, Promotion, RefreshRight } from '@element-plus/icons-vue'
+import { UploadFilled, VideoCamera, Promotion, RefreshRight, Loading } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 
 const props = defineProps({
@@ -12,7 +12,6 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  // acceptHint 只在未上传文件时才需要
   acceptHint: {
     type: String,
     default: '上传视频或Mp3音频'
@@ -23,7 +22,11 @@ const props = defineProps({
   fileMd5: String,
   style: String,
   showStyleSelector: Boolean,
-  disabled: Boolean
+  disabled: Boolean,
+  md5Calculating: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const emit = defineEmits(['file-selected', 'update:style', 'start-process', 'reset'])
@@ -37,6 +40,18 @@ const allowedTypes = [
   'audio/mpeg'
 ]
 
+// 获取本地设置的最大上传文件大小（单位MB），默认200
+function getLocalMaxUploadSize() {
+  try {
+    const v = localStorage.getItem('maxUploadSize')
+    if (v) {
+      const n = parseInt(v)
+      if (!isNaN(n) && n >= 10) return n
+    }
+  } catch { }
+  return 200
+}
+
 const handleFileChange = (file) => {
   const isAllowedType = allowedTypes.includes(file.raw.type) ||
     file.raw.name.toLowerCase().endsWith('.mp3');
@@ -44,9 +59,9 @@ const handleFileChange = (file) => {
     ElMessage.error('只支持上传视频文件（MP4、MOV、AVI、MKV、WebM）或MP3音频文件')
     return false
   }
-  const maxSize = 100 * 1024 * 1024
+  const maxSize = getLocalMaxUploadSize() * 1024 * 1024
   if (file.raw.size > maxSize) {
-    ElMessage.error('文件大小不能超过 100MB')
+    ElMessage.error(`文件大小不能超过 ${getLocalMaxUploadSize()}MB`)
     return false
   }
   emit('file-selected', file.raw)
@@ -128,7 +143,20 @@ const handleReset = () => {
           </div>
           <div class="file-info-row">
             <span class="file-info-label">文件MD5：</span>
-            <span class="file-info-value file-info-md5">{{ props.fileMd5 }}</span>
+            <span class="file-info-value file-info-md5">
+              <template v-if="props.md5Calculating">
+                <el-icon class="md5-loading-icon">
+                  <Loading />
+                </el-icon>
+                正在计算 MD5
+                <span class="md5-loading-dots">
+                  <span>.</span><span>.</span><span>.</span>
+                </span>
+              </template>
+              <template v-else>
+                {{ props.fileMd5 }}
+              </template>
+            </span>
           </div>
         </div>
         <div class="style-selector-wrapper style-selector-flex">
@@ -412,6 +440,48 @@ const handleReset = () => {
   border-radius: 4px;
   padding: 2px 6px;
   word-break: break-all;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.md5-loading-icon {
+  font-size: 1.1em;
+  color: #888;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.md5-loading-dots span {
+  animation: blink 1.4s infinite both;
+  opacity: 0.5;
+  font-size: 1.2em;
+}
+
+.md5-loading-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.md5-loading-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes blink {
+
+  0%,
+  80%,
+  100% {
+    opacity: 0.5;
+  }
+
+  40% {
+    opacity: 1;
+  }
 }
 
 .style-selector-wrapper {

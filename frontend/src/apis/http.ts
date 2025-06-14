@@ -34,17 +34,61 @@ class HttpService {
 
     // 请求拦截器
     this.axiosInstance.interceptors.request.use(
-      config => config,
+      config => {
+        // 自动添加Web访问密码请求头
+        try {
+          const webAccessPassword = localStorage.getItem('webAccessPassword')
+          if (webAccessPassword) {
+            config.headers = config.headers || {}
+            config.headers['request-web-access-password'] = webAccessPassword
+          }
+        } catch (error) {
+          console.warn('获取Web访问密码失败:', error)
+        }
+        
+        return config
+      },
       error => Promise.reject(error)
     )
 
     // 响应拦截器
     this.axiosInstance.interceptors.response.use(
-      response => response.data,
+      response => {
+        // 检查状态码是否大于200
+        if (response.status > 200) {
+          const errorData = response.data
+          const message = errorData?.detail?.message || errorData?.message || '请求失败'
+          const status = response.status
+          
+          console.error(`API错误 [${status}]:`, message, errorData)
+          ElMessage.error(message)
+          
+          throw new ApiError(message, status, errorData)
+        }
+        return response.data
+      },
       error => {
-        const message = error.response?.data?.message || error.message || '请求失败'
-        const status = error.response?.status || 500
-        const data = error.response?.data
+        let message = '请求失败'
+        let status = 500
+        let data = null
+        
+        if (error.response) {
+          // 服务器返回了错误响应
+          status = error.response.status
+          data = error.response.data
+          
+          // 优先从detail.message获取错误信息
+          if (data && typeof data === 'object' && 'detail' in data && (data as any).detail?.message) {
+            message = (data as any).detail.message
+          } else if (data && typeof data === 'object' && 'message' in data) {
+            message = (data as any).message
+          } else {
+            message = error.message || '请求失败'
+          }
+        } else {
+          // 网络错误或其他错误
+          message = error.message || '网络错误'
+        }
         
         console.error(`API错误 [${status}]:`, message, data)
         ElMessage.error(message)

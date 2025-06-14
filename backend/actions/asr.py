@@ -5,6 +5,7 @@ import time
 
 import requests
 from arkitect.core.component.llm import ArkChatRequest
+from arkitect.core.errors import APIException
 from arkitect.types.llm.model import ArkChatResponse
 from throttled import Throttled, per_sec, MemoryStore
 
@@ -67,8 +68,10 @@ async def submit_asr_task(request: ArkChatRequest):
             metadata={"task_id": task_id},
         )
     else:
-        raise Exception(
-            f"Submit task failed and the response headers " f"are: {response.headers}"
+        raise APIException(
+            message=f"Submit asr task failed. Response headers: {response.headers}",
+            code="500",
+            http_code=500,
         )
 
 
@@ -144,6 +147,9 @@ async def query_asr_task_status(request: ArkChatRequest):
                 metadata={"result": None, "status": AsrTaskStatus.FAILED.value},
             )
     else:
-        raise Exception(
-            f"Query task failed and the response headers " f"are: {response.headers}"
+        raise APIException(
+            message=f"Query ASR task failed. Response headers: {response.headers}. "
+            f"Please check the task ID or API configuration.",
+            code="500",
+            http_code=500,
         )
