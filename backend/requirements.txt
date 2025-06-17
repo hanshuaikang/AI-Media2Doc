@@ -2,3 +2,4 @@ arkitect==0.2.3
 opentelemetry-sdk>=1.22.0
 opentelemetry-semantic-conventions>=0.43b0
 throttled-py==2.0.2
+openai==1.88.0

@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 ```bash
 export MODEL_ID=xxxx
-export ARK_API_KEY=xxxx
+export LLM_API_KEY=xxxx
 export TOS_ACCESS_KEY=xxxx
 export TOS_SECRET_KEY=xxxx
 export TOS_ENDPOINT=xxxx
@@ -66,7 +66,7 @@ python main.py
 当然你也可以根据实际情况灵活选择。
 
 #### TOS_ENDPOINT
-点击 **桶列表** ->  **点进去你创建的那个 bucket** -> **点击概览** -> **眼睛往下看**
+点击 **桶列表** -> **点进去你创建的那个 bucket** -> **点击概览** -> **眼睛往下看**
 
 你会看到一个访问域名, TOS_ENDPOINT 的值就是红框框里面那个，不同的区域 TOS_ENDPOINT 的值可能不一样。
 <p>
@@ -102,6 +102,12 @@ python main.py
 
 #### AUC_CLUSTER_ID
 点击试用 `录音文件识别-通用-标准版` 或者其他的大模型，开通试用之后，`Cluster ID` 列就表示 AUC_CLUSTER_ID 的值。
+
+
+
+### FAQ
+- ❓:如何使用 ChatGPT, Claude, Gemini 等第三方大模型。
+-  默认 LLM 的代码 Openai SDK。 因此你可以通过替换 `LLM_BASE_URL`, `LLM_API_KEY` 和 `MODEL_ID` 三个环境变量的值来使用其他大模型。
 
 
 
