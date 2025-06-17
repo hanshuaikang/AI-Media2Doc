@@ -9,7 +9,7 @@ from .dispatcher import ActionDispatcher
 @ActionDispatcher.register("generate_markdown_text")
 async def generate_markdown_text(request: ArkChatRequest):
     client = OpenAI(
-        base_url=env.BASE_URL,
+        base_url=env.LLM_BASE_URL,
         api_key=env.LLM_API_KEY,
     )
     messages = [
@@ -18,7 +18,7 @@ async def generate_markdown_text(request: ArkChatRequest):
     ]
 
     yield client.chat.completions.create(
-        model=env.MODEL_ID,
+        model=env.LLM_MODEL_ID,
         messages=messages,
     )
 
@@ -26,7 +26,7 @@ async def generate_markdown_text(request: ArkChatRequest):
 @ActionDispatcher.register("default")
 async def default_llm_action(request: ArkChatRequest):
     client = OpenAI(
-        base_url=env.BASE_URL,
+        base_url=env.LLM_BASE_URL,
         api_key=env.LLM_API_KEY,
     )
     messages = [
@@ -35,6 +35,6 @@ async def default_llm_action(request: ArkChatRequest):
     ]
 
     yield client.chat.completions.create(
-        model=env.MODEL_ID,
+        model=env.LLM_MODEL_ID,
         messages=messages,
     )
