@@ -38,7 +38,7 @@ COPY --from=builder /.venv /.venv
 ADD ./ ./
 
 ENV MODEL_ID="xxx" \
-    ARK_API_KEY="xxx" \
+    LLM_API_KEY="xxx" \
     TOS_ACCESS_KEY="xxx" \
     TOS_SECRET_KEY="xxx" \
     TOS_ENDPOINT="xxx" \
@@ -46,7 +46,9 @@ ENV MODEL_ID="xxx" \
     TOS_BUCKET="xxx" \
     AUC_APP_ID="xxx" \
     AUC_ACCESS_TOKEN="xxx" \
-    AUC_CLUSTER_ID="xxx"
+    AUC_CLUSTER_ID="xxx" \
+    LLM_BASE_URL="https://ark.cn-beijing.volces.com/api/v3"
+
 
 EXPOSE 8080
 
