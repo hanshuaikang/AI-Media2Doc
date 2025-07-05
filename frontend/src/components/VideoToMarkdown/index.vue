@@ -156,10 +156,8 @@ const startProcessing = async () => {
         const endMin = Math.floor(seg.end_time / 60000)
         const endSec = Math.floor((seg.end_time % 60000) / 1000)
         const endMs = seg.end_time % 1000
-
         const startTime = `${startMin.toString().padStart(2, '0')}:${startSec.toString().padStart(2, '0')}.${startMs.toString().padStart(3, '0')}`
         const endTime = `${endMin.toString().padStart(2, '0')}:${endSec.toString().padStart(2, '0')}.${endMs.toString().padStart(3, '0')}`
-
         return `[${startTime} - ${endTime}] ${seg.text}`
       }).join('\n')
     } else {
@@ -230,6 +228,7 @@ async function processImageMarkers(md, file, imageTimeMarkers) {
   if (imageTimeMarkers.length > 0 && !isMP3File(file)) {
     const videoData = new Uint8Array(await file.arrayBuffer())
     let result = md
+    let imageCount = 1 // 新增编号计数器
     for (const marker of imageTimeMarkers) {
       try {
         const timeMatch = marker.match(/#image\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/)
@@ -238,10 +237,14 @@ async function processImageMarkers(md, file, imageTimeMarkers) {
           const seconds = parseInt(timeMatch[2])
           const milliseconds = timeMatch[3] ? parseInt(timeMatch[3]) : 0
           const totalSeconds = minutes * 60 + seconds + milliseconds / 1000
+          console.log(`正在截图: ${marker} (时间: ${marker}) 当前进度 ${imageCount}/${imageTimeMarkers.length}`)
+          // 捕获视频帧`)
           const frameData = await captureVideoFrame(videoData, totalSeconds)
           const base64Image = frameToBase64(frameData)
-          const imageTag = `![截图](${base64Image})`
+          // 使用 HTML img 标签并加编号，设置最大宽度自适应
+          const imageTag = `<div style="text-align:center;"><span style="font-size:0.98em;color:#888;">截图${imageCount}</span><br><img src="${base64Image}" alt="截图${imageCount}" style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 2px 8px #0001;margin:8px 0;" /></div>`
           result = result.replace(marker, imageTag)
+          imageCount++
         }
       } catch (error) {
         console.error(`处理标记 ${marker} 时出错:`, error)

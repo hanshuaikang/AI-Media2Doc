@@ -38,7 +38,8 @@ const props = defineProps({
     }
 })
 
-const md = new MarkdownIt()
+// 修改这里，允许 HTML 渲染
+const md = new MarkdownIt({ html: true })
 const mindMapInstance = ref(null)
 
 // 判断内容是否为JSON格式
@@ -118,6 +119,8 @@ const downloadContent = () => {
 onMounted(() => isContentMindMap.value && initMindMap())
 onBeforeUnmount(() => mindMapInstance.value?.destroy())
 watch(() => props.content, () => isContentMindMap.value && initMindMap())
+
+const isHtmlContent = computed(() => typeof props.content === 'string' && props.content.includes('<div'))
 </script>
 
 <style scoped>
@@ -253,7 +256,7 @@ watch(() => props.content, () => isContentMindMap.value && initMindMap())
 .markdown-content ul ul,
 .markdown-content ol ul,
 .markdown-content ul ol,
-.markdown-content ol ol {
+.markdown-content.ol ol {
     padding-left: 1.2em;
     margin-top: 0;
     margin-bottom: 0;

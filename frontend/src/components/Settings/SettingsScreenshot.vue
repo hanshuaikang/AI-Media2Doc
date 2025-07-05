@@ -132,11 +132,15 @@ function saveScreenshotSettings() {
     box-shadow: 0 1px 4px 0 rgba(60, 80, 120, 0.04);
     width: 100%;
     align-self: flex-start;
+    text-align: left;
+    /* 新增：左对齐 */
 }
 
 .screenshot-warn-tip-text {
     color: #e67e22;
     font-weight: 600;
+    text-align: left;
+    /* 新增：左对齐 */
 }
 
 .screenshot-save-btn-row {
