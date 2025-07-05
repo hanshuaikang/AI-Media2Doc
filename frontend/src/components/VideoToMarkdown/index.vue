@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import UploadSection from './UploadSection.vue'
 import LoadingOverlay from './LoadingOverlay.vue'
-import { loadFFmpeg, extractAudio } from '../../utils/ffmpeg'
+import { loadFFmpeg, extractAudio, captureVideoFrame, frameToBase64 } from '../../utils/ffmpeg'
 import { submitAsrTask, pollAsrTask } from '../../apis/asrService'
 import { generateMarkdownText } from '../../apis/markdownService'
 import { calculateMD5 } from '../../utils/md5'
@@ -145,15 +145,34 @@ const startProcessing = async () => {
 
     // 5. 生成内容
     updateStepStatus(4, 'processing')
-    // 兼容新版协议：只传入文本
-    let plainText
+    // 处理转录文本，支持字幕格式
+    let processedText
     if (Array.isArray(transcriptionText.value) && transcriptionText.value.length > 0 && typeof transcriptionText.value[0] === 'object' && 'text' in transcriptionText.value[0]) {
-      plainText = transcriptionText.value.map(seg => seg.text).join('\n')
+      // 转换为字幕格式，包含时间戳信息
+      processedText = transcriptionText.value.map(seg => {
+        const startMin = Math.floor(seg.start_time / 60000)
+        const startSec = Math.floor((seg.start_time % 60000) / 1000)
+        const startMs = seg.start_time % 1000
+        const endMin = Math.floor(seg.end_time / 60000)
+        const endSec = Math.floor((seg.end_time % 60000) / 1000)
+        const endMs = seg.end_time % 1000
+
+        const startTime = `${startMin.toString().padStart(2, '0')}:${startSec.toString().padStart(2, '0')}.${startMs.toString().padStart(3, '0')}`
+        const endTime = `${endMin.toString().padStart(2, '0')}:${endSec.toString().padStart(2, '0')}.${endMs.toString().padStart(3, '0')}`
+
+        return `[${startTime} - ${endTime}] ${seg.text}`
+      }).join('\n')
     } else {
-      plainText = transcriptionText.value
+      processedText = transcriptionText.value
     }
-    const md = await generateMarkdownText(plainText, style.value)
-    markdownContent.value = md
+    const md = await generateMarkdownText(processedText, style.value)
+    // 提取所有时间戳标记 #image[MM:SS] 或 #image[MM:SS.mmm] 格式
+    const imageTimeRegex = /#image\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/g
+    const imageTimeMarkers = md.match(imageTimeRegex) || []
+    console.log('提取到的时间戳标记:', imageTimeMarkers)
+    // 新逻辑：根据开关处理截图
+    markdownContent.value = await processImageMarkers(md, file.value, imageTimeMarkers)
+
     updateStepStatus(4, 'success')
 
     // 保存
@@ -161,7 +180,7 @@ const startProcessing = async () => {
       fileName: fileName.value,
       md5: audioMd5,
       transcriptionText: transcriptionText.value,
-      markdownContent: md,
+      markdownContent: markdownContent.value, // 使用处理后的markdown内容
       contentStyle: style.value,
       createdAt: new Date().toISOString()
     }
@@ -180,6 +199,60 @@ const startProcessing = async () => {
     isProcessing.value = false
     showStartButton.value = false
   }
+}
+
+// 智能截图开关读取
+function isSmartScreenshotEnabled() {
+  try {
+    return localStorage.getItem('smartScreenshotEnabled') === 'true'
+  } catch {
+    return false
+  }
+}
+
+// 抽离截图处理逻辑
+async function processImageMarkers(md, file, imageTimeMarkers) {
+  // 去除掉 md 开头的 ```markdown 和 结尾的 ```
+  if (md.startsWith('```markdown')) {
+    md = md.replace(/^```markdown\s*/, '').replace(/```$/, '').trim()
+  } else if (md.startsWith('```')) {
+    md = md.replace(/^```/, '').replace(/```$/, '').trim()
+  }
+  if (!isSmartScreenshotEnabled()) {
+    // 未开启，全部替换为空
+    let result = md
+    for (const marker of imageTimeMarkers) {
+      result = result.replaceAll(marker, '')
+    }
+    return result
+  }
+  // 已开启，执行截图逻辑
+  if (imageTimeMarkers.length > 0 && !isMP3File(file)) {
+    const videoData = new Uint8Array(await file.arrayBuffer())
+    let result = md
+    for (const marker of imageTimeMarkers) {
+      try {
+        const timeMatch = marker.match(/#image\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/)
+        if (timeMatch) {
+          const minutes = parseInt(timeMatch[1])
+          const seconds = parseInt(timeMatch[2])
+          const milliseconds = timeMatch[3] ? parseInt(timeMatch[3]) : 0
+          const totalSeconds = minutes * 60 + seconds + milliseconds / 1000
+          const frameData = await captureVideoFrame(videoData, totalSeconds)
+          const base64Image = frameToBase64(frameData)
+          const imageTag = `![截图](${base64Image})`
+          result = result.replace(marker, imageTag)
+        }
+      } catch (error) {
+        console.error(`处理标记 ${marker} 时出错:`, error)
+        ElMessage.error(`处理标记 ${marker} 时出错: ${error.message}`)
+      }
+    }
+    return result
+  } else if (imageTimeMarkers.length > 0 && isMP3File(file)) {
+    return md
+  }
+  return md
 }
 
 // 步骤百分比辅助
