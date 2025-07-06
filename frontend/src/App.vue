@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import AppSidebar from './components/AppSidebar.vue'
 import VideoToMarkdown from './components/VideoToMarkdown/index.vue'
 import TaskDetail from './components/VideoToMarkdown/TaskDetail.vue'
@@ -13,6 +13,9 @@ const isTaskDetailOpen = ref(false)
 const currentTask = ref(null)
 
 const previousMenu = ref('new-task')
+
+// 新增：全局 isProcessing 状态
+const isProcessing = ref(false)
 
 const handleMenuSelect = (key) => {
   if (key.startsWith('task-')) {
@@ -43,7 +46,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="app-container">
-    <AppSidebar :active-menu="activeMenu" @menu-select="handleMenuSelect" @view-task="handleViewTask" />
+    <AppSidebar :active-menu="activeMenu" :is-processing="isProcessing" @menu-select="handleMenuSelect" @view-task="handleViewTask" />
 
     <div class="content-area">
       <div class="content-wrapper">
@@ -51,7 +54,7 @@ onBeforeUnmount(() => {
           <TaskDetail :task="currentTask" />
         </template>
         <template v-else-if="activeMenu === 'new-task'">
-          <VideoToMarkdown />
+          <VideoToMarkdown v-model:is-processing="isProcessing" />
         </template>
         <template v-else>
         </template>

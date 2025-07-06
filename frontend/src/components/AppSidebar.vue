@@ -10,6 +10,10 @@ const props = defineProps({
     activeMenu: {
         type: String,
         default: 'new-task'
+    },
+    isProcessing: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -132,6 +136,11 @@ const handleDeleteTask = async (event, task) => {
         }
     }
 };
+
+// 自动关闭弹窗：生成中时强制关闭
+watch(() => props.isProcessing, (val) => {
+    if (val) showSettingsDialog.value = false
+})
 </script>
 
 <template>
@@ -214,7 +223,7 @@ const handleDeleteTask = async (event, task) => {
 
         <!-- 设置按钮放在底部版权信息上方，脱离 el-menu -->
         <div class="sidebar-settings">
-            <div class="settings-menu-item" @click="showSettingsDialog = true">
+            <div class="settings-menu-item" :class="{ 'is-disabled': isProcessing }" @click="!isProcessing && (showSettingsDialog = true)">
                 <div class="settings-btn-content">
                     <el-icon class="menu-icon-settings">
                         <el-icon>
@@ -717,6 +726,12 @@ const handleDeleteTask = async (event, task) => {
     background: #f0f6ff;
     border-color: #0057ff;
     box-shadow: 0 2px 8px rgba(0, 87, 255, 0.07);
+}
+
+.settings-menu-item.is-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 .settings-btn-content {

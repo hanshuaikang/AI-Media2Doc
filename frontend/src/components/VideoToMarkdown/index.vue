@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import UploadSection from './UploadSection.vue'
 import LoadingOverlay from './LoadingOverlay.vue'
@@ -10,6 +10,12 @@ import { calculateMD5 } from '../../utils/md5'
 import { getAudioUploadUrl, uploadFile } from '../../apis'
 import { saveTask, checkTaskExistsByMd5AndStyle, getAnyTaskByMd5, getTaskByID } from '../../utils/db'
 import { eventBus } from '../../utils/eventBus'
+
+// v-model:is-processing 双向绑定支持
+const props = defineProps({
+  isProcessing: Boolean
+})
+const emit = defineEmits(['update:is-processing'])
 
 const stepDefs = [
   { title: '初始化 FFmpeg', icon: 'Promotion', status: 'wait' },
@@ -24,7 +30,15 @@ const activeStep = ref(0)
 
 const ffmpegLoading = ref(false)
 const ffmpegLoaded = ref(false)
-const isProcessing = ref(false)
+const isProcessing = ref(props.isProcessing || false)
+
+// 双向绑定同步逻辑
+watch(() => props.isProcessing, (val) => {
+  isProcessing.value = val
+})
+watch(isProcessing, (val) => {
+  emit('update:is-processing', val)
+})
 
 const file = ref(null)
 const fileName = ref('')
@@ -151,7 +165,6 @@ const startProcessing = async () => {
     updateStepStatus(4, 'processing')
     // 处理转录文本，支持字幕格式
     let processedText
-    console.log(transcriptionText.value)
     if (Array.isArray(transcriptionText.value) && transcriptionText.value.length > 0 && typeof transcriptionText.value[0] === 'object' && 'text' in transcriptionText.value[0]) {
       // 转换为字幕格式，包含时间戳信息
       processedText = transcriptionText.value.map(seg => {
@@ -172,8 +185,6 @@ const startProcessing = async () => {
     // 提取所有时间戳标记 #image[20] 格式（整数秒数）
     const imageTimeRegex = /#image\[(\d+)\]/g
     const imageTimeMarkers = md.match(imageTimeRegex) || []
-    console.log('提取到的时间戳标记:', imageTimeMarkers)
-    // 新逻辑：根据开关处理截图
     markdownContent.value = await processImageMarkers(md, file.value, imageTimeMarkers)
 
     updateStepStatus(4, 'success')
@@ -245,7 +256,6 @@ async function processImageMarkers(md, file, imageTimeMarkers) {
         const timeMatch = marker.match(/#image\[(\d+)\]/)
         if (timeMatch) {
           const totalSeconds = parseInt(timeMatch[1])
-          console.log(`正在截图: ${marker} (时间: ${totalSeconds}秒) 当前进度 ${imageIdx}/${imageTimeMarkers.length}`)
           // 捕获视频帧
           const frameData = await captureVideoFrame(videoData, totalSeconds)
           const base64Image = frameToBase64(frameData)
