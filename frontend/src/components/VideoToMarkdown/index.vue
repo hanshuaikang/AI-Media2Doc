@@ -151,7 +151,6 @@ const startProcessing = async () => {
     updateStepStatus(4, 'processing')
     // 处理转录文本，支持字幕格式
     let processedText
-    console.log(transcriptionText.value)
     if (Array.isArray(transcriptionText.value) && transcriptionText.value.length > 0 && typeof transcriptionText.value[0] === 'object' && 'text' in transcriptionText.value[0]) {
       // 转换为字幕格式，包含时间戳信息
       processedText = transcriptionText.value.map(seg => {
