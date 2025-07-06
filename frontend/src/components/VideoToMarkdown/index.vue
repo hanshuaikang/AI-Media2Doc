@@ -8,7 +8,7 @@ import { submitAsrTask, pollAsrTask } from '../../apis/asrService'
 import { generateMarkdownText } from '../../apis/markdownService'
 import { calculateMD5 } from '../../utils/md5'
 import { getAudioUploadUrl, uploadFile } from '../../apis'
-import { saveTask, checkTaskExistsByMd5AndStyle, getAnyTaskByMd5, getAllTasks, getTaskByID } from '../../utils/db'
+import { saveTask, checkTaskExistsByMd5AndStyle, getAnyTaskByMd5, getTaskByID } from '../../utils/db'
 import { eventBus } from '../../utils/eventBus'
 
 const stepDefs = [
@@ -147,6 +147,7 @@ const startProcessing = async () => {
     updateStepStatus(4, 'processing')
     // 处理转录文本，支持字幕格式
     let processedText
+    console.log(transcriptionText.value)
     if (Array.isArray(transcriptionText.value) && transcriptionText.value.length > 0 && typeof transcriptionText.value[0] === 'object' && 'text' in transcriptionText.value[0]) {
       // 转换为字幕格式，包含时间戳信息
       processedText = transcriptionText.value.map(seg => {
@@ -164,8 +165,8 @@ const startProcessing = async () => {
       processedText = transcriptionText.value
     }
     const md = await generateMarkdownText(processedText, style.value)
-    // 提取所有时间戳标记 #image[MM:SS] 或 #image[MM:SS.mmm] 格式
-    const imageTimeRegex = /#image\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/g
+    // 提取所有时间戳标记 #image[20] 格式（整数秒数）
+    const imageTimeRegex = /#image\[(\d+)\]/g
     const imageTimeMarkers = md.match(imageTimeRegex) || []
     console.log('提取到的时间戳标记:', imageTimeMarkers)
     // 新逻辑：根据开关处理截图
@@ -231,14 +232,12 @@ async function processImageMarkers(md, file, imageTimeMarkers) {
     let imageCount = 1 // 新增编号计数器
     for (const marker of imageTimeMarkers) {
       try {
-        const timeMatch = marker.match(/#image\[(\d{1,2}):(\d{1,2})(?:\.(\d{1,3}))?\]/)
+        // 匹配 #image[20] 形式
+        const timeMatch = marker.match(/#image\[(\d+)\]/)
         if (timeMatch) {
-          const minutes = parseInt(timeMatch[1])
-          const seconds = parseInt(timeMatch[2])
-          const milliseconds = timeMatch[3] ? parseInt(timeMatch[3]) : 0
-          const totalSeconds = minutes * 60 + seconds + milliseconds / 1000
-          console.log(`正在截图: ${marker} (时间: ${marker}) 当前进度 ${imageCount}/${imageTimeMarkers.length}`)
-          // 捕获视频帧`)
+          const totalSeconds = parseInt(timeMatch[1])
+          console.log(`正在截图: ${marker} (时间: ${totalSeconds}秒) 当前进度 ${imageCount}/${imageTimeMarkers.length}`)
+          // 捕获视频帧
           const frameData = await captureVideoFrame(videoData, totalSeconds)
           const base64Image = frameToBase64(frameData)
           // 使用 HTML img 标签并加编号，设置最大宽度自适应
