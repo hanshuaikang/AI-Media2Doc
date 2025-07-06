@@ -44,6 +44,10 @@ const fileMd5 = ref('')
 const fileSize = ref(0)
 const md5Calculating = ref(false)
 
+const smartScreenshot = ref(false)
+const imageCount = ref(0)
+const imageTotal = ref(0)
+
 const resetAll = () => {
   steps.value = stepDefs.map(s => ({ ...s }))
   activeStep.value = 0
@@ -217,43 +221,54 @@ async function processImageMarkers(md, file, imageTimeMarkers) {
   } else if (md.startsWith('```')) {
     md = md.replace(/^```/, '').replace(/```$/, '').trim()
   }
-  if (!isSmartScreenshotEnabled()) {
+  smartScreenshot.value = isSmartScreenshotEnabled()
+  imageCount.value = 0
+  imageTotal.value = imageTimeMarkers.length
+  if (!smartScreenshot.value) {
     // 未开启，全部替换为空
     let result = md
     for (const marker of imageTimeMarkers) {
       result = result.replaceAll(marker, '')
     }
+    imageCount.value = 0
+    imageTotal.value = 0
     return result
   }
   // 已开启，执行截图逻辑
   if (imageTimeMarkers.length > 0 && !isMP3File(file)) {
     const videoData = new Uint8Array(await file.arrayBuffer())
     let result = md
-    let imageCount = 1 // 新增编号计数器
+    let imageIdx = 1 // 新增编号计数器
     for (const marker of imageTimeMarkers) {
       try {
         // 匹配 #image[20] 形式
         const timeMatch = marker.match(/#image\[(\d+)\]/)
         if (timeMatch) {
           const totalSeconds = parseInt(timeMatch[1])
-          console.log(`正在截图: ${marker} (时间: ${totalSeconds}秒) 当前进度 ${imageCount}/${imageTimeMarkers.length}`)
+          console.log(`正在截图: ${marker} (时间: ${totalSeconds}秒) 当前进度 ${imageIdx}/${imageTimeMarkers.length}`)
           // 捕获视频帧
           const frameData = await captureVideoFrame(videoData, totalSeconds)
           const base64Image = frameToBase64(frameData)
           // 使用 HTML img 标签并加编号，设置最大宽度自适应
-          const imageTag = `<div style="text-align:center;"><span style="font-size:0.98em;color:#888;">截图${imageCount}</span><br><img src="${base64Image}" alt="截图${imageCount}" style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 2px 8px #0001;margin:8px 0;" /></div>`
+          const imageTag = `<div style="text-align:center;"><span style="font-size:0.98em;color:#888;">截图${imageIdx}</span><br><img src="${base64Image}" alt="截图${imageIdx}" style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 2px 8px #0001;margin:8px 0;" /></div>`
           result = result.replace(marker, imageTag)
-          imageCount++
+          imageCount.value = imageIdx // 实时更新进度
+          imageIdx++
         }
       } catch (error) {
         console.error(`处理标记 ${marker} 时出错:`, error)
         ElMessage.error(`处理标记 ${marker} 时出错: ${error.message}`)
       }
     }
+    imageCount.value = imageTotal.value // 处理完成
     return result
   } else if (imageTimeMarkers.length > 0 && isMP3File(file)) {
+    imageCount.value = 0
+    imageTotal.value = 0
     return md
   }
+  imageCount.value = 0
+  imageTotal.value = 0
   return md
 }
 
@@ -275,7 +290,8 @@ const stepText = computed(() => steps.value[activeStep.value]?.title || '')
           @reset="resetAll" />
       </div>
       <!-- 步骤3：处理进度（全屏loading） -->
-      <LoadingOverlay v-if="isProcessing" :step-text="stepText" :percent="percent" />
+      <LoadingOverlay v-if="isProcessing" :step-text="stepText" :percent="percent" :smart-screenshot="smartScreenshot"
+        :image-count="imageCount" :image-total="imageTotal" />
     </div>
   </div>
 </template>

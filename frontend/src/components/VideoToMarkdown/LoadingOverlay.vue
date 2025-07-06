@@ -11,6 +11,10 @@
             <span class="step-text">{{ stepText }}</span>
             <span class="percent-text" v-if="percent !== undefined && percent !== null">{{ percent }}%</span>
         </div>
+        <!-- 智能截图进度提示 -->
+        <div v-if="smartScreenshot && imageTotal > 0" class="smart-screenshot-hint">
+            当前正在智能截图，进度{{ imageCount }}/{{ imageTotal }}，智能截图需要较多时间，请耐心等待
+        </div>
         <div class="sub-text">
             请勿关闭或者离开此页面
         </div>
@@ -30,6 +34,19 @@ const props = defineProps({
     percent: {
         type: [Number, String],
         default: null
+    },
+    // 新增智能截图相关 props
+    smartScreenshot: {
+        type: Boolean,
+        default: false
+    },
+    imageCount: {
+        type: Number,
+        default: 0
+    },
+    imageTotal: {
+        type: Number,
+        default: 0
     }
 })
 </script>
@@ -142,5 +159,32 @@ const props = defineProps({
 
 .loading-text {
     display: none;
+}
+
+/* 智能截图提示：无背景，字体小，呼吸动画 */
+.smart-screenshot-hint {
+    font-size: 0.89rem;
+    color: #6b7280;
+    font-weight: 500;
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+    opacity: 0.85;
+    letter-spacing: 0.1px;
+    text-align: center;
+    animation: breathing 2.2s ease-in-out infinite;
+}
+
+@keyframes breathing {
+    0% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.7;
+    }
 }
 </style>
