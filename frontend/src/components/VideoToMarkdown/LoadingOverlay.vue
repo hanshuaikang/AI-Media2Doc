@@ -58,7 +58,7 @@ const props = defineProps({
     right: 0;
     top: 0;
     bottom: 0;
-    z-index: 9999;
+    z-index: 1500;
     background: rgba(255, 255, 255, 0.96);
     display: flex;
     flex-direction: column;

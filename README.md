@@ -139,9 +139,9 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 ### 🙌 致谢
 感谢这些朋友对本项目做出的贡献:
 
-|  |  |
-|:-:|:-:|
-| <a href="https://github.com/ZhuoZhuoCrayon"><img src="https://github.com/ZhuoZhuoCrayon.png" width="50" height="50"/><br/>crayon</a> | <a href="https://github.com/cjx929"><img src="https://github.com/cjx929.png" width="50" height="50"/><br/>chen_jx</a> |
+|  |  |                                                                                                                        |
+|:-:|:-:|:----------------------------------------------------------------------------------------------------------------------:|
+| <a href="https://github.com/ZhuoZhuoCrayon"><img src="https://github.com/ZhuoZhuoCrayon.png" width="50" height="50"/><br/>crayon</a> | <a href="https://github.com/cjx929"><img src="https://github.com/cjx929.png" width="50" height="50"/><br/>chen_jx</a> | <a href="https://github.com/LMseventeen"><img src="https://github.com/LMseventeen.png" width="50" height="50"/><br/>LMseventeen</a>  |
 
 感谢以下自媒体对本项目的关注和转发(以下排名不分先后), 大家感兴趣的话可以关注下他们 ～
 

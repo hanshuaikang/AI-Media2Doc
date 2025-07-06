@@ -1,6 +1,6 @@
 <template>
-    <el-dialog v-model="visible" title="自定义配置" width="50vw" class="settings-dialog" :close-on-click-modal="false"
-        :close-on-press-escape="true" :show-close="true" @close="handleClose">
+    <el-dialog v-model="visible" title="自定义配置" width="50vw" class="settings-dialog" :close-on-click-modal="true"
+        :close-on-press-escape="true" :show-close="true" @close="handleClose" append-to-body :z-index="9999">
         <div class="settings-dialog-body">
             <div class="settings-sidebar">
                 <ul>
