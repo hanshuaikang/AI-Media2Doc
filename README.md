@@ -56,8 +56,11 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
 开启方式, 点击自定义设置->智能截图 选择打开。
 
 开启之后截图会花费比较长的时间, 同时目前只支持一个小时内的视频。
+
+**如果定义了自定义 prompt 则需要重置到当前最新 prompt 才可以使用该功能。**
+
 <p align="center">
-<img src="docs/images/screenshot.jpg" alt="task details" width="80%">
+<img src="docs/images/screenshot.png" alt="task details" width="80%">
 </p>
 
 #### 全新设计的结果页, 支持一键导出为字幕。
