@@ -20,7 +20,8 @@ export const loadFFmpeg = async () => {
 
   try {
     const script = document.createElement('script')
-    script.src = 'https://unpkg.com/@ffmpeg/ffmpeg@0.10.1/dist/ffmpeg.min.js'
+    script.src = '/assets/ffmpeg/ffmpeg.min.js'
+
     document.head.appendChild(script)
 
     await new Promise((resolve) => {
@@ -28,6 +29,7 @@ export const loadFFmpeg = async () => {
     })
 
     ffmpeg = FFmpeg.createFFmpeg({
+      corePath: '/assets/ffmpeg/ffmpeg-core.js',
       log: true,
       progress: ({ ratio }) => {
         // 进度回调
