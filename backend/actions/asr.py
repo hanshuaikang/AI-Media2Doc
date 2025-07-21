@@ -18,6 +18,14 @@ from env import AUC_APP_ID, AUC_ACCESS_TOKEN, AUC_CLUSTER_ID
 STORE = MemoryStore()
 
 
+def get_mac_address():
+    # 获取本机 MAC 地址
+    mac = uuid.getnode()
+    # 将 MAC 地址格式化为标准形式
+    mac_address = ":".join(("%012X" % mac)[i : i + 2] for i in range(0, 12, 2))
+    return mac_address
+
+
 @ActionDispatcher.register("submit_asr_task")
 async def submit_asr_task(request: ArkChatRequest):
     """
@@ -25,38 +33,43 @@ async def submit_asr_task(request: ArkChatRequest):
     :param request: message: filename
     :return:
     """
-    submit_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/submit"
+    submit_url = "https://openspeech.bytedance.com/api/v1/auc/submit"
     # 音频文件名
     file_name = request.messages[0].content
     download_url = generate_download_url(file_name)
     # 生成人物 id
-    task_id = uuid.uuid4().hex
 
     data = {
+        "app": {
+            "appid": AUC_APP_ID,
+            "token": AUC_ACCESS_TOKEN,
+            "cluster": AUC_CLUSTER_ID,
+        },
+        "user": {
+            "uid": get_mac_address(),
+        },
         "audio": {"format": "mp3", "url": download_url},
         "request": {"model_name": "bigmodel", "enable_itn": True},
     }
 
-    if AUC_CLUSTER_ID:
-        data["cluster"] = AUC_CLUSTER_ID
-
     headers = {
-        "X-Api-App-Key": AUC_APP_ID,
-        "X-Api-Access-Key": AUC_ACCESS_TOKEN,
-        "X-Api-Resource-Id": "volc.bigasr.auc",
-        "X-Api-Request-Id": task_id,
-        "X-Api-Sequence": "-1",
+        "Authorization": f"Bearer; {AUC_ACCESS_TOKEN}",
     }
 
     # 最大 QPS 限制在 100，避免频繁请求。
     with Throttled(key=AUC_APP_ID, store=STORE, quota=per_sec(limit=100, burst=100)):
         response = requests.post(submit_url, data=json.dumps(data), headers=headers)
 
-    # 判断任务是否成功
-    if (
-        "X-Api-Status-Code" in response.headers
-        and response.headers["X-Api-Status-Code"] == "20000000"
-    ):
+    try:
+        response.raise_for_status()
+        resp = response.json()
+        if resp["resp"]["message"] != "success":
+            raise APIException(
+                message=f"Submit asr task failed. Response: {resp}",
+                code="500",
+                http_code=500,
+            )
+        task_id = resp["resp"]["id"]
         yield ArkChatResponse(
             id="upload_url",
             choices=[],
@@ -67,9 +80,9 @@ async def submit_asr_task(request: ArkChatRequest):
             bot_usage=None,
             metadata={"task_id": task_id},
         )
-    else:
+    except requests.RequestException as e:
         raise APIException(
-            message=f"Submit asr task failed. Response headers: {response.headers}",
+            message=f"Submit asr task failed. Request error: {str(e)}",
             code="500",
             http_code=500,
         )
@@ -78,78 +91,82 @@ async def submit_asr_task(request: ArkChatRequest):
 @ActionDispatcher.register("query_asr_task_status")
 async def query_asr_task_status(request: ArkChatRequest):
     task_id = request.messages[0].content
-    headers = {
-        "X-Api-App-Key": AUC_APP_ID,
-        "X-Api-Access-Key": AUC_ACCESS_TOKEN,
-        "X-Api-Resource-Id": "volc.bigasr.auc",
-        "X-Api-Request-Id": task_id,
-    }
 
-    query_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/query"
+    data = {
+        "appid": AUC_APP_ID,
+        "token": AUC_ACCESS_TOKEN,
+        "cluster": AUC_CLUSTER_ID,
+        "id": task_id,
+    }
+    query_url = "https://openspeech.bytedance.com/api/v1/auc/query"
+
+    headers = {
+        "Authorization": f"Bearer; {AUC_ACCESS_TOKEN}",
+    }
 
     # 最大 QPS 限制在 100，避免频繁请求。
     with Throttled(key=AUC_APP_ID, store=STORE, quota=per_sec(limit=100, burst=100)):
-        response = requests.post(query_url, json.dumps({}), headers=headers)
+        response = requests.post(query_url, json.dumps(data), headers=headers)
 
-    if "X-Api-Status-Code" in response.headers:
-        if (
-            response.headers["X-Api-Status-Code"]
-            == VolcengineASRResponseStatusCode.SUCCESS.value
-        ):
-
-            data = response.json()
-            utterances = data["result"]["utterances"]
-            result = [
-                {
-                    "start_time": utterance["start_time"],
-                    "end_time": utterance["end_time"],
-                    "text": utterance["text"],
-                }
-                for utterance in utterances
-            ]
-
-            yield ArkChatResponse(
-                id="query_asr_task_status",
-                choices=[],
-                created=int(time.time()),
-                model="",
-                object="chat.completion",
-                usage=None,
-                bot_usage=None,
-                metadata={
-                    "result": result,
-                    "status": AsrTaskStatus.FINISHED.value,
-                },
-            )
-        elif response.headers["X-Api-Status-Code"] in [
-            VolcengineASRResponseStatusCode.PENDING.value,
-            VolcengineASRResponseStatusCode.RUNNING.value,
-        ]:
-            yield ArkChatResponse(
-                id="query_asr_task_status",
-                choices=[],
-                created=int(time.time()),
-                model="",
-                object="chat.completion",
-                usage=None,
-                bot_usage=None,
-                metadata={"result": None, "status": AsrTaskStatus.RUNNING.value},
-            )
-        else:
-            yield ArkChatResponse(
-                id="query_asr_task_status",
-                choices=[],
-                created=int(time.time()),
-                model="",
-                object="chat.completion",
-                usage=None,
-                bot_usage=None,
-                metadata={"result": None, "status": AsrTaskStatus.FAILED.value},
-            )
-    else:
+    try:
+        response.raise_for_status()
+        resp = response.json()
+        print(json.dumps(resp))
+    except requests.RequestException as e:
         raise APIException(
-            message=f"Query ASR task failed. Response headers: {response.headers}. "
-            f"Please check the task ID or API configuration.",
+            message=f"Query ASR task failed. Request error: {str(e)}",
             code="500",
             http_code=500,
+        )
+
+    code = resp["resp"]["code"]
+    if code == VolcengineASRResponseStatusCode.SUCCESS.value:
+        utterances = resp["resp"]["utterances"]
+        result = [
+            {
+                "start_time": utterance["start_time"],
+                "end_time": utterance["end_time"],
+                "text": utterance["text"],
+            }
+            for utterance in utterances
+        ]
+
+        yield ArkChatResponse(
+            id="query_asr_task_status",
+            choices=[],
+            created=int(time.time()),
+            model="",
+            object="chat.completion",
+            usage=None,
+            bot_usage=None,
+            metadata={
+                "result": result,
+                "status": AsrTaskStatus.FINISHED.value,
+            },
+        )
+
+    elif code in [
+        VolcengineASRResponseStatusCode.PENDING.value,
+        VolcengineASRResponseStatusCode.RUNNING.value,
+    ]:
+        yield ArkChatResponse(
+            id="query_asr_task_status",
+            choices=[],
+            created=int(time.time()),
+            model="",
+            object="chat.completion",
+            usage=None,
+            bot_usage=None,
+            metadata={"result": None, "status": AsrTaskStatus.RUNNING.value},
+        )
+    else:
+        yield ArkChatResponse(
+            id="query_asr_task_status",
+            choices=[],
+            created=int(time.time()),
+            model="",
+            object="chat.completion",
+            usage=None,
+            bot_usage=None,
+            metadata={"result": None, "status": AsrTaskStatus.FAILED.value},
         )

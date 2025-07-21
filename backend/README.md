@@ -90,7 +90,7 @@ python main.py
 
 火山方舟每个音频识别大模型都提供了 20 个小时的试用额度, 可以轮流试用。
 
-登录录音文件识别大模型控制台(https://console.volcengine.com/speech/service), 点击右侧录音文件识别， 创建一个应用, 你就得到了 `AUC_APP_ID` 和 `AUC_ACCESS_TOKEN` 的值。
+登录录音文件识别大模型控制台(https://console.volcengine.com/speech/service), 点击右侧**语音识别->录音文件识别**(注意不是录音文件识别大模型)， 创建一个应用, 你就得到了 `AUC_APP_ID` 和 `AUC_ACCESS_TOKEN` 和 `AUC_CLUSTER_ID` 的值。
 
 
 #### AUC_APP_ID

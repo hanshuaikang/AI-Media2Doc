@@ -2,9 +2,9 @@ import enum
 
 
 class VolcengineASRResponseStatusCode(enum.Enum):
-    SUCCESS = "20000000"
-    RUNNING = "20000001"
-    PENDING = "20000002"
+    SUCCESS = 1000
+    RUNNING = 2000
+    PENDING = 2001
 
 
 class AsrTaskStatus(enum.Enum):
