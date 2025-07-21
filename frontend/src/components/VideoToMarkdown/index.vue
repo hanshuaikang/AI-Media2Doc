@@ -140,6 +140,7 @@ const startProcessing = async () => {
       await uploadFile(uploadUrl, new Blob([audioBuf], { type: 'audio/mpeg' }))
       updateStepStatus(2, 'success')
 
+      updateStepStatus(3, 'processing')
       const taskId = await submitAsrTask(audioFilename.value)
       const text = await pollAsrTask(taskId)
       transcriptionText.value = text
