@@ -135,6 +135,14 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
  赞助作者: <a href="https://afdian.com/a/hanshu-github">我的爱发电主页</a>
 </p>
 
+**赞助名单**
+
+| 赞助者          | 渠道  | 金额    | 备注                             |
+|--------------|-----|-------|--------------------------------|
+| LMseventeen  | 爱发电 | 9.9元  | 请作者吃包辣条(买了卫龙)                  |
+| 甄选网创云        | 爱发电 | 19.8元 | 开源正能量, 请作者吃辣条哈哈哈，超好用，完美解决了我的困扰 |
+| 小红书博主: 摸鱼的小李 | 爱发电 | 59.4元 | 大家都去关注的他的小红书哇，很好的一个账号          |
+
 
 ### 🙌 致谢
 感谢这些朋友对本项目做出的贡献:
@@ -145,9 +153,9 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 
 感谢以下自媒体对本项目的关注和转发(以下排名不分先后), 大家感兴趣的话可以关注下他们 ～
 
-| [HelloGithub](https://hellogithub.com)   |                           开源AI项目落地                            |                               [阮一峰的网络日志](https://www.ruanyifeng.com/blog/weekly/)                               |                               一飞开源                               |                             胖氪笔记                              |                          逛逛Github                            |
-|:----:|:-------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------:|:-------------------------------------------------------------:|:------------------------------------------------------------:|
-|<img src="docs/images/wxgzh/hellogithub.png" width="80" height="80"/>|<img src="docs/images/wxgzh/aild.png" width="80" height="80"/> |<img src="docs/images/wxgzh/ryf.png" width="80" height="80"/> | <img src="docs/images/wxgzh/yf.png" width="80" height="80"/> | <img src="docs/images/wxgzh/pk.png" width="80" height="80"/>  | <img src="docs/images/wxgzh/gg.png" width="80" height="80"/> 
+| [HelloGithub](https://hellogithub.com)   |                           开源AI项目落地                            |                               [阮一峰的网络日志](https://www.ruanyifeng.com/blog/weekly/)                               |                               一飞开源                               |                             胖氪笔记                              |                          逛逛Github                            |                    小红书: 摸鱼的小李                            |
+|:----:|:-------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------:|:-------------------------------------------------------------:|:------------------------------------------------------------:|:------------------------------------------------------------:|
+|<img src="docs/images/wxgzh/hellogithub.png" width="80" height="80"/>|<img src="docs/images/wxgzh/aild.png" width="80" height="80"/> |<img src="docs/images/wxgzh/ryf.png" width="80" height="80"/> | <img src="docs/images/wxgzh/yf.png" width="80" height="80"/> | <img src="docs/images/wxgzh/pk.png" width="80" height="80"/>  | <img src="docs/images/wxgzh/gg.png" width="80" height="80"/> | <img src="docs/images/wxgzh/myxl.png" width="80" height="80"/> 
 
 小红书:
 [AI-GitHub](https://www.xiaohongshu.com/user/profile/65c44d1200000000090254fc) | [逛逛Github](https://www.xiaohongshu.com/user/profile/65e05165000000000500b059)

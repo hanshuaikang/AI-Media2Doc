@@ -101,7 +101,7 @@ python main.py
 
 
 #### AUC_CLUSTER_ID
-点击试用 `录音文件识别-通用-标准版` 或者其他的大模型，开通试用之后，`Cluster ID` 列就表示 AUC_CLUSTER_ID 的值。
+点击试用 `录音文件识别-通用-标准版` 或者极速版，**开通试用之后有 20 个小时的试用额度**，`Cluster ID` 列就表示 AUC_CLUSTER_ID 的值。
 
 
 
