@@ -111,7 +111,6 @@ async def query_asr_task_status(request: ArkChatRequest):
     try:
         response.raise_for_status()
         resp = response.json()
-        print(json.dumps(resp))
     except requests.RequestException as e:
         raise APIException(
             message=f"Query ASR task failed. Request error: {str(e)}",
