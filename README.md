@@ -39,7 +39,7 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
 ### 💬 哪里可以找到我
 公众号(韩数同学)
 <p align="left">
-    <img src="docs/images/wxgzh/hstx.jpg" alt="index" width="40%">
+    <img src="docs/images/wxgzh/hstx.jpg" alt="index" width="20%">
 </p>
 
 或者首页置顶 issue 加入微信交流群. 如果部署遇到问题，我下班之后看到后一般会回复。
