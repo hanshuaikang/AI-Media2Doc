@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import UploadSection from './UploadSection.vue'
 import LoadingOverlay from './LoadingOverlay.vue'
-import { loadFFmpeg, extractAudio, captureVideoFrame, frameToBase64 } from '../../utils/ffmpeg'
+import { loadFFmpeg, extractAudio, captureVideoFrame, frameToBase64, cleanupVideoCache } from '../../utils/ffmpeg'
 import { submitAsrTask, pollAsrTask } from '../../apis/asrService'
 import { generateMarkdownText } from '../../apis/markdownService'
 import { calculateMD5 } from '../../utils/md5'
@@ -49,6 +49,7 @@ const imageCount = ref(0)
 const imageTotal = ref(0)
 
 const resetAll = () => {
+  cleanupVideoCache()
   steps.value = stepDefs.map(s => ({ ...s }))
   activeStep.value = 0
   isProcessing.value = false
@@ -175,7 +176,7 @@ const startProcessing = async () => {
     console.log('提取到的时间戳标记:', imageTimeMarkers)
     // 新逻辑：根据开关处理截图
     markdownContent.value = await processImageMarkers(md, file.value, imageTimeMarkers)
-
+    cleanupVideoCache()
     updateStepStatus(4, 'success')
 
     // 保存
@@ -250,7 +251,7 @@ async function processImageMarkers(md, file, imageTimeMarkers) {
           const frameData = await captureVideoFrame(videoData, totalSeconds)
           const base64Image = frameToBase64(frameData)
           // 使用 HTML img 标签并加编号，设置最大宽度自适应
-          const imageTag = `<div style="text-align:center;"><span style="font-size:0.98em;color:#888;">截图${imageIdx}</span><br><img src="${base64Image}" alt="截图${imageIdx}" style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 2px 8px #0001;margin:8px 0;" /></div>`
+          const imageTag = `<div style="text-align:center;"><span style="font-size:0.98em;color:#888;">截图${imageIdx}</span><br><img src="${base64Image}" alt="截图${imageIdx}" style="max-width:100%;height:auto;border-radius:8px;box-shadow:0 2px 8px #0001;margin:8px 0;" /></div><p></p>`
           result = result.replace(marker, imageTag)
           imageCount.value = imageIdx // 实时更新进度
           imageIdx++
