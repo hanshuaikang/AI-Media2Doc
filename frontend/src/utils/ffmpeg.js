@@ -250,6 +250,10 @@ export const captureVideoFrame = async (videoData, timeInSeconds) => {
         return await captureFrameWithVideoAPI(videoBlob, timeInSeconds)
       } catch (videoApiError) {
         console.warn('HTML5 Video API截图失败，回退到FFmpeg:', videoApiError.message)
+        // 如果是时间点超出错误，直接抛出，不回退到FFmpeg
+        if (videoApiError.message.includes('超出视频时长')) {
+          throw videoApiError
+        }
       }
     } else {
       console.log('文件过大，直接使用FFmpeg截图')
@@ -263,6 +267,7 @@ export const captureVideoFrame = async (videoData, timeInSeconds) => {
       await prepareVideoForCapture(videoData)
     }
 
+    // 在FFmpeg处理前也检查时间点，虽然不如Video API准确，但可以避免一些明显超出的情况
     console.log('使用FFmpeg进行截图，时间点:', timeInSeconds)
     const outputFile = `frame_${timeInSeconds}_${Date.now()}.jpg`
 

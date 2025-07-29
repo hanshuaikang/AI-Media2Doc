@@ -257,8 +257,15 @@ async function processImageMarkers(md, file, imageTimeMarkers) {
           imageIdx++
         }
       } catch (error) {
-        console.error(`处理标记 ${marker} 时出错:`, error)
-        ElMessage.error(`处理标记 ${marker} 时出错: ${error.message}`)
+        console.warn(`跳过标记 ${marker}:`, error.message)
+        // 如果是时间点超出错误，直接移除标记，不显示错误
+        if (error.message.includes('超出视频时长')) {
+          result = result.replace(marker, '')
+        } else {
+          // 其他错误仍然显示错误信息
+          console.error(`处理标记 ${marker} 时出错:`, error)
+          ElMessage.error(`处理标记 ${marker} 时出错: ${error.message}`)
+        }
       }
     }
     imageCount.value = imageTotal.value // 处理完成
