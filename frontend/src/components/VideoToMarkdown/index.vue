@@ -158,13 +158,14 @@ const startProcessing = async () => {
       processedText = transcriptionText.value.map(seg => {
         const startMin = Math.floor(seg.start_time / 60000)
         const startSec = Math.floor((seg.start_time % 60000) / 1000)
-        const startMs = seg.start_time % 1000
         const endMin = Math.floor(seg.end_time / 60000)
         const endSec = Math.floor((seg.end_time % 60000) / 1000)
-        const endMs = seg.end_time % 1000
-        const startTime = `${startMin.toString().padStart(2, '0')}:${startSec.toString().padStart(2, '0')}.${startMs.toString().padStart(3, '0')}`
-        const endTime = `${endMin.toString().padStart(2, '0')}:${endSec.toString().padStart(2, '0')}.${endMs.toString().padStart(3, '0')}`
-        return `[${startTime} - ${endTime}] ${seg.text}`
+        const startTime = `${startMin.toString().padStart(2, '0')}:${startSec.toString().padStart(2, '0')}`
+        const endTime = `${endMin.toString().padStart(2, '0')}:${endSec.toString().padStart(2, '0')}`
+        const startTotalSec = Math.floor(seg.start_time / 1000)
+        const endTotalSec = Math.floor(seg.end_time / 1000)
+
+        return `[${startTime} - ${endTime} 时间范围秒数:(${startTotalSec}s-${endTotalSec}s)] ${seg.text}`
       }).join('\n')
     } else {
       processedText = transcriptionText.value
@@ -259,8 +260,9 @@ async function processImageMarkers(md, file, imageTimeMarkers) {
       } catch (error) {
         console.warn(`跳过标记 ${marker}:`, error.message)
         // 如果是时间点超出错误，直接移除标记，不显示错误
-        if (error.message.includes('超出视频时长')) {
+        if (error.code === 'TIME_OUT_OF_RANGE') {
           result = result.replace(marker, '')
+          console.log(`跳过超出时长的截图标记: ${marker} (${error.timeInSeconds}s > ${error.videoDuration}s)`)
         } else {
           // 其他错误仍然显示错误信息
           console.error(`处理标记 ${marker} 时出错:`, error)
