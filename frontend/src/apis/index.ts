@@ -5,7 +5,7 @@ import * as chatService from './chatService'
 import httpService from './http'
 
 // 从各个服务中导出常用函数
-export const { submitAudioTask, pollAsrTask: pollAudioTask, queryAudioTask } = audioService
+export const { submitAsrTask, pollAsrTask: pollAudioTask, queryAsrTask } = audioService
 export const { generateMarkdownText } = markdownService
 export const { getAudioUploadUrl, uploadFile } = uploadService
 export const { sendChatMessage } = chatService

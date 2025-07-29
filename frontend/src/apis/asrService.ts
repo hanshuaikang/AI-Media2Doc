@@ -76,21 +76,39 @@ export const queryAsrTask = async (taskId: string): Promise<AudioTaskResult> => 
 }
 
 /**
+ * 获取本地存储的最大轮询次数
+ * @returns 最大轮询次数
+ */
+const getMaxPollingAttempts = (): number => {
+  try {
+    const v = localStorage.getItem('maxPollingAttempts')
+    if (v) {
+      const n = parseInt(v)
+      if (!isNaN(n) && n >= 10) return n
+    }
+  } catch { }
+  return 60 // 默认值
+}
+
+/**
  * 轮询音频处理任务直到完成
  * @param taskId 任务ID
  * @param onProgress 进度回调
- * @param maxAttempts 最大尝试次数
+ * @param maxAttempts 最大尝试次数，如果不传则从localStorage读取
  * @param interval 轮询间隔(ms)
  * @returns 处理结果文本
  */
 export const pollAsrTask = async (
   taskId: string,
-  maxAttempts = 60,
+  maxAttempts?: number,
   interval = 3000
 ): Promise<string> => {
+  const actualMaxAttempts = maxAttempts || getMaxPollingAttempts()
   let attempts = 0
   
-  while (attempts < maxAttempts) {
+  console.log(`开始轮询任务 ${taskId}，最大尝试次数: ${actualMaxAttempts}`)
+  
+  while (attempts < actualMaxAttempts) {
     const result = await queryAsrTask(taskId)
     console.log('Polling result:', result)
     
@@ -106,5 +124,5 @@ export const pollAsrTask = async (
     attempts++
   }
   
-  throw new Error('音频识别超时')
+  throw new Error(`音频识别超时，已尝试 ${actualMaxAttempts} 次`)
 }

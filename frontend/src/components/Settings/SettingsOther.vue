@@ -16,6 +16,14 @@
                     单位：MB，默认 200，范围 10~1024。
                 </span>
             </div>
+            <div class="other-form-row polling-row">
+                <label class="other-label" for="max-polling-attempts">最大轮询次数：</label>
+                <el-input-number id="max-polling-attempts" v-model="maxPollingAttempts" :min="10" :max="1000" :step="10"
+                    class="max-polling-attempts-input" controls-position="right" />
+                <span class="other-tip align-tip">
+                    默认 60，范围 10~1000。用于音频转文字任务轮询。
+                </span>
+            </div>
             <transition name="fade-slide">
                 <div v-if="maxUploadSize > 200" class="warn-tip-row">
                     <el-icon style="margin-right: 6px; color: #e67e22;">
@@ -66,13 +74,28 @@ function getLocalMaxUploadSize() {
 function setLocalMaxUploadSize(val) {
     localStorage.setItem('maxUploadSize', String(val))
 }
+function getLocalMaxPollingAttempts() {
+    try {
+        const v = localStorage.getItem('maxPollingAttempts')
+        if (v) {
+            const n = parseInt(v)
+            if (!isNaN(n) && n >= 10) return n
+        }
+    } catch { }
+    return 60
+}
+function setLocalMaxPollingAttempts(val) {
+    localStorage.setItem('maxPollingAttempts', String(val))
+}
 const maxRecords = ref(getLocalMaxRecords())
 const maxUploadSize = ref(getLocalMaxUploadSize())
+const maxPollingAttempts = ref(getLocalMaxPollingAttempts())
 const otherSaveSuccess = ref(false)
 
 function saveOtherSettings() {
     setLocalMaxRecords(maxRecords.value)
     setLocalMaxUploadSize(maxUploadSize.value)
+    setLocalMaxPollingAttempts(maxPollingAttempts.value)
     otherSaveSuccess.value = true
     ElMessage.success('已保存到本地')
     setTimeout(() => {
@@ -128,6 +151,12 @@ function saveOtherSettings() {
 }
 
 .other-form-row.upload-size-row {
+    border-bottom: 1px solid #f0f1f3;
+    margin-bottom: 0;
+    padding-bottom: 8px;
+}
+
+.other-form-row.polling-row {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
@@ -151,7 +180,8 @@ function saveOtherSettings() {
 }
 
 .max-records-input,
-.max-upload-size-input {
+.max-upload-size-input,
+.max-polling-attempts-input {
     width: 120px;
     margin-right: 8px;
     border-radius: 6px;
@@ -162,7 +192,8 @@ function saveOtherSettings() {
 }
 
 .max-records-input:focus-within,
-.max-upload-size-input:focus-within {
+.max-upload-size-input:focus-within,
+.max-polling-attempts-input:focus-within {
     border-color: #357aff;
 }
 
