@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+import hashlib
 import json
 import uuid
 import time
@@ -18,12 +19,13 @@ from env import AUC_APP_ID, AUC_ACCESS_TOKEN, AUC_CLUSTER_ID
 STORE = MemoryStore()
 
 
-def get_mac_address():
+def generate_local_uuid():
     # 获取本机 MAC 地址
     mac = uuid.getnode()
     # 将 MAC 地址格式化为标准形式
     mac_address = ":".join(("%012X" % mac)[i : i + 2] for i in range(0, 12, 2))
-    return mac_address
+    md5_obj = hashlib.md5(mac_address.encode("utf-8"))
+    return md5_obj.hexdigest()
 
 
 @ActionDispatcher.register("submit_asr_task")
@@ -46,7 +48,7 @@ async def submit_asr_task(request: ArkChatRequest):
             "cluster": AUC_CLUSTER_ID,
         },
         "user": {
-            "uid": get_mac_address(),
+            "uid": generate_local_uuid(),
         },
         "audio": {"format": "mp3", "url": download_url},
         "request": {"model_name": "bigmodel", "enable_itn": True},
