@@ -61,22 +61,12 @@ const isJsonString = (str) => {
     }
 }
 
-// 判断内容是否包含表格
-const hasTable = (str) => {
-    if (typeof str !== 'string') return false
-    return /\|.*\|/.test(str) || /<table/.test(str)
-}
-
 // 判断内容是否应该显示为思维导图
 const isContentMindMap = computed(() => isJsonString(props.content))
-
-// 判断内容是否包含表格
-const isContentTable = computed(() => hasTable(props.content))
 
 // 获取内容类型标题
 const getContentTypeTitle = () => {
     if (isContentMindMap.value) return '思维导图'
-    if (isContentTable.value) return '表格信息'
     return '图文信息'
 }
 
@@ -135,9 +125,6 @@ const downloadContent = () => {
     if (isContentMindMap.value) {
         filename = `mindmap_${props.taskId}.json`
         type = 'application/json'
-    } else if (isContentTable.value) {
-        filename = `table_${props.taskId}.md`
-        type = 'text/markdown'
     } else {
         filename = `markdown_${props.taskId}.md`
         type = 'text/markdown'
@@ -158,8 +145,6 @@ const downloadContent = () => {
 onMounted(() => isContentMindMap.value && initMindMap())
 onBeforeUnmount(() => mindMapInstance.value?.destroy())
 watch(() => props.content, () => isContentMindMap.value && initMindMap())
-
-const isHtmlContent = computed(() => typeof props.content === 'string' && props.content.includes('<div'))
 </script>
 
 <style scoped>
@@ -304,45 +289,6 @@ const isHtmlContent = computed(() => typeof props.content === 'string' && props.
 .markdown-content li {
     margin: 0.2em 0;
     padding-left: 0;
-}
-
-/* 表格样式增强 */
-.markdown-content table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    margin: 1em 0 !important;
-    font-size: 14px !important;
-    background: #fff !important;
-    border-radius: 8px !important;
-    overflow: hidden !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-    border: 1px solid #e9ecef !important;
-}
-
-.markdown-content table th {
-    background: #f8f9fa !important;
-    color: #333 !important;
-    font-weight: 600 !important;
-    padding: 12px 16px !important;
-    text-align: left !important;
-    border: 1px solid #e9ecef !important;
-    font-size: 14px !important;
-}
-
-.markdown-content table td {
-    padding: 12px 16px !important;
-    border: 1px solid #e9ecef !important;
-    color: #555 !important;
-    font-size: 14px !important;
-    line-height: 1.4 !important;
-}
-
-.markdown-content table tr:hover {
-    background-color: #f8f9fa !important;
-}
-
-.markdown-content table tr:last-child td {
-    border-bottom: 1px solid #e9ecef !important;
 }
 
 /* 表格响应式处理 */
