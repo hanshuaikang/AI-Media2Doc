@@ -58,57 +58,75 @@ function saveScreenshotSettings() {
 
 <style scoped>
 .screenshot-settings {
-    width: 480px;
+    width: 100%;
+    max-width: 600px;
     margin: 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    background: #fff;
-    border-radius: 8px;
-    padding: 24px 32px 18px 32px;
-    box-shadow: 0 2px 8px 0 rgba(60, 80, 120, 0.04);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 12px;
+    padding: 24px 32px 24px 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     min-height: 220px;
+    border: 1px solid #e2e8f0;
 }
 
 .screenshot-title {
-    font-size: 1.18rem;
+    font-size: 18px;
     font-weight: 700;
-    margin: 0 0 12px 0;
-    color: #23272f;
+    margin: 0 0 16px 0;
+    color: #1e293b;
     letter-spacing: 0.2px;
     align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.screenshot-title::before {
+    content: '';
+    width: 4px;
+    height: 18px;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 2px;
 }
 
 .screenshot-tip {
-    color: #6b7280;
-    font-size: 0.97rem;
-    margin-bottom: 22px;
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 24px;
     line-height: 1.7;
     text-align: left;
-    background: #f8f9fa;
-    border-left: 4px solid #d1d5db;
-    padding: 8px 14px;
-    border-radius: 4px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-left: 4px solid #94a3b8;
+    padding: 12px 16px;
+    border-radius: 8px;
     width: 100%;
     align-self: flex-start;
+    box-shadow: 0 2px 8px rgba(148, 163, 184, 0.1);
 }
 
 .screenshot-form-row {
     display: flex;
     align-items: center;
     width: 100%;
-    margin-bottom: 18px;
-    gap: 12px;
+    margin-bottom: 20px;
+    gap: 16px;
     justify-content: flex-start;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 16px 20px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
 }
 
 .screenshot-label {
-    font-size: 1.03rem;
+    font-size: 15px;
     font-weight: 600;
-    color: #23272f;
-    min-width: 120px;
-    text-align: right;
+    color: #1e293b;
+    min-width: 140px;
+    text-align: left;
     margin-bottom: 0;
     letter-spacing: 0.1px;
 }
@@ -120,47 +138,54 @@ function saveScreenshotSettings() {
 .screenshot-warn-tip-row {
     display: flex;
     align-items: center;
-    margin-top: 2px;
-    margin-bottom: 8px;
-    font-size: 1.01rem;
-    color: #e67e22;
-    background: #fffbe6;
-    border-left: 4px solid #ffd666;
-    border-radius: 4px;
-    padding: 8px 16px;
-    font-weight: 600;
-    box-shadow: 0 1px 4px 0 rgba(60, 80, 120, 0.04);
+    margin-top: 4px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #d97706;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid #f59e0b;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
     width: 100%;
     align-self: flex-start;
     text-align: left;
-    /* 新增：左对齐 */
 }
 
 .screenshot-warn-tip-text {
-    color: #e67e22;
-    font-weight: 600;
+    color: #d97706;
+    font-weight: 500;
     text-align: left;
-    /* 新增：左对齐 */
 }
 
 .screenshot-save-btn-row {
-    margin-top: 6px;
+    margin-top: 12px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
     align-self: flex-start;
 }
 
 .save-btn-row {
-    margin-top: 8px;
+    margin-top: 12px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 }
 
 .save-success-msg {
-    color: #67C23A;
-    font-size: 0.97rem;
+    color: #059669;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.save-success-msg::before {
+    content: '✓';
+    font-weight: bold;
 }
 
 .fade-slide-enter-active,

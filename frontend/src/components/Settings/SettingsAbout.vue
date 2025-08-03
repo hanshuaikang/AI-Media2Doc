@@ -41,27 +41,29 @@ const xiaohongshuQr = new URL('../../assets/xiaohongshu-qr.png', import.meta.url
     width: 100%;
     max-width: 700px;
     margin: 0;
-    color: #23272f;
-    font-size: 1.01rem;
+    color: #1e293b;
+    font-size: 15px;
     line-height: 1.7;
-    background: #fff;
-    border-radius: 8px;
-    padding: 8px 4px 8px 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 12px;
+    padding: 24px 32px 24px 32px;
     text-align: left;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .about-highlight-tip {
-    background: linear-gradient(90deg, #eaf2ff 0%, #fffbe6 100%);
-    color: #d35400;
-    font-size: 1.09rem;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #d97706;
+    font-size: 16px;
     font-weight: 700;
-    border-left: 5px solid #ffd666;
-    border-radius: 7px;
-    padding: 10px 18px;
-    margin-bottom: 18px;
-    margin-top: 2px;
+    border-left: 5px solid #f59e0b;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    margin-top: 0;
     letter-spacing: 0.2px;
-    box-shadow: 0 2px 8px 0 rgba(53, 122, 255, 0.06);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
     text-align: left;
 }
 
@@ -72,8 +74,8 @@ const xiaohongshuQr = new URL('../../assets/xiaohongshu-qr.png', import.meta.url
 
 .about-qrcodes {
     display: flex;
-    gap: 36px;
-    margin-top: 18px;
+    gap: 32px;
+    margin-top: 24px;
     margin-bottom: 8px;
     justify-content: flex-start;
     align-items: flex-end;
@@ -83,28 +85,41 @@ const xiaohongshuQr = new URL('../../assets/xiaohongshu-qr.png', import.meta.url
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 12px 0 rgba(53, 122, 255, 0.06);
-    border: 1.5px solid #eaf2ff;
-    padding: 10px 18px 12px 18px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+    border: 2px solid #dbeafe;
+    padding: 16px 20px 20px 20px;
+    transition: all 0.3s ease;
+}
+
+.about-qrcode-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(59, 130, 246, 0.2);
+    border-color: #3b82f6;
 }
 
 .about-qrcode-title {
-    font-size: 1.01rem;
+    font-size: 15px;
     font-weight: 600;
-    color: #357aff;
-    margin-bottom: 7px;
+    color: #3b82f6;
+    margin-bottom: 12px;
     letter-spacing: 0.5px;
 }
 
 .about-qrcode-img {
-    width: 110px;
-    height: 110px;
-    border-radius: 14px;
-    border: 2px solid #ffd6e0;
+    width: 120px;
+    height: 120px;
+    border-radius: 16px;
+    border: 2px solid #fecaca;
     background: #fff;
     object-fit: contain;
-    box-shadow: 0 2px 8px 0 rgba(255, 99, 132, 0.08);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+    transition: all 0.3s ease;
+}
+
+.about-qrcode-item:hover .about-qrcode-img {
+    border-color: #f87171;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.2);
 }
 </style>

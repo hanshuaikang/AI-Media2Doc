@@ -93,15 +93,15 @@ function refreshPrompt() {
 <style scoped>
 .style-settings {
     width: 100%;
-    max-width: 700px;
+    max-width: 800px;
     margin: 0;
 }
 
 .style-selector-row {
-    margin-bottom: 18px;
+    margin-bottom: 24px;
     display: flex;
     flex-wrap: wrap;
-    gap: 18px;
+    gap: 16px;
     justify-content: flex-start;
     align-items: center;
     overflow-x: auto;
@@ -112,65 +112,93 @@ function refreshPrompt() {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #fff;
-    border: 2px solid #e5e6eb;
-    border-radius: 12px;
-    padding: 14px 18px 10px 18px;
-    min-width: 90px;
-    min-height: 74px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px 16px 16px;
+    min-width: 100px;
+    min-height: 80px;
     cursor: pointer;
-    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s, color 0.18s;
-    font-size: 1.01rem;
-    color: #23272f;
-    box-shadow: 0 1px 4px 0 rgba(60, 80, 120, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 14px;
+    color: #475569;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     user-select: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.style-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
 }
 
 .style-card:hover {
-    border-color: #357aff;
-    box-shadow: 0 4px 16px 0 rgba(53, 122, 255, 0.08);
-    background: #f0f6ff;
+    border-color: #3b82f6;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    transform: translateY(-2px);
+}
+
+.style-card:hover::before {
+    transform: scaleX(1);
 }
 
 .style-card.active {
-    border-color: #357aff;
-    background: #eaf2ff;
-    color: #357aff;
-    box-shadow: 0 4px 16px 0 rgba(53, 122, 255, 0.10);
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1d4ed8;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+    transform: translateY(-2px);
+}
+
+.style-card.active::before {
+    transform: scaleX(1);
 }
 
 .style-card-icon {
-    width: 28px;
-    height: 28px;
-    margin-bottom: 7px;
+    width: 32px;
+    height: 32px;
+    margin-bottom: 8px;
     vertical-align: middle;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .style-card-name {
-    font-size: 1.01rem;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.1px;
+    letter-spacing: 0.2px;
+    text-align: center;
+    line-height: 1.2;
 }
 
 .prompt-editor-row {
-    margin-bottom: 14px;
+    margin-bottom: 20px;
     margin-top: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     position: relative;
 }
 
 .prompt-tip {
-    color: #e67e22;
-    font-size: 0.96rem;
-    margin-bottom: 6px;
+    color: #d97706;
+    font-size: 13px;
+    margin-bottom: 8px;
     line-height: 1.6;
     text-align: left;
-    background: #fffbe6;
-    border-left: 4px solid #ffd666;
-    padding: 6px 12px;
-    border-radius: 4px;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-left: 4px solid #f59e0b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
 }
 
 .prompt-label-row {
@@ -181,9 +209,9 @@ function refreshPrompt() {
 }
 
 .prompt-label {
-    font-size: 1.01rem;
+    font-size: 15px;
     font-weight: 600;
-    color: #23272f;
+    color: #1e293b;
     margin-bottom: 0;
     margin-top: 0;
     text-align: left;
@@ -193,7 +221,7 @@ function refreshPrompt() {
 
 .prompt-action-row {
     position: absolute;
-    top: 38px;
+    top: 42px;
     right: 0;
     z-index: 2;
     display: flex;
@@ -201,45 +229,61 @@ function refreshPrompt() {
 }
 
 .refresh-prompt-btn {
-    padding: 0 10px;
-    height: 26px;
-    font-size: 0.97rem;
-    border-radius: 4px;
+    padding: 0 12px;
+    height: 28px;
+    font-size: 13px;
+    border-radius: 6px;
     border: 1px solid #dbeafe;
-    background: #f7faff;
-    color: #357aff;
-    transition: background 0.15s, border-color 0.15s;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    color: #3b82f6;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
 }
 
 .refresh-prompt-btn:hover {
-    background: #eaf2ff;
-    border-color: #357aff;
-    color: #357aff;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-color: #3b82f6;
+    color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
 }
 
 .prompt-textarea {
     width: 100%;
-    font-size: 0.98rem;
-    border-radius: 6px;
-    background: #f7f8fa;
-    border: 1.5px solid #e3e6ef;
-    transition: border-color 0.18s;
-    padding-top: 32px !important;
+    font-size: 14px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+    padding-top: 36px !important;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    line-height: 1.6;
 }
 
 .prompt-textarea:focus-within {
-    border-color: #357aff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background: white;
 }
 
 .save-btn-row {
-    margin-top: 8px;
+    margin-top: 16px;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 }
 
 .save-success-msg {
-    color: #67C23A;
-    font-size: 0.97rem;
+    color: #059669;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.save-success-msg::before {
+    content: '✓';
+    font-weight: bold;
 }
 </style>
