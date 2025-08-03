@@ -1,7 +1,7 @@
 <template>
     <div class="text-card full-height">
         <div class="section-header with-bar">
-            <h2>{{ isContentMindMap ? '思维导图' : '图文信息' }}</h2>
+            <h2>{{ getContentTypeTitle() }}</h2>
             <el-button type="primary" :icon="Download" circle size="small" title="下载内容" @click="downloadContent"
                 class="copy-btn" />
         </div>
@@ -14,7 +14,7 @@
                 </div>
             </template>
             <template v-else>
-                <div v-html="md.render(content)" class="markdown-content" />
+                <div v-html="renderedContent" class="markdown-content" />
             </template>
         </div>
     </div>
@@ -38,8 +38,16 @@ const props = defineProps({
     }
 })
 
-// 修改这里，允许 HTML 渲染
-const md = new MarkdownIt({ html: true })
+// 配置 markdown-it 支持表格
+const md = new MarkdownIt({
+    html: true,
+    breaks: true,
+    linkify: true
+})
+
+// 启用表格插件
+md.enable('table')
+
 const mindMapInstance = ref(null)
 
 // 判断内容是否为JSON格式
@@ -53,8 +61,29 @@ const isJsonString = (str) => {
     }
 }
 
+// 判断内容是否包含表格
+const hasTable = (str) => {
+    if (typeof str !== 'string') return false
+    return /\|.*\|/.test(str) || /<table/.test(str)
+}
+
 // 判断内容是否应该显示为思维导图
 const isContentMindMap = computed(() => isJsonString(props.content))
+
+// 判断内容是否包含表格
+const isContentTable = computed(() => hasTable(props.content))
+
+// 获取内容类型标题
+const getContentTypeTitle = () => {
+    if (isContentMindMap.value) return '思维导图'
+    if (isContentTable.value) return '表格信息'
+    return '图文信息'
+}
+
+// 渲染后的内容
+const renderedContent = computed(() => {
+    return md.render(props.content)
+})
 
 // 转换思维导图数据格式
 const convertToMindMapFormat = (jsonData) => {
@@ -102,8 +131,18 @@ const initMindMap = async () => {
 
 // 下载内容
 const downloadContent = () => {
-    const filename = isContentMindMap.value ? `mindmap_${props.taskId}.json` : `markdown_${props.taskId}.md`
-    const type = isContentMindMap.value ? 'application/json' : 'text/markdown'
+    let filename, type
+    if (isContentMindMap.value) {
+        filename = `mindmap_${props.taskId}.json`
+        type = 'application/json'
+    } else if (isContentTable.value) {
+        filename = `table_${props.taskId}.md`
+        type = 'text/markdown'
+    } else {
+        filename = `markdown_${props.taskId}.md`
+        type = 'text/markdown'
+    }
+
     const blob = new Blob([props.content], { type })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -267,9 +306,102 @@ const isHtmlContent = computed(() => typeof props.content === 'string' && props.
     padding-left: 0;
 }
 
+/* 表格样式增强 */
+.markdown-content table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 1em 0 !important;
+    font-size: 14px !important;
+    background: #fff !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.markdown-content table th {
+    background: #f8f9fa !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    padding: 12px 16px !important;
+    text-align: left !important;
+    border: 1px solid #e9ecef !important;
+    font-size: 14px !important;
+}
+
+.markdown-content table td {
+    padding: 12px 16px !important;
+    border: 1px solid #e9ecef !important;
+    color: #555 !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+}
+
+.markdown-content table tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+.markdown-content table tr:last-child td {
+    border-bottom: 1px solid #e9ecef !important;
+}
+
+/* 表格响应式处理 */
+@media (max-width: 768px) {
+    .markdown-content table {
+        font-size: 12px;
+    }
+
+    .markdown-content table th,
+    .markdown-content table td {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+}
+
 .mindmap-tip {
     margin-top: 16px;
     font-size: 14px;
     color: #888;
+}
+</style>
+
+<style>
+/* 全局表格样式，确保应用到动态渲染的内容 */
+.markdown-content table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 1em 0 !important;
+    font-size: 14px !important;
+    background: #fff !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid #e9ecef !important;
+}
+
+.markdown-content table th {
+    background: #f8f9fa !important;
+    color: #333 !important;
+    font-weight: 600 !important;
+    padding: 12px 16px !important;
+    text-align: left !important;
+    border: 1px solid #e9ecef !important;
+    font-size: 14px !important;
+}
+
+.markdown-content table td {
+    padding: 12px 16px !important;
+    border: 1px solid #e9ecef !important;
+    color: #555 !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+}
+
+.markdown-content table tr:hover {
+    background-color: #f8f9fa !important;
+}
+
+.markdown-content table tr:last-child td {
+    border-bottom: 1px solid #e9ecef !important;
 }
 </style>
