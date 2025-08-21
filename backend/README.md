@@ -16,6 +16,7 @@ pip install -r requirements.txt
 ```bash
 export MODEL_ID=xxxx
 export LLM_API_KEY=xxxx
+export LLM_MAX_TOKENS=4096
 export TOS_ACCESS_KEY=xxxx
 export TOS_SECRET_KEY=xxxx
 export TOS_ENDPOINT=xxxx
@@ -29,7 +30,7 @@ export WEB_ACCESS_PASSWORD=xxx
 环境变量说明:
 
 **WEB_ACCESS_PASSWORD**【选填】:前端访问后端服务的密码,后端指定之后需要在前端自定义设置-> 访问密码填写该密码才可以正常使用。
-
+**LLM_MAX_TOKENS**【选填】: 大模型输出的最大 token 数，选填, 默认值为 4096, 不同的大模型的 max_tokens 值不一样，对于超过半个小时的长视频而言, 较大的 max_tokens 可以明显改善模型输出的内容丰富度。
 
 ## 3. 启动服务
 ```bash

@@ -20,6 +20,8 @@ async def generate_markdown_text(request: ArkChatRequest):
     yield client.chat.completions.create(
         model=env.LLM_MODEL_ID,
         messages=messages,
+        timeout=120,
+        max_tokens=env.LLM_MAX_TOKENS,
     )
 
 
@@ -36,5 +38,7 @@ async def default_llm_action(request: ArkChatRequest):
 
     yield client.chat.completions.create(
         model=env.LLM_MODEL_ID,
+        timeout=120,
         messages=messages,
+        max_tokens=env.LLM_MAX_TOKENS,
     )
