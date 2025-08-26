@@ -88,7 +88,6 @@ async function cleanupOldTasks(db) {
       }
     } catch { }
     // 按创建时间降序排列获取所有任务
-    console.log(maxTasks)
     const allTasks = await db.getAllFromIndex('tasks', 'createdAt');
     allTasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
