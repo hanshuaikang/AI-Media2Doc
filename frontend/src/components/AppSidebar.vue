@@ -61,7 +61,6 @@ const loadRecentTasks = async () => {
         // 按创建时间倒序排序并获取前5条
         recentTasks.value = allTasks
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .slice(0, 10)
 
     } catch (error) {
         console.error('加载历史任务失败:', error)
@@ -308,7 +307,7 @@ const handleDeleteTask = async (event, task) => {
     border-right: none;
     background-color: transparent;
     padding: 18px 0 0 0;
-    overflow-y: auto;
+    overflow-y: none;
 
 }
 
