@@ -20,3 +20,4 @@ __pycache__
 .pytest_cache
 *.hypothesis
 /models/
+variables.env
