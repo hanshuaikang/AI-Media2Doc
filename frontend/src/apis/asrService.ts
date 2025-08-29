@@ -1,6 +1,5 @@
 import httpService from './http'
-import { API_PATHS } from '../config'
-import { AudioTaskResponse, AudioTaskResult, TaskStatus } from './types'
+import { APIResponse, SubmitAsrTaskResponse, QueryASRTaskResponse, AudioTaskResult, TaskStatus } from './types'
 
 /**
  * 提交音频处理任务
@@ -9,28 +8,19 @@ import { AudioTaskResponse, AudioTaskResult, TaskStatus } from './types'
  */
 export const submitAsrTask = async (audioFileName: string): Promise<string> => {
   try {
-    const response = await httpService.request<AudioTaskResponse>({
-      url: API_PATHS.AUDIO_TASK,
+    const response = await httpService.request<APIResponse<SubmitAsrTaskResponse>>({
+      url: '/api/v1/audio/transcription-tasks',
       method: 'POST',
-      headers: {
-        'request-action': 'submit_asr_task',
-      },
       data: {
-        model: 'my-bot',
-        messages: [
-          {
-            role: 'user',
-            content: audioFileName
-          }
-        ]
+        filename: audioFileName
       }
     })
     
-    if (response.error) {
-      throw new Error(response.error)
+    if (!response.success) {
+      throw new Error(response.error?.message || '提交音频任务失败')
     }
     
-    return response.metadata?.task_id || ''
+    return response.data?.task_id || ''
   } catch (error) {
     console.error('提交音频任务失败:', error)
     throw error
@@ -44,30 +34,25 @@ export const submitAsrTask = async (audioFileName: string): Promise<string> => {
  */
 export const queryAsrTask = async (taskId: string): Promise<AudioTaskResult> => {
   try {
-    const response = await httpService.request<AudioTaskResponse>({
-      url: API_PATHS.AUDIO_TASK,
-      method: 'POST',
-      headers: {
-        'request-action': 'query_asr_task_status',
-      },
-      data: {
-        model: 'my-bot',
-        messages: [
-          {
-            role: 'user',
-            content: taskId
-          }
-        ]
-      }
+    const response = await httpService.request<APIResponse<QueryASRTaskResponse>>({
+      url: `/api/v1/audio/transcription-tasks/${taskId}`,
+      method: 'GET'
     })
     
-    if (response.error) {
-      throw new Error(response.error)
+    if (!response.success) {
+      throw new Error(response.error?.message || '查询音频任务失败')
+    }
+
+    const status = response.data?.status as TaskStatus || 'running'
+    let text: Array<Record<string, any>> | null = null    
+    // 如果任务完成且有结果，拼接所有文本
+    if (status === 'finished' && response.data?.result) {
+      text = response.data.result
     }
     
     return {
-      text: response.metadata?.result || '',
-      status: (response.metadata?.status || 'pending') as TaskStatus
+      text,
+      status
     }
   } catch (error) {
     console.error('查询音频任务失败:', error)

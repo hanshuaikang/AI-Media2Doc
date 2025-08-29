@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios'
 import { ElMessage } from 'element-plus'
 import { API_BASE_URL } from '../config'
+import { APIResponse } from './types'
 
 /**
  * 统一的API请求错误
@@ -54,18 +55,17 @@ class HttpService {
     // 响应拦截器
     this.axiosInstance.interceptors.response.use(
       response => {
-        // 检查状态码是否大于200
-        if (response.status > 200) {
-          const errorData = response.data
-          const message = errorData?.detail?.message || errorData?.message || '请求失败'
-          const status = response.status
-          
-          console.error(`API错误 [${status}]:`, message, errorData)
+        const data = response.data as APIResponse
+        
+        // 检查业务逻辑是否成功
+        if (data && typeof data === 'object' && 'success' in data && !data.success) {
+          const message = data.error?.message || '请求失败'
+          console.error('API业务错误:', message, data.error)
           ElMessage.error(message)
-          
-          throw new ApiError(message, status, errorData)
+          throw new ApiError(message, response.status, data)
         }
-        return response.data
+        
+        return data
       },
       error => {
         let message = '请求失败'
@@ -77,13 +77,17 @@ class HttpService {
           status = error.response.status
           data = error.response.data
           
-          // 优先从detail.message获取错误信息
-          if (data && typeof data === 'object' && 'detail' in data && (data as any).detail?.message) {
-            message = (data as any).detail.message
-          } else if (data && typeof data === 'object' && 'message' in data) {
-            message = (data as any).message
-          } else {
-            message = error.message || '请求失败'
+          // 从新的错误格式中提取消息
+          if (data && typeof data === 'object') {
+            if ('error' in data && (data as any).error?.message) {
+              message = (data as any).error.message
+            } else if ('detail' in data) {
+              message = (data as any).detail
+            } else if ('message' in data) {
+              message = (data as any).message
+            } else {
+              message = error.message || '请求失败'
+            }
           }
         } else {
           // 网络错误或其他错误

@@ -435,7 +435,8 @@ const handleDeleteTask = async (event, task) => {
 }
 
 .history-submenu.is-expanded {
-    max-height: 750px;
+    height: 62vh;
+    max-height: 62vh;
     overflow-y: auto;
     opacity: 1;
     padding: 5px 0;

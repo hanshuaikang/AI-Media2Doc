@@ -1,6 +1,5 @@
 import httpService from './http'
-import { API_PATHS } from '../config'
-import { ChatResponse, ContentStyle } from './types'
+import { APIResponse, ChatResponse, ContentStyle } from './types'
 import { DEFAULT_PROMPTS } from '../constants'
 
 
@@ -35,14 +34,10 @@ function renderPrompt(style: string, text: string): string {
 export const generateMarkdownText = async (text: string, contentStyle: string): Promise<string> => {
   try {
     const prompt = renderPrompt(contentStyle, text)
-    const response = await httpService.request<ChatResponse>({
-      url: API_PATHS.CHAT_COMPLETIONS,
+    const response = await httpService.request<APIResponse<ChatResponse>>({
+      url: '/api/v1/llm/markdown-generation', // 新的RESTful路径
       method: 'POST',
-      headers: {
-        'request-action': 'generate_markdown_text',
-      },
       data: {
-        model: 'my-bot',
         messages: [
           {
             role: 'user',
@@ -52,13 +47,18 @@ export const generateMarkdownText = async (text: string, contentStyle: string): 
       }
     })
 
-    if (response.error) {
-      throw new Error(response.error)
+    if (!response.success) {
+      throw new Error(response.error?.message || '生成Markdown失败')
     }
 
-    return response.choices[0]?.message?.content || ''
+    if (!response.data?.choices?.[0]?.message?.content) {
+      throw new Error('无效的响应格式')
+    }
+
+    return response.data.choices[0].message.content
   } catch (error) {
     console.error('生成Markdown失败:', error)
     throw error
   }
 }
+

@@ -1,6 +1,5 @@
 import httpService from './http'
-import { API_PATHS } from '../config'
-import { ChatMessage, ChatResponse } from './types'
+import { ChatMessage, APIResponse, ChatResponse } from './types'
 
 /**
  * 发送聊天消息
@@ -9,24 +8,23 @@ import { ChatMessage, ChatResponse } from './types'
  */
 export const sendChatMessage = async (messages: ChatMessage[]): Promise<ChatMessage> => {
   try {
-    const response = await httpService.request<ChatResponse>({
-      url: API_PATHS.CHAT_COMPLETIONS,
+    const response = await httpService.request<APIResponse<ChatResponse>>({
+      url: '/api/v1/llm/completions', // 新的RESTful路径
       method: 'POST',
       data: {
-        model: 'my-bot',
         messages
       }
     })
     
-    if (response.error) {
-      throw new Error(response.error)
+    if (!response.success) {
+      throw new Error(response.error?.message || '聊天请求失败')
     }
     
-    if (!response.choices?.[0]?.message) {
+    if (!response.data?.choices?.[0]?.message) {
       throw new Error('无效的响应格式')
     }
     
-    return response.choices[0].message as ChatMessage
+    return response.data.choices[0].message as ChatMessage
   } catch (error) {
     console.error('聊天请求失败:', error)
     throw error
