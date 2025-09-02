@@ -19,5 +19,4 @@ __pycache__
 *.coverage
 .pytest_cache
 *.hypothesis
-/models/
 variables.env
