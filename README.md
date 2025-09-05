@@ -53,11 +53,6 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
     <img src="docs/images/index.jpg" alt="index" width="80%">
 </p>
 
-#### 更加简洁的加载页
-<p align="center">
-<img src="docs/images/loading.png" alt="task details" width="80%">
-</p>
-
 #### 全新功能: 支持智能截图并插入到文中对应位置(本地方案, 无需视觉大模型, 0成本)
 
 开启方式, 点击自定义设置->智能截图 选择打开。
@@ -78,12 +73,6 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
 </p>
 
 
-#### 可基于视频内容进行 AI 二次对话
-
-<p align="center">
-<img src="docs/images/ai_talk.png" alt="mindmap" width="80%">
-</p>
-
 
 ### 📦 docker 本地一键部署
 0️⃣：安装 `docker`, 这个网上有教程
@@ -99,6 +88,24 @@ $ make docker-image
 ```shell
 $ make run
 ```
+
+
+### 🤝 赞助
+
+<table>
+  <thead>
+    <tr>
+      <th align="center" style="width: 150px;">
+        <a href="https://skywork.ai/"><img src="./docs/images/sponsors/skywork.jpg" width="80px"><br>
+          <sub>天工超级智能体</sub><br>
+          <sub>省时高效的专家级PPT智能体</sub>
+        </a>
+      </th>
+    </tr>
+  </thead>
+</table>
+
+
 
 ### 👾 开发者的废话
 
