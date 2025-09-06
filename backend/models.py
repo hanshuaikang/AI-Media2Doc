@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Any
 
 
 class MessageModel(BaseModel):
@@ -16,3 +16,10 @@ class ChatRequest(BaseModel):
 
 class FileNameRequest(BaseModel):
     filename: str
+
+
+class EnvResponse(BaseModel):
+    code: int = 200
+    success: bool = True
+    message: str = "operation successful"
+    data: Optional[Any] = None

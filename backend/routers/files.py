@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from fastapi import APIRouter
 from config.log import get_logger
 from core.exceptions import ExternalServiceException

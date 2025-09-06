@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from typing import Any, Optional, Dict
 from pydantic import BaseModel
 

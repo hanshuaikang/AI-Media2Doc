@@ -11,7 +11,7 @@ from core.exceptions import (
     general_exception_handler,
 )
 from core.response import success_response, APIResponse
-from routers import llm, files, audio
+from routers import llm, files, audio, secrets
 
 # 设置日志
 setup_logging(log_level="INFO")
@@ -66,6 +66,10 @@ app.include_router(
 )
 app.include_router(
     audio.router, prefix="/api/v1", dependencies=[Depends(verify_web_access_password)]
+)
+
+app.include_router(
+    secrets.router, prefix="/api/v1", dependencies=[Depends(verify_web_access_password)]
 )
 
 

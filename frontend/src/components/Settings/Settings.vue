@@ -31,6 +31,12 @@
                         </el-icon>
                         <span>其他设置</span>
                     </li>
+                    <li :class="{ active: activeMenu === 'connectivity' }" @click="activeMenu = 'connectivity'">
+                        <el-icon>
+                            <Link />
+                        </el-icon>
+                        <span>连通性测试</span>
+                    </li>
                     <li :class="{ active: activeMenu === 'about' }" @click="activeMenu = 'about'">
                         <el-icon>
                             <InfoFilled />
@@ -49,6 +55,7 @@
                     <SettingsScreenshot v-if="activeMenu === 'screenshot'" />
                     <SettingsOther v-if="activeMenu === 'other'" />
                     <SettingsAbout v-if="activeMenu === 'about'" />
+                    <SettingsConnectivity v-if="activeMenu === 'connectivity'" />
                 </div>
             </div>
         </div>
@@ -57,12 +64,13 @@
 
 <script setup>
 import { ref, watch, defineProps, defineEmits } from 'vue'
-import { Document, Lock, Picture, Setting, InfoFilled } from '@element-plus/icons-vue'
+import { Document, Lock, Picture, Setting, InfoFilled, Link } from '@element-plus/icons-vue'
 import SettingsStyle from './SettingsStyle.vue'
 import SettingsPassword from './SettingsPassword.vue'
 import SettingsScreenshot from './SettingsScreenshot.vue'
 import SettingsOther from './SettingsOther.vue'
 import SettingsAbout from './SettingsAbout.vue'
+import SettingsConnectivity from './SettingsConnectivity.vue'
 
 const props = defineProps({
     visible: {
@@ -95,6 +103,7 @@ const menuConfig = {
     other: {
         title: '其他设置'
     },
+    connectivity: { title: '连通性' },
     about: {
         title: '关于'
     }

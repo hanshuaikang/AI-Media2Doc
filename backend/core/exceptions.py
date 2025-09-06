@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 from typing import Union
