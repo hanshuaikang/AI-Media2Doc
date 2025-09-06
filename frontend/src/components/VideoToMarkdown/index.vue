@@ -30,6 +30,7 @@ const file = ref(null)
 const fileName = ref('')
 const showStyleSelector = ref(false)
 const style = ref('')
+const remarks = ref('')
 const showStartButton = ref(false)
 
 const audioData = ref(null)
@@ -60,6 +61,7 @@ const resetAll = () => {
   showStartButton.value = false
   audioData.value = null
   audioUrl.value = ''
+  remarks.value = ''
   audioFilename.value = ''
   audioExtracted.value = false
   textTranscribed.value = false
@@ -77,6 +79,11 @@ const handleFileSelected = async (f) => {
   fileMd5.value = await calculateMD5(new Uint8Array(await f.arrayBuffer()))
   md5Calculating.value = false
   showStyleSelector.value = true
+}
+
+
+const handleRemarksUpdate = (val) => {
+  remarks.value = val
 }
 
 const handleStyleSelected = (val) => {
@@ -170,7 +177,7 @@ const startProcessing = async () => {
     } else {
       processedText = transcriptionText.value
     }
-    const md = await generateMarkdownText(processedText, style.value)
+    const md = await generateMarkdownText(processedText, style.value, remarks.value)
     // 提取所有时间戳标记 #image[20] 格式（整数秒数）
     const imageTimeRegex = /#image\[(\d+)\]/g
     const imageTimeMarkers = md.match(imageTimeRegex) || []
@@ -297,7 +304,7 @@ const stepText = computed(() => steps.value[activeStep.value]?.title || '')
         <UploadSection :ffmpeg-loading="ffmpegLoading" :is-processing="isProcessing" :file="file" :file-name="fileName"
           :file-size="fileSize" :file-md5="fileMd5" :md5-calculating="md5Calculating" :style="style"
           @file-selected="handleFileSelected" @update:style="handleStyleSelected" @start-process="startProcessing"
-          @reset="resetAll" />
+          :remarks="remarks" @update:remarks="handleRemarksUpdate" @reset="resetAll" />
       </div>
       <!-- 步骤3：处理进度（全屏loading） -->
       <LoadingOverlay v-if="isProcessing" :step-text="stepText" :percent="percent" :smart-screenshot="smartScreenshot"

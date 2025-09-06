@@ -1,5 +1,5 @@
 <script setup>
-import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton } from 'element-plus'
+import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton, ElInput } from 'element-plus'
 import { UploadFilled, VideoCamera, Promotion, RefreshRight, Loading } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 
@@ -26,10 +26,14 @@ const props = defineProps({
   md5Calculating: {
     type: Boolean,
     default: false
+  },
+  remarks: {
+    type: String,
+    default: ''
   }
 })
 
-const emit = defineEmits(['file-selected', 'update:style', 'start-process', 'reset'])
+const emit = defineEmits(['file-selected', 'update:style', 'update:remarks', 'start-process', 'reset'])
 
 const allowedTypes = [
   'video/mp4',
@@ -87,6 +91,12 @@ const handleStart = () => {
 }
 const handleReset = () => {
   emit('reset')
+}
+
+const localRemarks = ref(props.remarks || '')
+watch(() => props.remarks, v => { localRemarks.value = v })
+const handleRemarksChange = (val) => {
+  emit('update:remarks', val)
 }
 </script>
 
@@ -159,15 +169,21 @@ const handleReset = () => {
             </span>
           </div>
         </div>
-        <div class="style-selector-wrapper style-selector-flex">
-          <el-radio-group v-model="localStyle" :disabled="isProcessing" @change="handleStyleChange" size="large"
-            class="style-radio-group-flex">
-            <el-radio-button v-for="item in styleList" :key="item.label" :label="item.label"
-              class="style-radio-btn-flex" :disabled="item.label === 'cc'">
-              <img :src="item.icon" :alt="item.name" class="style-radio-icon" />
-              {{ item.name }}
-            </el-radio-button>
-          </el-radio-group>
+        <div class="file-info-main">
+          <div class="style-selector-wrapper style-selector-flex">
+            <el-radio-group v-model="localStyle" :disabled="isProcessing" @change="handleStyleChange" size="large"
+              class="style-radio-group-flex">
+              <el-radio-button v-for="item in styleList" :key="item.label" :label="item.label"
+                class="style-radio-btn-flex" :disabled="item.label === 'cc'">
+                <img :src="item.icon" :alt="item.name" class="style-radio-icon" />
+                {{ item.name }}
+              </el-radio-button>
+            </el-radio-group>
+          </div>
+          <div class="remarks-wrapper">
+            <el-input v-model="localRemarks" type="textarea" placeholder="你可以添加备注在默认提示词的基础上实现更加个性化的输出" :rows="2"
+              :disabled="isProcessing" @input="handleRemarksChange" class="remarks-input" resize="none" />
+          </div>
         </div>
         <div class="file-action-row">
           <el-button class="start-process-btn" :disabled="!localStyle || isProcessing" @click="handleStart">
@@ -380,15 +396,22 @@ const handleReset = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2.2rem;
+  gap: 1.0rem;
   background: transparent;
   box-shadow: none;
   border: none;
 }
 
-.file-info-card {
+.file-info-main {
   width: 100%;
-  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 不设置gap，间距用margin控制 */
+}
+
+.file-info-card {
+  width: 93%;
   background: #f7f8fa;
   border-radius: 14px;
   padding: 1.5rem 2rem 1.2rem 2rem;
@@ -485,11 +508,10 @@ const handleReset = () => {
 }
 
 .style-selector-wrapper {
-  /* width: 100%;
-  max-width: 520px; */
-  /* 保持原有宽度 */
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+  /* 控制与下方remarks的间距 */
 }
-
 
 .start-process-btn {
   background: #23272f !important;
@@ -658,5 +680,49 @@ const handleReset = () => {
     width: 24px;
     height: 24px;
   }
+}
+
+.remarks-wrapper {
+  width: 93%;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+  /* 可根据需要调整与上方的距离 */
+}
+
+.remarks-input {
+  width: 100%;
+}
+
+:deep(.remarks-input .el-textarea__inner) {
+  background: #f7f8fa !important;
+  border: 1.5px solid #f2f3f5 !important;
+  border-radius: 14px !important;
+  padding: 16px 20px !important;
+  font-size: 1.01rem !important;
+  color: #23272f !important;
+  transition: border-color 0.18s, box-shadow 0.18s !important;
+  resize: none !important;
+  font-family: inherit !important;
+  line-height: 1.5 !important;
+  box-shadow: 0 2px 10px 0 rgba(60, 80, 120, 0.04) !important;
+}
+
+:deep(.remarks-input .el-textarea__inner:focus) {
+  border-color: #23272f !important;
+  box-shadow: 0 0 0 2px rgba(35, 39, 47, 0.1), 0 2px 10px 0 rgba(60, 80, 120, 0.04) !important;
+  outline: none !important;
+}
+
+:deep(.remarks-input .el-textarea__inner::placeholder) {
+  color: #9ca3af !important;
+  font-size: 0.98rem !important;
+  line-height: 1.5 !important;
+}
+
+:deep(.remarks-input .el-textarea__inner:disabled) {
+  background: #f3f4f6 !important;
+  color: #9ca3af !important;
+  cursor: not-allowed !important;
+  border-color: #e5e7eb !important;
 }
 </style>
