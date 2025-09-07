@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from fastapi import APIRouter
 from openai import OpenAI
 

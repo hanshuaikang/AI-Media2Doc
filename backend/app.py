@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 from fastapi import FastAPI, HTTPException, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import time

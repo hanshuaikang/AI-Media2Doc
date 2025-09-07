@@ -1,3 +1,6 @@
+# -*- coding: UTF-8 -*-
+
+
 def mask_middle(s: str) -> str:
     """
     中间打码(保持原长度):

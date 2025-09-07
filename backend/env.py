@@ -1,3 +1,5 @@
+# -*- coding: UTF-8 -*-
+
 import os
 
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "https://ark.cn-beijing.volces.com/api/v3")
