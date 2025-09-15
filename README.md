@@ -19,6 +19,11 @@
 
 AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将视频和音频转化为各种风格的文档, 无需登录注册, 前后端本地部署，以极低的成本体验 AI 视频/音频转风格文档服务。
 
+
+### 👾 开发者的废话
+
+AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的人, 我更希望将一些视频内容转化为文字, 方便我进行二次阅读思考和总结记录笔记, 但市面上并没有一个好的工具来实现这个想法, 大多数工具都需要登录和付费, 我不太想在互联网上注册过多的账号, 同时也不想将自己想要总结的内容上传至除了云厂商之外的第三方平台，因此我开发了这个小应用，MIT 协议, 任何人都可以以极低的成本去体验音视频转文本。
+
 ### ✨ 核心功能
 
 - ✅ **完全开源**：MIT 协议授权，支持本地部署。
@@ -35,6 +40,7 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
 
 ### 🔜 未来计划
 - 🎙️ 音频识别支持使用 fast-whisper 本地大模型处理，进一步降低成本
+
 
 ### 💬 哪里可以找到我
 公众号(韩数同学)
@@ -56,7 +62,6 @@ AI 视频图文创作助手是一款 Web 工具, 基于 AI 大模型, 一键将�
 #### 全新功能: 支持智能截图并插入到文中对应位置(本地方案, 无需视觉大模型, 0成本)
 
 开启方式, 点击自定义设置->智能截图 选择打开。
-
 
 <p align="center">
 <img src="docs/images/screenshot.png" alt="task details" width="80%">
@@ -90,15 +95,21 @@ $ make run
 ```
 
 
+### 🔧 本地开发指南
+
+- [后端本地部署](./backend/README.md)
+- [前端本地部署](./frontend/README.md)
+
+
 ### 🤝 赞助
 
 <table>
   <thead>
     <tr>
       <th align="center" style="width: 150px;">
-        <a href="https://skywork.ai/"><img src="./docs/images/sponsors/skywork.jpg" width="80px"><br>
-          <sub>天工超级智能体</sub><br>
-          <sub>省时高效的专家级PPT智能体</sub>
+        <a href="https://skywork.ai/p/mvVidS"><img src="./docs/images/sponsors/skywork.jpg" width="80px"><br>
+          <sub>天工超级智能体 1.0</sub><br>
+          <sub>调用海量工具完成各种任务</sub>
         </a>
       </th>
     </tr>
@@ -106,32 +117,11 @@ $ make run
 </table>
 
 
-
-### 👾 开发者的废话
-
-AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的人, 我更希望将一些视频内容转化为文字, 方便我进行二次阅读思考和总结记录笔记, 但市面上并没有一个好的工具来实现这个想法, 大多数工具都需要登录和付费, 我不太想在互联网上注册过多的账号, 同时也不想将自己想要总结的内容上传至除了云厂商之外的第三方平台，因此我开发了这个小应用，MIT 协议, 任何人都可以以极低的成本去体验音视频转文本。
-
-
 ### 🔄 处理流程
 
 <p align="center">
 <img src="docs/images/process_flow.jpg" alt="architecture" width="80%">
 </p>
-
-### 🔧 本地开发指南
-
-- [后端本地部署](./backend/README.md)
-- [前端本地部署](./frontend/README.md)
-
-### 📄 许可证
-
-本项目采用 [MIT 许可证](./LICENSE)
-
-### 🔗 相关链接
-
-- [volcengine-ai-app-lab](https://github.com/volcengine/ai-app-lab)
-
-- [throttled-py](https://github.com/ZhuoZhuoCrayon/throttled-py)：✨Python 限流库，合理限制、平滑云资源用量。
 
 ### 🌵 支持开发者
 你可以关注我的小红书:
@@ -150,19 +140,7 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
  赞助作者: <a href="https://afdian.com/a/hanshu-github">我的爱发电主页</a>
 </p>
 
-**赞助名单**
-
-| 赞助者                 | 渠道  | 金额   | 备注                             |
-|---------------------|-----|------|--------------------------------|
-| LMseventeen         | 爱发电 | 9.9  | 请作者吃包辣条(买了卫龙)                  |
-| 甄选网创云               | 爱发电 | 19.8 | 开源正能量, 请作者吃辣条哈哈哈，超好用，完美解决了我的困扰 |
-| 小红书博主: 摸鱼的小李        | 爱发电 | 59.4 | 大家都去关注的他的小红书哇，很好的一个账号          |
-| wallenwong          | 爱发电 | 50   | 无                              |
-| Moses               | 微信  | 100  | 请作者喝星巴克和吃辣条                    |
-| 米                   | 微信  | 38   | 无                              |
-| 沐沐                    | 微信  | 66   | 请你吃辣条哈                   |
-
-
+- [赞助名单](./docs/sponsors.md)
 
 ### 🙌 致谢
 感谢这些朋友对本项目做出的贡献:
@@ -183,6 +161,16 @@ AI 视频创作助手源于我年初的一个想法, 作为一个喜欢阅读的
 
 推特:
 | [Geek](https://x.com/geekbb) | [AIGCLINK](https://x.com/aigclink) | [ilovelife](https://x.com/ilovek8s) | [ahhhhfs](https://x.com/abskoop)
+
+### 📄 许可证
+
+本项目采用 [MIT 许可证](./LICENSE)
+
+### 🔗 相关链接
+
+- [volcengine-ai-app-lab](https://github.com/volcengine/ai-app-lab)
+
+- [throttled-py](https://github.com/ZhuoZhuoCrayon/throttled-py)：✨Python 限流库，合理限制、平滑云资源用量。
 
 ### 🌟 Star History
 
