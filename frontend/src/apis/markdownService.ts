@@ -31,7 +31,7 @@ function renderPrompt(style: string, text: string): string {
  * @param contentStyle 内容风格
  * @returns 生成的Markdown内容
  */
-export const generateMarkdownText = async (text: string, contentStyle: string, remarks: string): Promise<string> => {
+export const generateMarkdownText = async (text: string, contentStyle: string, remarks: string, timeout: number, maxTokens: number): Promise<string> => {
 
 
   try {
@@ -65,8 +65,10 @@ export const generateMarkdownText = async (text: string, contentStyle: string, r
           {
             role: 'user',
             content: prompt
-          }
-        ]
+          },
+        ],
+        max_tokens: maxTokens,
+        timeout: timeout
       }
     })
 

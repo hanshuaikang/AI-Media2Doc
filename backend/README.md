@@ -15,7 +15,6 @@ pip install -r requirements.txt
 ```bash
 export MODEL_ID=xxxx
 export LLM_API_KEY=xxxx
-export LLM_MAX_TOKENS=8192
 export TOS_ACCESS_KEY=xxxx
 export TOS_SECRET_KEY=xxxx
 export TOS_ENDPOINT=xxxx

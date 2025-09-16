@@ -38,7 +38,6 @@ ADD ./ ./
 ENV MODEL_ID="xxx" \
     LLM_API_KEY="xxx" \
     TOS_ACCESS_KEY="xxx" \
-    LLM_MAX_TOKENS=8192 \
     TOS_SECRET_KEY="xxx" \
     TOS_ENDPOINT="xxx" \
     TOS_REGION="xxx" \

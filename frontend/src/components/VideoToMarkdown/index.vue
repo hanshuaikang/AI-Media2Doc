@@ -31,6 +31,9 @@ const fileName = ref('')
 const showStyleSelector = ref(false)
 const style = ref('')
 const remarks = ref('')
+const llmTimeout = ref(120)
+const llmMaxTokens = ref(8192)
+
 const showStartButton = ref(false)
 
 const audioData = ref(null)
@@ -84,6 +87,14 @@ const handleFileSelected = async (f) => {
 
 const handleRemarksUpdate = (val) => {
   remarks.value = val
+}
+
+const handleLLMTimeoutChange = (val) => {
+  llmTimeout.value = val
+}
+
+const handleLLMMaxTokensChange = (val) => {
+  llmMaxTokens.value = val
 }
 
 const handleStyleSelected = (val) => {
@@ -177,7 +188,7 @@ const startProcessing = async () => {
     } else {
       processedText = transcriptionText.value
     }
-    const md = await generateMarkdownText(processedText, style.value, remarks.value)
+    const md = await generateMarkdownText(processedText, style.value, remarks.value, llmTimeout.value, llmMaxTokens.value)
     // 提取所有时间戳标记 #image[20] 格式（整数秒数）
     const imageTimeRegex = /#image\[(\d+)\]/g
     const imageTimeMarkers = md.match(imageTimeRegex) || []
@@ -304,7 +315,8 @@ const stepText = computed(() => steps.value[activeStep.value]?.title || '')
         <UploadSection :ffmpeg-loading="ffmpegLoading" :is-processing="isProcessing" :file="file" :file-name="fileName"
           :file-size="fileSize" :file-md5="fileMd5" :md5-calculating="md5Calculating" :style="style"
           @file-selected="handleFileSelected" @update:style="handleStyleSelected" @start-process="startProcessing"
-          :remarks="remarks" @update:remarks="handleRemarksUpdate" @reset="resetAll" />
+          :remarks="remarks" @update:remarks="handleRemarksUpdate" @reset="resetAll"
+          @update:timeout="handleLLMTimeoutChange" @update:max-tokens="handleLLMMaxTokensChange" />
       </div>
       <!-- 步骤3：处理进度（全屏loading） -->
       <LoadingOverlay v-if="isProcessing" :step-text="stepText" :percent="percent" :smart-screenshot="smartScreenshot"

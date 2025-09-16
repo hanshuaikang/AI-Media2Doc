@@ -13,7 +13,8 @@ class ChatRequest(BaseModel):
     messages: List[MessageModel]
     model: Optional[str] = None
     temperature: Optional[float] = None
-    max_tokens: Optional[int] = None
+    max_tokens: Optional[int]
+    timeout: Optional[int]
 
 
 class FileNameRequest(BaseModel):

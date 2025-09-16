@@ -27,7 +27,6 @@ async def default_chat(request: ChatRequest):
         model=env.LLM_MODEL_ID,
         messages=messages,
         timeout=120,
-        max_tokens=env.LLM_MAX_TOKENS,
     )
     return success_response(
         data={"choices": [choices.model_dump() for choices in response.choices]},
@@ -51,8 +50,8 @@ async def generate_markdown_text(request: ChatRequest):
     response = client.chat.completions.create(
         model=env.LLM_MODEL_ID,
         messages=messages,
-        timeout=120,
-        max_tokens=env.LLM_MAX_TOKENS,
+        timeout=request.timeout,
+        max_tokens=request.max_tokens,
     )
 
     return success_response(

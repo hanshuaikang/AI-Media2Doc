@@ -1,7 +1,8 @@
 <script setup>
-import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton, ElInput } from 'element-plus'
-import { UploadFilled, VideoCamera, Promotion, RefreshRight, Loading } from '@element-plus/icons-vue'
+import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton, ElInput, ElInputNumber, ElCollapse, ElCollapseItem } from 'element-plus'
+import { UploadFilled, VideoCamera, Promotion, RefreshRight, Loading, Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
+import RemarksInput from '../common/RemarksInput.vue'
 
 const props = defineProps({
   ffmpegLoading: {
@@ -30,10 +31,18 @@ const props = defineProps({
   remarks: {
     type: String,
     default: ''
+  },
+  timeout: {
+    type: Number,
+    default: 120
+  },
+  maxTokens: {
+    type: Number,
+    default: 8192
   }
 })
 
-const emit = defineEmits(['file-selected', 'update:style', 'update:remarks', 'start-process', 'reset'])
+const emit = defineEmits(['file-selected', 'update:style', 'update:remarks', 'update:timeout', 'update:maxTokens', 'start-process', 'reset'])
 
 const allowedTypes = [
   'video/mp4',
@@ -94,9 +103,23 @@ const handleReset = () => {
 }
 
 const localRemarks = ref(props.remarks || '')
+const localTimeout = ref(props.timeout)
+const localMaxTokens = ref(props.maxTokens)
+
 watch(() => props.remarks, v => { localRemarks.value = v })
+watch(() => props.timeout, v => { localTimeout.value = v })
+watch(() => props.maxTokens, v => { localMaxTokens.value = v })
+
 const handleRemarksChange = (val) => {
   emit('update:remarks', val)
+}
+
+const handleTimeoutChange = (val) => {
+  emit('update:timeout', val)
+}
+
+const handleMaxTokensChange = (val) => {
+  emit('update:maxTokens', val)
 }
 </script>
 
@@ -180,10 +203,9 @@ const handleRemarksChange = (val) => {
               </el-radio-button>
             </el-radio-group>
           </div>
-          <div class="remarks-wrapper">
-            <el-input v-model="localRemarks" type="textarea" placeholder="你可以添加备注在默认提示词的基础上实现更加个性化的输出" :rows="2"
-              :disabled="isProcessing" @input="handleRemarksChange" class="remarks-input" resize="none" />
-          </div>
+          <RemarksInput v-model="localRemarks" :timeout="localTimeout" :max-tokens="localMaxTokens"
+            :disabled="isProcessing" @update:modelValue="handleRemarksChange" @update:timeout="handleTimeoutChange"
+            @update:maxTokens="handleMaxTokensChange" placeholder="你可以添加备注在默认提示词的基础上实现更加个性化的输出, 例如: 输出更详细一些" />
         </div>
         <div class="file-action-row">
           <el-button class="start-process-btn" :disabled="!localStyle || isProcessing" @click="handleStart">
