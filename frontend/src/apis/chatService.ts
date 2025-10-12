@@ -12,7 +12,9 @@ export const sendChatMessage = async (messages: ChatMessage[]): Promise<ChatMess
       url: '/api/v1/llm/completions', // 新的RESTful路径
       method: 'POST',
       data: {
-        messages
+        messages,
+        max_tokens: 8192,
+        timeout: 120,
       }
     })
     
