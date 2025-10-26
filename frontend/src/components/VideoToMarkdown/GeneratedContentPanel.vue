@@ -7,11 +7,7 @@
         </div>
         <div class="original-text-content markdown-content-area">
             <template v-if="isContentMindMap">
-                <div id="mindMapContainer" class="mind-map-container"></div>
-                <div class="mindmap-tip">
-                    点击下载思维导图, 导入到 <a href="https://wanglin2.github.io/mind-map/#/"
-                        target="_blank">https://wanglin2.github.io/mind-map/#/</a> 即可在线编辑
-                </div>
+                <MindMapViewer :content="content" />
             </template>
             <template v-else>
                 <div v-html="renderedContent" class="markdown-content" />
@@ -21,11 +17,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
-import { ElButton, ElMessage } from 'element-plus'
+import { computed } from 'vue'
+import { ElButton } from 'element-plus'
 import { Download } from '@element-plus/icons-vue'
 import MarkdownIt from 'markdown-it'
-import MindMap from 'simple-mind-map'
+import MindMapViewer from './MindMapViewer.vue'
 
 const props = defineProps({
     content: {
@@ -47,8 +43,6 @@ const md = new MarkdownIt({
 
 // 启用表格插件
 md.enable('table')
-
-const mindMapInstance = ref(null)
 
 // 判断内容是否为JSON格式
 const isJsonString = (str) => {
@@ -75,50 +69,6 @@ const renderedContent = computed(() => {
     return md.render(props.content)
 })
 
-// 转换思维导图数据格式
-const convertToMindMapFormat = (jsonData) => {
-    try {
-        const data = typeof jsonData === 'object' ? jsonData : JSON.parse(jsonData)
-        return data.data && (data.data.text || data.data.title)
-            ? data
-            : { data: { text: data.text || data.title || "思维导图" }, children: data.children || [] }
-    } catch {
-        return { data: { text: "解析失败的思维导图" }, children: [] }
-    }
-}
-
-// 初始化思维导图
-const initMindMap = async () => {
-    try {
-        if (mindMapInstance.value) mindMapInstance.value.destroy()
-        await nextTick()
-        const container = document.getElementById('mindMapContainer')
-        if (!container) return
-        container.style.width = '100%'
-        container.style.height = '500px'
-        const mindMapData = convertToMindMapFormat(props.content)
-        mindMapInstance.value = new MindMap({
-            el: container,
-            data: mindMapData,
-            theme: 'primary',
-            layout: 'mindMap',
-            enableNodeDragging: false,
-            height: 500,
-            width: container.clientWidth,
-            keypress: false,
-            contextMenu: false,
-            fit: true,
-            scale: 0.8,
-            textAutoWrap: true,
-            nodeTextEdit: false
-        })
-        mindMapInstance.value.render()
-        setTimeout(() => mindMapInstance.value?.command?.executeCommand('fit'), 300)
-    } catch {
-        ElMessage.error('思维导图初始化失败')
-    }
-}
-
 // 下载内容
 const downloadContent = () => {
     let filename, type
@@ -140,11 +90,6 @@ const downloadContent = () => {
     URL.revokeObjectURL(url)
     document.body.removeChild(a)
 }
-
-// 组件生命周期
-onMounted(() => isContentMindMap.value && initMindMap())
-onBeforeUnmount(() => mindMapInstance.value?.destroy())
-watch(() => props.content, () => isContentMindMap.value && initMindMap())
 </script>
 
 <style scoped>
