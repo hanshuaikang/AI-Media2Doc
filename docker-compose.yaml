@@ -14,5 +14,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1
+    environment:
+        - VITE_API_BASE_URL=http://localhost:8080
     ports:
       - "5173:5173"

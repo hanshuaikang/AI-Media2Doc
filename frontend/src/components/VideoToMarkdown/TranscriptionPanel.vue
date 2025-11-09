@@ -2,7 +2,7 @@
     <div class="text-card half-height">
         <div class="section-header with-bar">
             <h2>文本转录信息</h2>
-            <el-button type="primary" :icon="CopyDocument" circle size="small" title="复制文本" @click="copyText"
+            <el-button type="primary" :icon="CopyDocument" circle size="small" title="复制含时间" @click="copyText"
                 class="copy-btn" />
             <el-button type="primary" :icon="Download" size="small" title="导出为字幕文件" @click="exportSRT"
                 class="export-btn rounded-btn" style="margin-left: 8px;">
@@ -52,9 +52,14 @@ const formatTime = (ms) => {
 }
 
 const copyText = () => {
-    let textToCopy = props.transcription
+    let textToCopy = ''
     if (isSegmentArray.value && Array.isArray(props.transcription)) {
-        textToCopy = props.transcription.map(seg => seg.text).join('\n')
+        textToCopy = props.transcription
+            .map(seg => `${formatTime(seg.start_time)} ${seg.text}`)
+            .join('\n')
+    } else if (typeof props.transcription === 'string') {
+        // 无片段时间戳时的回退：前缀 00:00
+        textToCopy = `00:00 ${props.transcription}`
     }
     if (!textToCopy) {
         ElMessage.warning('没有可复制的文本')
@@ -62,7 +67,7 @@ const copyText = () => {
     }
     navigator.clipboard.writeText(textToCopy)
         .then(() => {
-            ElMessage.success('文本已复制到剪贴板')
+            ElMessage.success('含时间戳文本已复制到剪贴板')
         })
         .catch(() => {
             ElMessage.error('复制失败')
