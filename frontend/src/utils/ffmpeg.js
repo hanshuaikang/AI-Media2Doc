@@ -102,6 +102,25 @@ class CaptureError extends Error {
 }
 
 /**
+ * 读取“视频 API 截图大小阈值”（单位MB），来源于其他设置的本地存储
+ * 默认 100MB
+ */
+function getVideoApiMaxSizeMB() {
+  try {
+    const v = localStorage.getItem('videoApiMaxSizeMB')
+    if (v) {
+      const n = parseInt(v)
+      if (!isNaN(n) && n > 0) return n
+    }
+  } catch {}
+  return 200
+}
+
+function getVideoApiThresholdBytes() {
+  return getVideoApiMaxSizeMB() * 1024 * 1024
+}
+
+/**
  * 使用HTML5 Video API快速截图（适用于浏览器支持的格式）
  * @param {Blob} videoBlob 视频文件Blob
  * @param {number} timeInSeconds 截图时间点（秒）
@@ -109,9 +128,9 @@ class CaptureError extends Error {
  */
 export const captureFrameWithVideoAPI = async (videoBlob, timeInSeconds) => {
   // 对于大文件（>50MB），直接抛出错误让其使用FFmpeg
-  const MAX_SIZE_FOR_VIDEO_API = 100 * 1024 * 1024 // 100MB
+  const MAX_SIZE_FOR_VIDEO_API = getVideoApiThresholdBytes() // 来自设置，默认 100MB
   if (videoBlob.size > MAX_SIZE_FOR_VIDEO_API) {
-    throw new Error(`文件过大 (${Math.round(videoBlob.size / 1024 / 1024)}MB)，使用FFmpeg处理`)
+    throw new Error(`文件过大 (${Math.round(videoBlob.size / 1024 / 1024)}MB)，超过阈值，无法使用浏览器截图。请在“设置 > 其他设置”调整阈值或减小文件大小。`)
   }
 
   console.log(`开始使用Video API截图，文件大小: ${Math.round(videoBlob.size / 1024 / 1024)}MB，时间点: ${timeInSeconds}s`)
@@ -256,61 +275,13 @@ export const captureFrameWithVideoAPI = async (videoBlob, timeInSeconds) => {
 
 export const captureVideoFrame = async (videoData, timeInSeconds) => {
   try {
-    // 检查文件大小，大文件直接使用FFmpeg
+    // 始终使用 HTML5 Video API 进行截图，不再回退到 FFmpeg
     const videoSize = videoData.length
     console.log(`视频文件大小: ${Math.round(videoSize / 1024 / 1024)}MB`)
+    console.log('使用 HTML5 Video API 截图')
 
-    // 对于小文件（<100MB），尝试使用HTML5 Video API
-    if (videoSize <= 100 * 1024 * 1024) {
-      try {
-        console.log('尝试使用HTML5 Video API截图...')
-        const videoBlob = new Blob([videoData], { type: 'video/mp4' })
-        return await captureFrameWithVideoAPI(videoBlob, timeInSeconds)
-      } catch (videoApiError) {
-        console.warn('HTML5 Video API截图失败，回退到FFmpeg:', videoApiError.message)
-        // 如果是时间点超出错误，直接抛出，不回退到FFmpeg
-        if (videoApiError.code === 'TIME_OUT_OF_RANGE') {
-          throw videoApiError
-        }
-      }
-    } else {
-      console.log('文件过大，直接使用FFmpeg截图')
-    }
-
-    // 使用FFmpeg方案
-    await loadFFmpeg() // 确保FFmpeg已加载
-
-    if (!cachedVideoFile) {
-      console.log('缓存视频文件到FFmpeg...')
-      await prepareVideoForCapture(videoData)
-    }
-
-    // 在FFmpeg处理前也检查时间点，虽然不如Video API准确，但可以避免一些明显超出的情况
-    console.log('使用FFmpeg进行截图，时间点:', timeInSeconds)
-    const outputFile = `frame_${timeInSeconds}_${Date.now()}.jpg`
-
-    // 优化的FFmpeg参数 - 优先速度
-    await ffmpeg.run(
-      '-i', cachedVideoFile,
-      '-ss', timeInSeconds.toString(),
-      '-vframes', '1',
-      '-q:v', '5',
-      '-vf', 'scale=800:600:force_original_aspect_ratio=decrease',
-      '-f', 'mjpeg',
-      '-y',
-      outputFile
-    )
-
-    const frameData = ffmpeg.FS('readFile', outputFile)
-
-    // 清理输出文件
-    try {
-      ffmpeg.FS('unlink', outputFile)
-    } catch (e) {
-      // 忽略清理错误
-    }
-
-    return frameData
+    const videoBlob = new Blob([videoData], { type: 'video/mp4' })
+    return await captureFrameWithVideoAPI(videoBlob, timeInSeconds)
   } catch (error) {
     console.error('视频截图失败:', error)
     throw error

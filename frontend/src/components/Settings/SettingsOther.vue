@@ -22,6 +22,16 @@
                     <span class="other-tip">单位：MB，默认 200，范围 10~1024。</span>
                 </div>
             </div>
+            <div class="other-form-row video-api-row">
+                <div class="form-content">
+                    <label class="other-label" for="video-api-max-size">视频 API 截图大小阈值：</label>
+                    <el-input-number id="video-api-max-size" v-model="videoApiMaxSizeMB" :min="10" :max="2048" :step="10"
+                        class="video-api-max-size-input" controls-position="right" />
+                </div>
+                <div class="form-tip">
+                    <span class="other-tip">单位：MB，默认 200M。</span>
+                </div>
+            </div>
             <div class="other-form-row polling-row">
                 <div class="form-content">
                     <label class="other-label" for="max-polling-attempts">最大轮询次数：</label>
@@ -82,6 +92,19 @@ function getLocalMaxUploadSize() {
 function setLocalMaxUploadSize(val) {
     localStorage.setItem('maxUploadSize', String(val))
 }
+function getLocalVideoApiMaxSizeMB() {
+    try {
+        const v = localStorage.getItem('videoApiMaxSizeMB')
+        if (v) {
+            const n = parseInt(v)
+            if (!isNaN(n) && n >= 10) return n
+        }
+    } catch { }
+    return 100
+}
+function setLocalVideoApiMaxSizeMB(val) {
+    localStorage.setItem('videoApiMaxSizeMB', String(val))
+}
 function getLocalMaxPollingAttempts() {
     try {
         const v = localStorage.getItem('maxPollingAttempts')
@@ -97,12 +120,14 @@ function setLocalMaxPollingAttempts(val) {
 }
 const maxRecords = ref(getLocalMaxRecords())
 const maxUploadSize = ref(getLocalMaxUploadSize())
+const videoApiMaxSizeMB = ref(getLocalVideoApiMaxSizeMB())
 const maxPollingAttempts = ref(getLocalMaxPollingAttempts())
 const otherSaveSuccess = ref(false)
 
 function saveOtherSettings() {
     setLocalMaxRecords(maxRecords.value)
     setLocalMaxUploadSize(maxUploadSize.value)
+    setLocalVideoApiMaxSizeMB(videoApiMaxSizeMB.value)
     setLocalMaxPollingAttempts(maxPollingAttempts.value)
     otherSaveSuccess.value = true
     ElMessage.success('已保存到本地')
@@ -215,7 +240,8 @@ function saveOtherSettings() {
 
 .max-records-input,
 .max-upload-size-input,
-.max-polling-attempts-input {
+.max-polling-attempts-input,
+.video-api-max-size-input {
     width: 120px;
     margin-right: 8px;
     border-radius: 8px;
@@ -228,7 +254,8 @@ function saveOtherSettings() {
 
 .max-records-input:focus-within,
 .max-upload-size-input:focus-within,
-.max-polling-attempts-input:focus-within {
+.max-polling-attempts-input:focus-within,
+.video-api-max-size-input:focus-within {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
