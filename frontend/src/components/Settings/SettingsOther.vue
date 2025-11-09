@@ -100,7 +100,7 @@ function getLocalVideoApiMaxSizeMB() {
             if (!isNaN(n) && n >= 10) return n
         }
     } catch { }
-    return 100
+    return 200
 }
 function setLocalVideoApiMaxSizeMB(val) {
     localStorage.setItem('videoApiMaxSizeMB', String(val))
