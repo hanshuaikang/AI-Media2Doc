@@ -129,7 +129,7 @@ onMounted(() => {
     <div class="chat-header">
       <div class="header-info">
         <div class="header-icon">
-          <el-avatar :src="'/src/assets/system.jpeg'" :size="40" />
+          <el-avatar :src="'/src/assets/system.jpg'" :size="40" />
         </div>
         <div class="header-title">
           <h3>AI 智能助手</h3>
@@ -146,7 +146,7 @@ onMounted(() => {
     <div class="chat-content">
       <div v-for="(msg, index) in chatMessages" :key="index" class="message-wrapper" :class="msg.role">
         <div class="avatar-container">
-          <el-avatar :size="40" :src="msg.role === 'assistant' ? '/src/assets/system.jpeg' : '/src/assets/user.jpeg'"
+          <el-avatar :size="40" :src="msg.role === 'assistant' ? '/src/assets/system.jpg' : '/src/assets/user.jpg'"
             :icon="msg.role === 'assistant' ? '' : User" :class="msg.role" />
         </div>
         <div class="message-bubble">

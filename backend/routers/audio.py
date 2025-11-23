@@ -12,7 +12,7 @@ from core.exceptions import BusinessException, ExternalServiceException
 from core.response import success_response, APIResponse
 from config.log import get_logger
 import env
-from utils.tos import generate_download_url
+from utils.s3 import generate_download_url
 
 router = APIRouter(prefix="/audio", tags=["Audio"])
 logger = get_logger(__name__)

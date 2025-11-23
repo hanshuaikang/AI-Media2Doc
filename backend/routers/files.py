@@ -4,10 +4,9 @@ from config.log import get_logger
 from core.exceptions import ExternalServiceException
 from core.response import success_response, APIResponse
 from models import FileNameRequest
-import tos
-import env
+from utils import s3
 
-router = APIRouter(prefix="/files", tags=["Tos"])
+router = APIRouter(prefix="/files", tags=["storage"])
 logger = get_logger(__name__)
 
 
@@ -20,14 +19,7 @@ async def create_upload_url(request: FileNameRequest):
     logger.info(f"Creating upload URL for file: {request.filename}")
 
     try:
-        tos_client = tos.TosClient(
-            tos.Auth(env.TOS_ACCESS_KEY, env.TOS_SECRET_KEY, env.TOS_REGION),
-            env.TOS_ENDPOINT,
-        )
-
-        url = tos_client.generate_presigned_url(
-            Method="PUT", Bucket=env.TOS_BUCKET, Key=request.filename, ExpiresIn=3600
-        )
+        url = s3.generate_upload_url(request.filename)
 
         logger.info(f"Upload URL created successfully for file: {request.filename}")
 
