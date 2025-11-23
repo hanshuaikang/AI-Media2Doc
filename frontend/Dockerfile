@@ -6,12 +6,11 @@ ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
     PATH="/app/node_modules/.bin:$PATH"
 
+
 RUN set -ex && \
-    sed -i 's/deb.debian.org/mirrors.cloud.tencent.com/g' /etc/apt/sources.list.d/debian.sources && \
-    apt update && \
-    apt install -y --no-install-recommends \
-    git \
-    ca-certificates
+    apt-get update -o Acquire::Retries=3 && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN npm config set registry https://mirrors.cloud.tencent.com/npm/
 
