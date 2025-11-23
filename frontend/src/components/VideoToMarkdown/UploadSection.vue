@@ -1,5 +1,5 @@
 <script setup>
-import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton, ElInput, ElInputNumber, ElCollapse, ElCollapseItem } from 'element-plus'
+import { ElUpload, ElIcon, ElMessage, ElRadioGroup, ElRadioButton, ElInput, ElInputNumber, ElCollapse, ElCollapseItem, ElTooltip } from 'element-plus'
 import { UploadFilled, VideoCamera, Promotion, RefreshRight, Loading, Setting } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
 import RemarksInput from '../common/RemarksInput.vue'
@@ -159,7 +159,10 @@ const handleMaxTokensChange = (val) => {
           </h3>
           <p class="upload-desc" v-if="!ffmpegLoading">
             支持拖放或点击上传视频或MP3文件<br>
-            <span class="upload-formats">支持格式：MP4、MOV、AVI、MKV、WebM、MP3，最大 100MB</span>
+            <span class="upload-formats">支持格式：MP4、MOV、AVI、MKV、WebM、MP3，当前设置最大值为 {{ getLocalMaxUploadSize() }}MB</span>
+            <el-tooltip content="可以在自定义设置中调整大小。" placement="top" effect="dark">
+              <span class="size-tip-hint">?</span>
+            </el-tooltip>
           </p>
         </div>
       </el-upload>
@@ -404,6 +407,22 @@ const handleMaxTokensChange = (val) => {
   color: #23272f;
   font-weight: 500;
   letter-spacing: 0.1px;
+}
+
+.size-tip-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #e5e7eb;
+  cursor: help;
 }
 
 .loading-state {

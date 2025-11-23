@@ -19,7 +19,7 @@
                         class="max-upload-size-input" controls-position="right" />
                 </div>
                 <div class="form-tip">
-                    <span class="other-tip">单位：MB，默认 200，范围 10~1024。</span>
+                    <span class="other-tip">单位：MB，默认 200，范围 10~1024。当前：{{ maxUploadSize }}MB。</span>
                 </div>
             </div>
             <div class="other-form-row video-api-row">

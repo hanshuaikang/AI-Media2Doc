@@ -15,11 +15,11 @@ pip install -r requirements.txt
 ```bash
 export MODEL_ID=xxxx
 export LLM_API_KEY=xxxx
-export TOS_ACCESS_KEY=xxxx
-export TOS_SECRET_KEY=xxxx
-export TOS_ENDPOINT=xxxx
-export TOS_REGION=xxxx
-export TOS_BUCKET=xxxx
+export STORAGE_ACCESS_KEY=xxxx
+export STORAGE_SECRET_KEY=xxxx
+export STORAGE_ENDPOINT=xxxx
+export STORAGE_REGION=xxxx
+export STORAGE_BUCKET=xxxx
 export AUC_APP_ID=xxxx
 export AUC_ACCESS_TOKEN=xxxx
 export AUC_CLUSTER_ID=xxxx 
@@ -55,7 +55,7 @@ python app.py
 #### ARK_API_KEY
 在 API Key 管理中创建一个 API Key [参考文档](https://www.volcengine.com/docs/82379/1399008#_3-%E5%88%9B%E5%BB%BAAPIKey) 你就得到了 `ARK_API_KEY` 的值。
 
-### 火山引擎对象存储服务
+### S3对象存储服务, 以火山引擎为例，你可以选择其他兼容 S3 协议的对象存储服务商。
 #### 创建 bucket 设置跨域规则
 登录[对象存储控制台](https://console.volcengine.com/tos) 创建一个 bucket, 创建完毕之后进入该 bucket。点击右侧权限管理, 找到跨域访问设置, 新建一条跨域访问规则。
 <p>
@@ -63,7 +63,7 @@ python app.py
 </p>
 当然你也可以根据实际情况灵活选择。
 
-#### TOS_ENDPOINT
+#### STORAGE_ENDPOINT
 点击 **桶列表** -> **点进去你创建的那个 bucket** -> **点击概览** -> **眼睛往下看**
 
 你会看到一个访问域名, TOS_ENDPOINT 的值就是红框框里面那个，不同的区域 TOS_ENDPOINT 的值可能不一样。
@@ -72,16 +72,16 @@ python app.py
 </p>
 
 
-#### TOS_BUCKET
-`TOS_BUCKET` 的值就是你创建的 bucket 的名称。
+#### STORAGE_BUCKET
+`STORAGE_BUCKET` 的值就是你创建的 bucket 的名称。
 
-#### TOS_REGION
-`TOS_REGION` 的值就是你创建的 bucket 的区域, 例如 `cn-beijing`。
+#### STORAGE_REGION
+`STORAGE_REGION` 的值就是你创建的 bucket 的区域, 例如 `cn-beijing`。
 
 
-#### TOS_ACCESS_KEY 和 TOS_SECRET_KEY
+#### STORAGE_ACCESS_KEY 和 STORAGE_SECRET_KEY
 进入 [IAM控制台](https://console.volcengine.com/iam/keymanage) 创建一个访问密钥,
-你就得到了 `TOS_ACCESS_KEY` 和 `TOS_SECRET_KEY` 的值。
+你就得到了 `STORAGE_ACCESS_KEY` 和 `STORAGE_SECRET_KEY` 的值。
 
 
 ### 音频识别大模型

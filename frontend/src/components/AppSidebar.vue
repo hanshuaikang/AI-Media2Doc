@@ -38,6 +38,20 @@ const showHistoryTasks = ref(true)
 const isInitialLoad = ref(true)
 const showSettingsDialog = ref(false)
 
+const styleList = [
+    { label: 'note', name: '知识笔记', icon: new URL('../assets/笔记.svg', import.meta.url).href },
+    { label: 'xiaohongshu', name: '小红书', icon: new URL('../assets/小红书.svg', import.meta.url).href },
+    { label: 'wechat', name: '公众号', icon: new URL('../assets/微信.svg', import.meta.url).href },
+    { label: 'summary', name: '内容总结', icon: new URL('../assets/汇总.svg', import.meta.url).href },
+    { label: 'mind', name: '思维导图', icon: new URL('../assets/思维导图.svg', import.meta.url).href },
+    { label: 'cc', name: '字幕文件', icon: new URL('../assets/字幕.svg', import.meta.url).href },
+]
+
+const getStyleIcon = (style) => {
+    const item = styleList.find(s => s.label === style)
+    return item ? item.icon : ''
+}
+
 const styleMap = {
     note: { name: '知识笔记', color: '#409EFF' }, // 蓝色
     summary: { name: '内容总结', color: '#67C23A' }, // 绿色
@@ -183,9 +197,13 @@ const handleDeleteTask = async (event, task) => {
                     <div v-else class="history-list">
                         <div v-for="task in recentTasks" :key="task.id" class="history-item"
                             @click="handleSelect(`task-${task.id}`)">
-                            <el-icon class="history-icon">
-                                <Document />
-                            </el-icon>
+                            <div class="history-icon">
+                                <img v-if="getStyleIcon(task.contentStyle)" :src="getStyleIcon(task.contentStyle)" alt="style"
+                                    class="history-style-icon" />
+                                <el-icon v-else class="history-icon-el">
+                                    <Document />
+                                </el-icon>
+                            </div>
                             <div class="history-info">
                                 <div class="history-title">{{ task.fileName || '未命名文件' }}</div>
                                 <div class="history-meta">
@@ -484,6 +502,18 @@ const handleDeleteTask = async (event, task) => {
     color: #909399;
     margin-top: 2px;
     transition: all 0.2s ease;
+}
+
+.history-style-icon {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.history-icon-el {
+    font-size: 15px;
+    color: #909399;
 }
 
 .history-item:hover .history-icon {
