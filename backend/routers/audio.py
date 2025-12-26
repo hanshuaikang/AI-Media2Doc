@@ -36,42 +36,38 @@ async def create_transcription_task(request: FileNameRequest):
     logger.info(f"Creating transcription task for file: {request.filename}")
 
     try:
-        submit_url = "https://openspeech.bytedance.com/api/v1/auc/submit"
+        submit_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/submit"
         download_url = generate_download_url(request.filename)
-
+        uid = generate_local_uuid()
+        task_id = str(uuid.uuid4())
         data = {
-            "app": {
-                "appid": env.AUC_APP_ID,
-                "token": env.AUC_ACCESS_TOKEN,
-                "cluster": env.AUC_CLUSTER_ID,
-            },
             "user": {
-                "uid": generate_local_uuid(),
+                "uid": uid,
             },
-            "audio": {"format": "mp3", "url": download_url},
+            "audio": {"format": "mp3", "url": download_url,"show_utterances": True,},
             "request": {"model_name": "bigmodel", "enable_itn": True},
         }
 
         headers = {
-            "Authorization": f"Bearer; {env.AUC_ACCESS_TOKEN}",
+            "X-Api-App-Key":env.AUC_APP_ID,
+            "X-Api-Access-Key":env.AUC_ACCESS_TOKEN,
+            "X-Api-Resource-Id":"volc.bigasr.auc",
+            "X-Api-Request-Id":task_id,
+            "X-Api-Sequence":"-1",
         }
-
         with Throttled(
             key=env.AUC_APP_ID, store=STORE, quota=per_sec(limit=100, burst=100)
         ):
             response = requests.post(submit_url, data=json.dumps(data), headers=headers)
-
         response.raise_for_status()
-        resp = response.json()
 
-        if resp["resp"]["message"] != "success":
-            logger.error(f"ASR service returned error: {resp}")
+        status = response.headers.get("X-Api-Message")
+        logId = response.headers.get("X-Tt-Logid")
+        if "OK" != status:
+            logger.error(f"ASR service returned error status: {status}, logId: {logId}")
             raise ExternalServiceException(
-                "Volcengine ASR", f"Submit task failed: {resp['resp']['message']}"
+                "Volcengine ASR", f"Submit task failed with status: {status}"
             )
-
-        task_id = resp["resp"]["id"]
-
         logger.info(f"Transcription task created successfully with ID: {task_id}")
 
         return success_response(
@@ -95,39 +91,34 @@ async def get_transcription_task(task_id: str):
     logger.info(f"Querying transcription task status: {task_id}")
 
     try:
-        data = {
-            "appid": env.AUC_APP_ID,
-            "token": env.AUC_ACCESS_TOKEN,
-            "cluster": env.AUC_CLUSTER_ID,
-            "id": task_id,
-        }
-        query_url = "https://openspeech.bytedance.com/api/v1/auc/query"
+        query_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/query"
 
         headers = {
-            "Authorization": f"Bearer; {env.AUC_ACCESS_TOKEN}",
+            "X-Api-App-Key":env.AUC_APP_ID,
+            "X-Api-Access-Key":env.AUC_ACCESS_TOKEN,
+            "X-Api-Resource-Id":"volc.bigasr.auc",
+            "X-Api-Request-Id":task_id,
         }
 
         with Throttled(
             key=env.AUC_APP_ID, store=STORE, quota=per_sec(limit=100, burst=100)
         ):
-            response = requests.post(query_url, json.dumps(data), headers=headers)
+            response = requests.post(query_url, json.dumps({}),headers=headers)
 
         response.raise_for_status()
-        resp = response.json()
+        heads = response.headers
 
-        code = resp["resp"]["code"]
-
+        code = heads.get("X-Api-Status-Code")
         if code == VolcengineASRResponseStatusCode.SUCCESS.value:
-            utterances = resp["resp"]["utterances"]
+            resp = response.json()
             result = [
                 {
                     "start_time": utterance["start_time"],
                     "end_time": utterance["end_time"],
                     "text": utterance["text"],
                 }
-                for utterance in utterances
+                for utterance in resp['result']['utterances']
             ]
-
             logger.info(f"Transcription task {task_id} completed successfully")
 
             return success_response(
