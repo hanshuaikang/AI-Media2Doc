@@ -128,6 +128,7 @@ $ docker-compose -f docker-compose.yaml up -d
 
 微信公众号: **韩数同学**
 
+
 **或者请我吃一包辣条** , 作为一个超级喜欢吃辣条的人, 很多晚上维护开源项目都是边吃辣条边写代码的 🤪。如果你有很喜欢吃的辣条, 你可以投喂我吃一包辣条, 5毛一包的也可以, 我将直接开启代码狂暴模式(化身八爪鱼: 🐙)。
 
 请留下你要赞助作者的辣条名称 (🤩❤️‍🔥): 支持卫龙/麻辣王子/博士牛筋/臭干子，禁止投喂(🥵😵😵‍💫🤧🥴): **缺牙齿**/**霸王丝**等有损本人生命值的辣条。
@@ -170,7 +171,13 @@ $ docker-compose -f docker-compose.yaml up -d
 
 - [throttled-py](https://github.com/ZhuoZhuoCrayon/throttled-py)：✨Python 限流库，合理限制、平滑云资源用量。
 
+### 其他 AI 工具:
+[Owl 猫头鹰小红书/公众号敏感词检测工具](https://owl.hanshutx.com/): 支持小红书、公众号敏感词检测，提交检测后自动识别文本中的敏感词并高亮显示，避免笔记违规, 免费使用。
+
 ### 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=hanshuaikang/AI-Media2Doc&type=Date)](https://www.star-history.com/#hanshuaikang/AI-Media2Doc&Date)
+
+
+
 
