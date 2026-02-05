@@ -90,6 +90,12 @@ python app.py
 
 登录录音文件识别大模型控制台(https://console.volcengine.com/speech/service), 点击右侧**语音识别->录音文件识别**(注意不是录音文件识别大模型)， 创建一个应用, 你就得到了 `AUC_APP_ID` 和 `AUC_ACCESS_TOKEN` 和 `AUC_CLUSTER_ID` 的值。
 
+❗️**语音识别->录音文件识别** 不是**录音文件识别大模型**, 一定要注意区分。
+
+<p>
+<img src="../docs/images/auc.png" alt="tos access key">
+</p>
+
 
 #### AUC_APP_ID
 `AUC_APP_ID` 的值就是你创建的应用的 ID。
@@ -101,7 +107,9 @@ python app.py
 #### AUC_CLUSTER_ID
 点击试用 `录音文件识别-通用-标准版` 或者极速版，**开通试用之后有 20 个小时的试用额度**，`Cluster ID` 列就表示 AUC_CLUSTER_ID 的值。
 
-
+<p>
+<img src="../docs/images/auc_detail.png" alt="tos access key">
+</p>
 
 ### FAQ
 - ❓:如何使用 ChatGPT, Claude, Gemini 等第三方大模型。
