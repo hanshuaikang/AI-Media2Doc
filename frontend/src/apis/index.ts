@@ -4,6 +4,7 @@ import * as uploadService from './uploadService'
 import * as chatService from './chatService'
 import * as healthService from './healthService'
 import * as secretsService from './secretsService' // 新增
+import * as visualService from './visualService' // TwelveLabs Pegasus 视觉理解 (可选)
 import httpService from './http'
 
 // 从各个服务中导出常用函数
@@ -13,6 +14,7 @@ export const { getAudioUploadUrl, uploadFile } = uploadService
 export const { sendChatMessage } = chatService
 export const { checkHealth } = healthService
 export const { getSecrets } = secretsService // 新增
+export const { analyzeVideoVisual } = visualService // 新增
 
 // 导出所有服务
 export {
@@ -22,6 +24,7 @@ export {
   chatService,
   healthService,
   secretsService, // 新增
+  visualService, // 新增
   httpService
 }
 
@@ -36,5 +39,6 @@ export default {
   chat: chatService,
   health: healthService,
   secrets: secretsService, // 新增
+  visual: visualService, // 新增
   http: httpService
 }
