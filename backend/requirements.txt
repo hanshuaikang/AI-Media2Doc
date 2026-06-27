@@ -7,3 +7,4 @@ openai==1.88.0
 requests==2.31.0
 python-json-logger==2.0.7
 boto3==1.40.69
+twelvelabs==1.2.8

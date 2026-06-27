@@ -29,6 +29,8 @@ export WEB_ACCESS_PASSWORD=xxx
 
 **WEB_ACCESS_PASSWORD**【选填】:前端访问后端服务的密码,后端指定之后需要在前端自定义设置-> 访问密码填写该密码才可以正常使用。
 
+**TWELVELABS_API_KEY**【选填】:TwelveLabs Pegasus 视觉理解能力的 API Key。现有流程仅依赖 ASR 字幕生成文档,看不到画面里的演示、图表、屏幕文字等信息;配置该 Key 后,可调用 `POST /api/v1/video/visual-analysis` 对视频画面做视觉理解,并把画面描述与字幕一起送入大模型,让生成的文档同时反映"听到的"和"看到的"。**留空则该能力关闭,不影响原有流程。** 可在 [https://twelvelabs.io](https://twelvelabs.io) 免费申请(有较充足的免费额度)。`TWELVELABS_MODEL_NAME` 选填,默认 `pegasus1.5`。
+
 ## 3. 启动服务
 ```bash
 python app.py

@@ -14,3 +14,6 @@ AUC_APP_ID = os.getenv("AUC_APP_ID")
 AUC_ACCESS_TOKEN = os.getenv("AUC_ACCESS_TOKEN")
 AUC_CLUSTER_ID = os.getenv("AUC_CLUSTER_ID", None)
 WEB_ACCESS_PASSWORD = os.getenv("WEB_ACCESS_PASSWORD", None)
+# 可选: TwelveLabs Pegasus 视觉理解, 留空则关闭, 不影响现有 ASR 流程
+TWELVELABS_API_KEY = os.getenv("TWELVELABS_API_KEY", None)
+TWELVELABS_MODEL_NAME = os.getenv("TWELVELABS_MODEL_NAME", "pegasus1.5")

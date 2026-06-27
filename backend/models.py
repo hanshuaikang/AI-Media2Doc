@@ -21,6 +21,13 @@ class FileNameRequest(BaseModel):
     filename: str
 
 
+class VisualAnalysisRequest(BaseModel):
+    filename: str
+    prompt: Optional[str] = None
+    # Pegasus 1.5 要求 max_tokens 介于 512 与 98304 之间
+    max_tokens: int = 2048
+
+
 class EnvResponse(BaseModel):
     code: int = 200
     success: bool = True

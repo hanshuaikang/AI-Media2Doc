@@ -70,6 +70,13 @@ export interface QueryASRTaskResponse {
 }
 
 /**
+ * 视觉分析响应 (TwelveLabs Pegasus, 可选能力)
+ */
+export interface VisualAnalysisResponse {
+  visual_description: string;
+}
+
+/**
  * 任务状态类型
  */
 export type TaskStatus = 'running' | 'finished' | 'failed';
