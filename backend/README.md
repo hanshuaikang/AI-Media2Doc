@@ -84,9 +84,16 @@ python app.py
 你就得到了 `STORAGE_ACCESS_KEY` 和 `STORAGE_SECRET_KEY` 的值。
 
 
-### 音频识别大模型
+### 音频识别
 
-火山方舟每个音频识别大模型都提供了 20 个小时的试用额度, 可以轮流试用。
+`POST /api/v1/audio/transcription-tasks` 和查询接口的应用层行为保持不变：提交音频 URL，轮询返回转写分段。`ASR_API_VERSION` 只切换后端实现：
+
+- `v1`：原有 AUC 实现，使用 `AUC_APP_ID` + `AUC_ACCESS_TOKEN` + `AUC_CLUSTER_ID`；
+- `v3`：新版大模型 ASR 实现，使用 `ASR_API_KEY`。
+
+默认继续使用 `v1`，兼容项目原有部署。
+
+#### 旧版 AUC v1
 
 登录录音文件识别大模型控制台(https://console.volcengine.com/speech/service), 点击右侧**语音识别->录音文件识别**(注意不是录音文件识别大模型)， 创建一个应用, 你就得到了 `AUC_APP_ID` 和 `AUC_ACCESS_TOKEN` 和 `AUC_CLUSTER_ID` 的值。
 
@@ -110,6 +117,18 @@ python app.py
 <p>
 <img src="../docs/images/auc_detail.png" alt="tos access key">
 </p>
+
+#### 新版大模型 v3
+
+如果使用新版「大模型录音文件识别」，设置：
+
+```bash
+export ASR_API_VERSION=v3
+export ASR_API_KEY=xxxx
+export ASR_RESOURCE_ID=volc.bigasr.auc
+```
+
+`ASR_RESOURCE_ID` 需要与实际开通的能力一致。标准版常见值包括 `volc.bigasr.auc` 或 `volc.seedasr.auc`，极速版常见值为 `volc.bigasr.auc_turbo`。
 
 ### FAQ
 - ❓:如何使用 ChatGPT, Claude, Gemini 等第三方大模型。
