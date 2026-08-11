@@ -29,6 +29,7 @@ async def get_environment_variables():
         "STORAGE_SECRET_KEY",
         "AUC_APP_ID",
         "AUC_ACCESS_TOKEN",
+        "ASR_API_KEY",
     ]
 
     for key, value in vars(env).items():

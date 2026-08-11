@@ -17,6 +17,12 @@ from utils.s3 import generate_download_url
 router = APIRouter(prefix="/audio", tags=["Audio"])
 logger = get_logger(__name__)
 STORE = MemoryStore()
+V3_STATUS_FINISHED = "20000000"
+V3_STATUS_RUNNING = {
+    "20000001",
+    "20000002",
+    "20000003",
+}
 
 
 def generate_local_uuid():
@@ -36,6 +42,9 @@ async def create_transcription_task(request: FileNameRequest):
     logger.info(f"Creating transcription task for file: {request.filename}")
 
     try:
+        if env.ASR_API_VERSION == "v3":
+            return _create_v3_transcription_task(request.filename)
+
         submit_url = "https://openspeech.bytedance.com/api/v1/auc/submit"
         download_url = generate_download_url(request.filename)
 
@@ -95,6 +104,9 @@ async def get_transcription_task(task_id: str):
     logger.info(f"Querying transcription task status: {task_id}")
 
     try:
+        if env.ASR_API_VERSION == "v3":
+            return _get_v3_transcription_task(task_id)
+
         data = {
             "appid": env.AUC_APP_ID,
             "token": env.AUC_ACCESS_TOKEN,
@@ -165,3 +177,94 @@ async def get_transcription_task(task_id: str):
             f"Unexpected error when querying transcription task {task_id}: {str(e)}"
         )
         raise BusinessException(f"Failed to query transcription task: {str(e)}")
+
+
+def _create_v3_transcription_task(filename: str):
+    submit_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/submit"
+    download_url = generate_download_url(filename)
+    task_id = str(uuid.uuid4())
+
+    data = {
+        "user": {
+            "uid": generate_local_uuid(),
+        },
+        "audio": {"format": "mp3", "url": download_url},
+        "request": {"model_name": "bigmodel", "enable_itn": True},
+    }
+    headers = _build_v3_headers(task_id)
+
+    with Throttled(
+        key=_asr_throttle_key(), store=STORE, quota=per_sec(limit=100, burst=100)
+    ):
+        response = requests.post(submit_url, json=data, headers=headers)
+
+    response.raise_for_status()
+    response_task_id = response.headers.get("X-Api-Task-Id") or task_id
+
+    logger.info(f"Transcription task created successfully with ID: {response_task_id}")
+
+    return success_response(
+        data={"task_id": response_task_id},
+        message="Transcription task created successfully",
+    )
+
+
+def _get_v3_transcription_task(task_id: str):
+    query_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/query"
+    headers = _build_v3_headers(task_id)
+    with Throttled(
+        key=_asr_throttle_key(), store=STORE, quota=per_sec(limit=100, burst=100)
+    ):
+        response = requests.post(query_url, json={}, headers=headers)
+
+    response.raise_for_status()
+    status_code = response.headers.get("X-Api-Status-Code")
+
+    if status_code == V3_STATUS_FINISHED:
+        payload = response.json()
+        utterances = payload.get("result", {}).get("utterances", [])
+        result = [
+            {
+                "start_time": utterance["start_time"],
+                "end_time": utterance["end_time"],
+                "text": utterance["text"],
+            }
+            for utterance in utterances
+        ]
+
+        logger.info(f"Transcription task {task_id} completed successfully")
+
+        return success_response(
+            data={"status": AsrTaskStatus.FINISHED.value, "result": result},
+            message="Transcription completed",
+        )
+
+    if status_code in V3_STATUS_RUNNING:
+        logger.info(f"Transcription task {task_id} is still running")
+
+        return success_response(
+            data={"status": AsrTaskStatus.RUNNING.value, "result": None},
+            message="Transcription in progress",
+        )
+
+    logger.error(f"Transcription task {task_id} failed with code: {status_code}")
+
+    return success_response(
+        data={"status": AsrTaskStatus.FAILED.value, "result": None},
+        message="Transcription failed",
+    )
+
+
+def _build_v3_headers(task_id: str):
+    return {
+        "Content-Type": "application/json",
+        "X-Api-Key": env.ASR_API_KEY,
+        "X-Api-Resource-Id": env.ASR_RESOURCE_ID,
+        "X-Api-Request-Id": task_id,
+        "X-Api-Task-Id": task_id,
+        "X-Api-Sequence": "-1",
+    }
+
+
+def _asr_throttle_key():
+    return env.ASR_API_KEY or env.AUC_APP_ID or "asr"
