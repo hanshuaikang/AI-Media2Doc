@@ -17,8 +17,9 @@ from utils.s3 import generate_download_url
 router = APIRouter(prefix="/audio", tags=["Audio"])
 logger = get_logger(__name__)
 STORE = MemoryStore()
-V3_STATUS_FINISHED = "20000000"
-V3_STATUS_RUNNING = {
+# Volcengine v3 AUC reports task state through the X-Api-Status-Code header.
+V3_HEADER_STATUS_FINISHED = "20000000"
+V3_HEADER_STATUS_RUNNING = {
     "20000001",
     "20000002",
     "20000003",
@@ -220,7 +221,7 @@ def _get_v3_transcription_task(task_id: str):
     response.raise_for_status()
     status_code = response.headers.get("X-Api-Status-Code")
 
-    if status_code == V3_STATUS_FINISHED:
+    if status_code == V3_HEADER_STATUS_FINISHED:
         payload = response.json()
         utterances = payload.get("result", {}).get("utterances", [])
         result = [
@@ -239,7 +240,7 @@ def _get_v3_transcription_task(task_id: str):
             message="Transcription completed",
         )
 
-    if status_code in V3_STATUS_RUNNING:
+    if status_code in V3_HEADER_STATUS_RUNNING:
         logger.info(f"Transcription task {task_id} is still running")
 
         return success_response(
