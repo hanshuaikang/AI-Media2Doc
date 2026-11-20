@@ -20,9 +20,8 @@ export STORAGE_SECRET_KEY=xxxx
 export STORAGE_ENDPOINT=xxxx
 export STORAGE_REGION=xxxx
 export STORAGE_BUCKET=xxxx
-export AUC_APP_ID=xxxx
-export AUC_ACCESS_TOKEN=xxxx
-export AUC_CLUSTER_ID=xxxx 
+export AUC_API_KEY=xxxx
+export AUC_RESOURCE_ID=volc.seedasr.auc
 export WEB_ACCESS_PASSWORD=xxx
 ```
 环境变量说明:
@@ -64,12 +63,11 @@ python app.py
 当然你也可以根据实际情况灵活选择。
 
 #### STORAGE_ENDPOINT
-点击 **桶列表** -> **点进去你创建的那个 bucket** -> **点击概览** -> **眼睛往下看**
+需要使用 **S3 兼容域名**：`tos-s3-<region>.volces.com`（例如 `tos-s3-cn-beijing.volces.com`）。
 
-你会看到一个访问域名, TOS_ENDPOINT 的值就是红框框里面那个，不同的区域 TOS_ENDPOINT 的值可能不一样。
-<p>
-<img src="../docs/images/tos_endpoint.png" alt="tos access key">
-</p>
+❗️控制台概览页展示的 `tos-<region>.volces.com` 是 TOS 原生端点，它只接受 TOS 自己的签名，用 boto3 调会返回 `400 Bad Request`（`x-tos-ec: 0002-00000002`）。
+
+不同区域的域名只把 `cn-beijing` 换成对应 region 即可。
 
 
 #### STORAGE_BUCKET
@@ -88,24 +86,18 @@ python app.py
 
 火山方舟每个音频识别大模型都提供了 20 个小时的试用额度, 可以轮流试用。
 
-登录录音文件识别大模型控制台(https://console.volcengine.com/speech/service), 点击右侧**语音识别->录音文件识别**(注意不是录音文件识别大模型)， 创建一个应用, 你就得到了 `AUC_APP_ID` 和 `AUC_ACCESS_TOKEN` 和 `AUC_CLUSTER_ID` 的值。
-
-❗️**语音识别->录音文件识别** 不是**录音文件识别大模型**, 一定要注意区分。
+登录豆包语音控制台(https://console.volcengine.com/speech/app), 在**应用管理**创建应用并勾选**豆包录音文件识别模型2.0**，开通试用后在该应用下获取 **API Key**，即 `AUC_API_KEY`。
 
 <p>
 <img src="../docs/images/auc.png" alt="tos access key">
 </p>
 
 
-#### AUC_APP_ID
-`AUC_APP_ID` 的值就是你创建的应用的 ID。
+#### AUC_API_KEY
+`AUC_API_KEY` 的值就是应用详情中的 API Key（新版控制台使用 API Key 鉴权，不再使用 APP ID + Access Token）。
 
-#### AUC_ACCESS_TOKEN
-`AUC_ACCESS_TOKEN` 的值就是你创建的应用的 Access Token。
-
-
-#### AUC_CLUSTER_ID
-点击试用 `录音文件识别-通用-标准版` 或者极速版，**开通试用之后有 20 个小时的试用额度**，`Cluster ID` 列就表示 AUC_CLUSTER_ID 的值。
+#### AUC_RESOURCE_ID
+模型资源 ID，`豆包录音文件识别模型2.0 标准版` 固定为 `volc.seedasr.auc`；如需换成 1.0 版本可填 `volc.bigasr.auc`。
 
 <p>
 <img src="../docs/images/auc_detail.png" alt="tos access key">
