@@ -4,6 +4,8 @@ import hashlib
 import json
 import uuid
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from throttled import Throttled, per_sec, MemoryStore
 
 from constants import VolcengineASRResponseStatusCode, AsrTaskStatus
@@ -18,6 +20,26 @@ router = APIRouter(prefix="/audio", tags=["Audio"])
 logger = get_logger(__name__)
 STORE = MemoryStore()
 
+SUBMIT_URL = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/submit"
+QUERY_URL = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/query"
+
+# DNS 解析器偶尔会瞬断（VPN 切换/解析缓存），对连接错误做重试
+SESSION = requests.Session()
+SESSION.mount(
+    "https://",
+    HTTPAdapter(
+        max_retries=Retry(
+            total=3,
+            connect=3,
+            read=2,
+            backoff_factor=0.8,
+            status_forcelist=(429, 500, 502, 503, 504),
+            allowed_methods=frozenset(["GET", "POST"]),
+            raise_on_status=False,
+        )
+    ),
+)
+
 
 def generate_local_uuid():
     """生成本地UUID"""
@@ -25,6 +47,19 @@ def generate_local_uuid():
     mac_address = ":".join(("%012X" % mac)[i : i + 2] for i in range(0, 12, 2))
     md5_obj = hashlib.md5(mac_address.encode("utf-8"))
     return md5_obj.hexdigest()
+
+
+def build_asr_headers(request_id: str, sequence: str = None):
+    """构造火山语音新版鉴权请求头（API Key）"""
+    headers = {
+        "X-Api-Key": env.AUC_API_KEY,
+        "X-Api-Resource-Id": env.AUC_RESOURCE_ID,
+        "X-Api-Request-Id": request_id,
+        "Content-Type": "application/json",
+    }
+    if sequence is not None:
+        headers["X-Api-Sequence"] = sequence
+    return headers
 
 
 @router.post("/transcription-tasks", response_model=APIResponse)
@@ -36,41 +71,45 @@ async def create_transcription_task(request: FileNameRequest):
     logger.info(f"Creating transcription task for file: {request.filename}")
 
     try:
-        submit_url = "https://openspeech.bytedance.com/api/v1/auc/submit"
         download_url = generate_download_url(request.filename)
+        # 新版接口以提交时生成的 request id 作为任务 id，查询时复用
+        task_id = str(uuid.uuid4())
 
         data = {
-            "app": {
-                "appid": env.AUC_APP_ID,
-                "token": env.AUC_ACCESS_TOKEN,
-                "cluster": env.AUC_CLUSTER_ID,
-            },
             "user": {
                 "uid": generate_local_uuid(),
             },
             "audio": {"format": "mp3", "url": download_url},
-            "request": {"model_name": "bigmodel", "enable_itn": True},
-        }
-
-        headers = {
-            "Authorization": f"Bearer; {env.AUC_ACCESS_TOKEN}",
+            "request": {
+                "model_name": "bigmodel",
+                "enable_itn": True,
+                "enable_punc": True,
+                "show_utterances": True,
+            },
         }
 
         with Throttled(
-            key=env.AUC_APP_ID, store=STORE, quota=per_sec(limit=100, burst=100)
+            key=env.AUC_API_KEY, store=STORE, quota=per_sec(limit=100, burst=100)
         ):
-            response = requests.post(submit_url, data=json.dumps(data), headers=headers)
-
-        response.raise_for_status()
-        resp = response.json()
-
-        if resp["resp"]["message"] != "success":
-            logger.error(f"ASR service returned error: {resp}")
-            raise ExternalServiceException(
-                "Volcengine ASR", f"Submit task failed: {resp['resp']['message']}"
+            response = SESSION.post(
+                SUBMIT_URL,
+                data=json.dumps(data),
+                headers=build_asr_headers(task_id, sequence="-1"),
+                timeout=60,
             )
 
-        task_id = resp["resp"]["id"]
+        response.raise_for_status()
+        status_code = response.headers.get("X-Api-Status-Code")
+        status_message = response.headers.get("X-Api-Message", "")
+
+        if status_code != VolcengineASRResponseStatusCode.SUCCESS.value:
+            logger.error(
+                f"ASR submit failed: code={status_code}, message={status_message}"
+            )
+            raise ExternalServiceException(
+                "Volcengine ASR",
+                f"Submit task failed: {status_code} {status_message}",
+            )
 
         logger.info(f"Transcription task created successfully with ID: {task_id}")
 
@@ -95,47 +134,42 @@ async def get_transcription_task(task_id: str):
     logger.info(f"Querying transcription task status: {task_id}")
 
     try:
-        data = {
-            "appid": env.AUC_APP_ID,
-            "token": env.AUC_ACCESS_TOKEN,
-            "cluster": env.AUC_CLUSTER_ID,
-            "id": task_id,
-        }
-        query_url = "https://openspeech.bytedance.com/api/v1/auc/query"
-
-        headers = {
-            "Authorization": f"Bearer; {env.AUC_ACCESS_TOKEN}",
-        }
-
         with Throttled(
-            key=env.AUC_APP_ID, store=STORE, quota=per_sec(limit=100, burst=100)
+            key=env.AUC_API_KEY, store=STORE, quota=per_sec(limit=100, burst=100)
         ):
-            response = requests.post(query_url, json.dumps(data), headers=headers)
+            response = SESSION.post(
+                QUERY_URL,
+                data=json.dumps({}),
+                headers=build_asr_headers(task_id),
+                timeout=60,
+            )
 
         response.raise_for_status()
-        resp = response.json()
+        status_code = response.headers.get("X-Api-Status-Code")
+        status_message = response.headers.get("X-Api-Message", "")
 
-        code = resp["resp"]["code"]
-
-        if code == VolcengineASRResponseStatusCode.SUCCESS.value:
-            utterances = resp["resp"]["utterances"]
-            result = [
+        if status_code == VolcengineASRResponseStatusCode.SUCCESS.value:
+            result = response.json().get("result") or {}
+            utterances = result.get("utterances") or []
+            segments = [
                 {
-                    "start_time": utterance["start_time"],
-                    "end_time": utterance["end_time"],
-                    "text": utterance["text"],
+                    "start_time": utterance.get("start_time", 0),
+                    "end_time": utterance.get("end_time", 0),
+                    "text": utterance.get("text", ""),
                 }
                 for utterance in utterances
             ]
+            if not segments and result.get("text"):
+                segments = [{"start_time": 0, "end_time": 0, "text": result["text"]}]
 
             logger.info(f"Transcription task {task_id} completed successfully")
 
             return success_response(
-                data={"status": AsrTaskStatus.FINISHED.value, "result": result},
+                data={"status": AsrTaskStatus.FINISHED.value, "result": segments},
                 message="Transcription completed",
             )
 
-        elif code in [
+        elif status_code in [
             VolcengineASRResponseStatusCode.PENDING.value,
             VolcengineASRResponseStatusCode.RUNNING.value,
         ]:
@@ -146,7 +180,9 @@ async def get_transcription_task(task_id: str):
                 message="Transcription in progress",
             )
         else:
-            logger.error(f"Transcription task {task_id} failed with code: {code}")
+            logger.error(
+                f"Transcription task {task_id} failed: code={status_code}, message={status_message}"
+            )
 
             return success_response(
                 data={"status": AsrTaskStatus.FAILED.value, "result": None},
